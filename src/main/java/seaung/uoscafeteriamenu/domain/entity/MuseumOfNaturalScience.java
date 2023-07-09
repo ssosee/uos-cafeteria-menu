@@ -10,12 +10,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 /**
- * 양식당
+ * 자연과학관
  */
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class WesternRestaurant extends Menu {
+public class MuseumOfNaturalScience extends Menu {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
 }

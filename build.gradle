@@ -37,6 +37,9 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+
+    // 정적페이지 크롤링
+    implementation 'org.jsoup:jsoup:1.14.2'
 }
 
 tasks.named('test') {
