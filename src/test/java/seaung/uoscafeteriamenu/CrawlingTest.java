@@ -2,6 +2,7 @@ package seaung.uoscafeteriamenu;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
+import org.jsoup.helper.HttpConnection;
 import org.jsoup.nodes.*;
 import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
@@ -20,9 +21,11 @@ public class CrawlingTest {
 
     @Test
     @DisplayName("학생회관1층 식단표 크롤링")
-    void test() throws IOException {
+    void crawlingStudentHall() throws IOException {
         // given
-        conn =  Jsoup.connect(studentHallUrl);
+        conn = new HttpConnection();
+        conn.url(studentHallUrl);
+        //conn =  Jsoup.connect(studentHallUrl);
         Document document = conn.get();
         Elements select = document.select("div.listType02#week table tbody tr");
 
@@ -32,6 +35,7 @@ public class CrawlingTest {
             Elements select2 = s.select("td");
 
             System.out.println("날짜="+select1.get(0).text());
+            System.out.println("날짜="+select1.text());
             for(Element s1 : select1) {
                 if(s1.text().equals("조식")) {
                     System.out.println("조식 메뉴="+select2.get(0).ownText());
@@ -57,6 +61,7 @@ public class CrawlingTest {
             }
         }
 
+        System.out.println(1);
         // then
     }
 }

@@ -1,15 +1,21 @@
 package seaung.uoscafeteriamenu.crawling.service;
 
-import org.springframework.scheduling.annotation.Scheduled;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import seaung.uoscafeteriamenu.crawling.crawler.CrawlingResponse;
+import seaung.uoscafeteriamenu.domain.repository.StudentHallRepository;
+
+import javax.transaction.Transactional;
+import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 @Transactional
 public class CrawlingStudentHallService {
 
-    public void test() {
+    private final StudentHallRepository studentHallRepository;
+
+    public void save(List<CrawlingResponse> responses) {
 
     }
-
 }

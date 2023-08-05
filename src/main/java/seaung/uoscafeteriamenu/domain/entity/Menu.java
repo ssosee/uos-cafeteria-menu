@@ -10,9 +10,10 @@ import javax.persistence.MappedSuperclass;
 @Data
 @MappedSuperclass
 public abstract class Menu extends BaseTimeEntity {
+    private String crawlingDate;
     @Enumerated(EnumType.STRING)
     private MealType mealType;
-    private String operatingTime;
+    // private String operatingTime;
     @Lob
     private String menuDesc;
 }
