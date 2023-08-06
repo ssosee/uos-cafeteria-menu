@@ -4,13 +4,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import seaung.uoscafeteriamenu.domain.entity.UosRestaurant;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurantName;
 import seaung.uoscafeteriamenu.crawling.crawler.CrawlingMealType;
 import seaung.uoscafeteriamenu.crawling.crawler.StudentHallCrawler;
 import seaung.uoscafeteriamenu.crawling.crawler.UosRestaurantCrawlingResponse;
 import seaung.uoscafeteriamenu.domain.entity.MealType;
-import seaung.uoscafeteriamenu.domain.entity.StudentHall;
-import seaung.uoscafeteriamenu.domain.repository.StudentHallRepository;
+import seaung.uoscafeteriamenu.domain.repository.UosRestaurantRepository;
 
 import java.io.IOException;
 import java.util.List;
@@ -26,7 +26,7 @@ class CrawlingStudentHallServiceTest {
     @Autowired
     StudentHallCrawler studentHallCrawler;
     @Autowired
-    StudentHallRepository studentHallRepository;
+    UosRestaurantRepository uosRestaurantRepository;
 
     @Test
     @DisplayName("학생회관 8층 크롤링 데이터를 저장한다.")
@@ -43,7 +43,7 @@ class CrawlingStudentHallServiceTest {
         crawlingStudentHallService.saveAllCrawlingData(responses);
 
         // then
-        List<StudentHall> all = studentHallRepository.findAll();
+        List<UosRestaurant> all = uosRestaurantRepository.findAll();
         // 주 5일 3끼 제공 -> 15개의 식단
         assertAll(
                 () -> assertThat(all).isNotEmpty(),

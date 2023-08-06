@@ -6,9 +6,9 @@ import org.springframework.transaction.annotation.Transactional;
 import seaung.uoscafeteriamenu.crawling.crawler.CrawlingMealType;
 import seaung.uoscafeteriamenu.crawling.crawler.UosRestaurantCrawlingResponse;
 import seaung.uoscafeteriamenu.domain.entity.MealType;
-import seaung.uoscafeteriamenu.domain.entity.StudentHall;
-import seaung.uoscafeteriamenu.domain.repository.StudentHallRepository;
+import seaung.uoscafeteriamenu.domain.entity.UosRestaurant;
 import seaung.uoscafeteriamenu.domain.repository.CrawlingTargetRepository;
+import seaung.uoscafeteriamenu.domain.repository.UosRestaurantRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,12 +19,12 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class CrawlingStudentHallService extends CrawlingService {
 
-    private final StudentHallRepository studentHallRepository;
+    private final UosRestaurantRepository uosRestaurantRepository;
 
     @Autowired
-    public CrawlingStudentHallService(CrawlingTargetRepository uosRestaurantsCrawlingInfoRepository, StudentHallRepository studentHallRepository) {
+    public CrawlingStudentHallService(CrawlingTargetRepository uosRestaurantsCrawlingInfoRepository, UosRestaurantRepository uosRestaurantRepository) {
         super(uosRestaurantsCrawlingInfoRepository);
-        this.studentHallRepository = studentHallRepository;
+        this.uosRestaurantRepository = uosRestaurantRepository;
     }
 
     /**
@@ -39,10 +39,10 @@ public class CrawlingStudentHallService extends CrawlingService {
     @Transactional
     public void saveAllCrawlingData(List<UosRestaurantCrawlingResponse> responses) {
 
-        List<StudentHall> studentHalls = new ArrayList<>();
+        List<UosRestaurant> studentHalls = new ArrayList<>();
 
         for(UosRestaurantCrawlingResponse response : responses) {
-            StudentHall.StudentHallBuilder builder = StudentHall.builder();
+            UosRestaurant.UosRestaurantBuilder builder = UosRestaurant.builder();
             builder.crawlingDate(response.getRestaurantDate());
 
             // 조식, 중식, 석식에 매칭되는 메뉴 추출
@@ -50,12 +50,12 @@ public class CrawlingStudentHallService extends CrawlingService {
                 builder.mealType(MealType.valueOf(menu.getKey().name()));
                 builder.menuDesc(menu.getValue());
 
-                StudentHall studentHall = builder.build();
+                UosRestaurant studentHall = builder.build();
                 studentHalls.add(studentHall);
             }
         }
 
-        studentHallRepository.saveAll(studentHalls);
+        uosRestaurantRepository.saveAll(studentHalls);
     }
 
     /**
@@ -67,9 +67,9 @@ public class CrawlingStudentHallService extends CrawlingService {
     @Deprecated
     @Transactional
     public void saveAllCrawlingDataUseLamDa(List<UosRestaurantCrawlingResponse> responses) {
-        List<StudentHall> studentHalls = responses.stream()
+        List<UosRestaurant> studentHalls = responses.stream()
                 .map(response -> {
-                    StudentHall.StudentHallBuilder builder = StudentHall.builder()
+                    UosRestaurant.UosRestaurantBuilder builder = UosRestaurant.builder()
                             .crawlingDate(response.getRestaurantDate());
 
                     response.getMenu().forEach((crawlingMealType, menuDesc) -> {
@@ -82,7 +82,7 @@ public class CrawlingStudentHallService extends CrawlingService {
                 })
                 .collect(Collectors.toList());
 
-        studentHallRepository.saveAll(studentHalls);
+        uosRestaurantRepository.saveAll(studentHalls);
     }
 
     private String mapValueToString(Map<CrawlingMealType, String> menu) {
