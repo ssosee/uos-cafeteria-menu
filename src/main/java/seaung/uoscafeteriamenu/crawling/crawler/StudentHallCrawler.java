@@ -7,6 +7,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -16,15 +17,19 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-@RequiredArgsConstructor
-public class StudentHallCrawler implements Crawler {
+public class StudentHallCrawler extends Crawler {
 
     private final Connection conn;
+    // 크롤링 위치 때문에 생성
 
-    public List<CrawlingResponse> crawlingFrom(String crawlingUrl, String cssQuery) throws IOException {
+    @Autowired
+    public StudentHallCrawler(Connection conn) {
+        this.conn = conn;
+    }
 
-        Map<String, String> menu = new HashMap<>();
-        List<CrawlingResponse> responses = new ArrayList<>();
+    public List<UosRestaurantCrawlingResponse> crawlingFrom(String restaurantName, String crawlingUrl, String cssQuery) throws IOException {
+
+        List<UosRestaurantCrawlingResponse> responses = new ArrayList<>();
 
         Elements elements = getElements(crawlingUrl, cssQuery);
 
@@ -33,13 +38,13 @@ public class StudentHallCrawler implements Crawler {
             Elements mealDesc = e.select("td");
 
             String date = dateAndMealType.get(0).text();
-            CrawlingResponse response = new CrawlingResponse();
-            response.setDate(date);
+            UosRestaurantCrawlingResponse response = new UosRestaurantCrawlingResponse(restaurantName, date);
+            Map<CrawlingMealType, String> menu = new HashMap<>();
 
-            for(Element mealType : dateAndMealType) {
-                addMenu(mealType, CrawlerKey.BREAKFAST, mealDesc, menu);
-                addMenu(mealType, CrawlerKey.LUNCH, mealDesc, menu);
-                addMenu(mealType, CrawlerKey.DINNER, mealDesc, menu);
+            for(int i = 1; i < dateAndMealType.size(); i++) {
+                addMenu(dateAndMealType.get(i), CrawlingMealType.BREAKFAST, mealDesc, menu);
+                addMenu(dateAndMealType.get(i), CrawlingMealType.LUNCH, mealDesc, menu);
+                addMenu(dateAndMealType.get(i), CrawlingMealType.DINNER, mealDesc, menu);
             }
             response.setMenu(menu);
             responses.add(response);
@@ -48,15 +53,23 @@ public class StudentHallCrawler implements Crawler {
         return responses;
     }
 
-    private void addMenu(Element mealType, CrawlerKey key, Elements mealDesc, Map<String, String> menu) {
-        if (mealType.text().equals(key.getKrName())) {
+
+    private int convertCrawlingMealTypeToNumber(CrawlingMealType crawlingMealType) {
+        return crawlingMealTypeIntegerMap.get(crawlingMealType);
+    }
+
+    private void addMenu(Element mealType, CrawlingMealType crawlingMealType, Elements mealDesc, Map<CrawlingMealType, String> menu) {
+        if (mealType.text().equals(crawlingMealType.getKrName())) {
+            int crawlingMealTypeToNumber = convertCrawlingMealTypeToNumber(crawlingMealType);
             StringBuilder sb = new StringBuilder();
-            for (Node t : mealDesc.get(1).childNodes()) {
+
+            for (Node t : mealDesc.get(crawlingMealTypeToNumber).childNodes()) {
                 if (t.toString().equals("<br>")) sb.append("\n");
                 else sb.append(t);
             }
-            String result = Parser.unescapeEntities(sb.toString(), false);
-            menu.put(key.getKrName(), result);
+
+            String resultMenu = Parser.unescapeEntities(sb.toString(), false);
+            menu.put(crawlingMealType, resultMenu);
         }
     }
 

@@ -4,8 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import seaung.uoscafeteriamenu.domain.entity.UosRestaurantName;
 import seaung.uoscafeteriamenu.crawling.crawler.Crawler;
-import seaung.uoscafeteriamenu.crawling.crawler.CrawlingResponse;
+import seaung.uoscafeteriamenu.crawling.crawler.UosRestaurantCrawlingResponse;
+import seaung.uoscafeteriamenu.crawling.service.CrawlingStudentHallService;
+import seaung.uoscafeteriamenu.domain.entity.CrawlingTarget;
 
 import java.io.IOException;
 import java.util.List;
@@ -16,12 +19,8 @@ import java.util.List;
 public class CrawlingSchedule {
 
     private final Crawler crawler;
-    private final String cssQuery = "div.listType02#week table tbody tr";
 
-    private final String studentHallUrl = "https://english.uos.ac.kr/food/placeList.do";
-    private final String mainBuildingUrl = "https://www.uos.ac.kr/food/placeList.do?rstcde=010&menuid=2000005006002000000";
-    private final String museumOfNaturalScienceUrl = "https://www.uos.ac.kr/food/placeList.do?rstcde=040&menuid=2000005006002000000";
-    private final String westernRestaurantUrl = "https://www.uos.ac.kr/food/placeList.do?rstcde=030&menuid=2000005006002000000";
+    private final CrawlingStudentHallService crawlingStudentHallService;
 
     /**
      * cron = "1 2 3 4 5 6"
@@ -33,11 +32,18 @@ public class CrawlingSchedule {
      * @6: 요일(0-7) 0과 7은 일요일, 1은 월요일 6은 토요일
      */
     // 매주 월요일마다 실행
-    @Scheduled(cron = "0 1 0 * * 1")
-    //@Scheduled(cron = "* * * * * *")
-    public void crawling() throws IOException {
-        List<CrawlingResponse> crawlingResponses = crawler.crawlingFrom(studentHallUrl, cssQuery);
-        log.info("크롤링 수행");
-        crawlingResponses.forEach(r -> System.out.println(r.getDate()));
+    //@Scheduled(cron = "0 1 0 * * MON")
+    @Scheduled(cron = "*/30 * * * * *")
+    public void crawlingStudentHall() throws IOException {
+        // 크롤링 대상 정보 조회
+        CrawlingTarget uosRestaurantsCrawlingInfo =
+                crawlingStudentHallService.findCrawlingTargetBy(UosRestaurantName.STUDENT_HALL);
+
+        List<UosRestaurantCrawlingResponse> crawlingResponses = crawler.crawlingFrom(UosRestaurantName.STUDENT_HALL.getKrName(),
+                        uosRestaurantsCrawlingInfo.getUrl(),
+                        uosRestaurantsCrawlingInfo.getCssQuery());
+
+        // 크롤링 결과 저장
+        crawlingStudentHallService.saveAllCrawlingData(crawlingResponses);
     }
 }

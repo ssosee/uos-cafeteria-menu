@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 public enum CrawlingMealType {
     BREAKFAST("조식"),
     LUNCH("중식"),
-    DINNER("석");
+    DINNER("석식");
 
     private final String krName;
 }
