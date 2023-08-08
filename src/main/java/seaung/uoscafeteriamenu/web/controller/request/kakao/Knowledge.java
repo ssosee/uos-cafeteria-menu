@@ -1,0 +1,14 @@
+package seaung.uoscafeteriamenu.web.controller.request.kakao;
+
+import lombok.Data;
+
+import java.util.List;
+
+@Data
+public class Knowledge {
+    private String answer; // 지식의 답변
+    private String question; // 지식의 질문
+    private List<String> categories; // QA의 카테고리
+    private String landingUrl; // 지식 탑변에서 링크 더보기
+    private String imageUrl; // 지식 답변에서 썸네일 이미지
+}

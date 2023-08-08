@@ -15,4 +15,8 @@ public class UosRestaurantInput {
         this.restaurantName = restaurantName;
         this.mealType = mealType;
     }
+
+    public UosRestaurantInput() {
+
+    }
 }
