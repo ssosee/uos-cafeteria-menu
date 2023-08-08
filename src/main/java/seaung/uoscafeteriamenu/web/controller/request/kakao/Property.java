@@ -1,5 +1,6 @@
 package seaung.uoscafeteriamenu.web.controller.request.kakao;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -27,4 +28,11 @@ public class Property {
      * 채널을 추가한 경우만 True 값이 전달되며, 채널을 추가하지 않은 경우/차단한 경우에는 값이 전달되지 않습니다.
      */
     private Boolean isFriend;
+
+    @Builder
+    private Property(String plusfriendUserKey, String appUserId, Boolean isFriend) {
+        this.plusfriendUserKey = plusfriendUserKey;
+        this.appUserId = appUserId;
+        this.isFriend = isFriend;
+    }
 }

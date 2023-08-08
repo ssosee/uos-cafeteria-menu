@@ -1,5 +1,6 @@
 package seaung.uoscafeteriamenu.web.controller.request.kakao;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -13,4 +14,13 @@ public class UserRequest {
     private String utterance; // 봇 시스템에 전달된 사용자의 발화입니다.
     private String lang; //사용자의 언어를 반환합니다. 한국에서 보낸 요청이라면 “ko”를 갖습니다.
     private User user; // 사용자의 정보입니다.
+
+    @Builder
+    private UserRequest(String timezone, Block block, String utterance, String lang, User user) {
+        this.timezone = timezone;
+        this.block = block;
+        this.utterance = utterance;
+        this.lang = lang;
+        this.user = user;
+    }
 }

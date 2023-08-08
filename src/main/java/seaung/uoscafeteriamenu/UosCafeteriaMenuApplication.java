@@ -6,6 +6,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import seaung.uoscafeteriamenu.crawling.crawler.Crawler;
+import seaung.uoscafeteriamenu.crawling.crawler.StudentHallCrawler;
+import seaung.uoscafeteriamenu.crawling.service.CrawlingStudentHallService;
 import seaung.uoscafeteriamenu.domain.TestInitData;
 import seaung.uoscafeteriamenu.domain.repository.CrawlingTargetRepository;
 
@@ -20,7 +23,7 @@ public class UosCafeteriaMenuApplication {
 
     @Bean
     @Profile("local")
-    public TestInitData testInitData(CrawlingTargetRepository crawlingTargetRepository) {
-        return new TestInitData(crawlingTargetRepository);
+    public TestInitData testInitData(CrawlingTargetRepository crawlingTargetRepository, Crawler crawler, CrawlingStudentHallService crawlingStudentHallService) {
+        return new TestInitData(crawlingTargetRepository, crawler, crawlingStudentHallService);
     }
 }

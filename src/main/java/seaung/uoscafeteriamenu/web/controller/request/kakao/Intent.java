@@ -1,5 +1,6 @@
 package seaung.uoscafeteriamenu.web.controller.request.kakao;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -11,4 +12,11 @@ public class Intent {
     private String id;
     private String name;
     private Extra extra;
+
+    @Builder
+    private Intent(String id, String name, Extra extra) {
+        this.id = id;
+        this.name = name;
+        this.extra = extra;
+    }
 }

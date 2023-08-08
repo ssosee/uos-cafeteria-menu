@@ -8,8 +8,6 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class AppConfig {
-
-    private String url;
     @Bean
     public Connection connection() {
         return new HttpConnection();

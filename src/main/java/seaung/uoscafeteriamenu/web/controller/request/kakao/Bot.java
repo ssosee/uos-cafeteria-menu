@@ -1,5 +1,6 @@
 package seaung.uoscafeteriamenu.web.controller.request.kakao;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -9,4 +10,10 @@ import lombok.Data;
 public class Bot {
     private String id; // 봇 고유 식별자
     private String name; // 설정된 봇의 이름
+
+    @Builder
+    private Bot(String id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }

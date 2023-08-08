@@ -1,5 +1,6 @@
 package seaung.uoscafeteriamenu.web.controller.request.kakao;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -15,4 +16,11 @@ public class User {
     private String id;
     private String type;
     private Property properties;
+
+    @Builder
+    private User(String id, String type, Property properties) {
+        this.id = id;
+        this.type = type;
+        this.properties = properties;
+    }
 }

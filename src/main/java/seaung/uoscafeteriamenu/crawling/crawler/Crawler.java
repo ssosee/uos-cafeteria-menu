@@ -1,5 +1,7 @@
 package seaung.uoscafeteriamenu.crawling.crawler;
 
+import seaung.uoscafeteriamenu.domain.entity.UosRestaurantName;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;

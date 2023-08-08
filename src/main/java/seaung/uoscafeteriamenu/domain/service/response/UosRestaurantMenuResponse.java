@@ -4,13 +4,14 @@ import lombok.Builder;
 import lombok.Data;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.SkillResponse;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.SkillTemplate;
+import seaung.uoscafeteriamenu.web.controller.response.kakao.outputs.Outputs;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.outputs.SimpleText;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class UosRestaurantMenuResponse<T> {
+public class UosRestaurantMenuResponse {
     private String restaurantName;
     private String mealType;
     private String menu;
@@ -22,12 +23,17 @@ public class UosRestaurantMenuResponse<T> {
         this.menu = menu;
     }
 
-    public SkillResponse<T> toSkillResponse(String version) {
+    public SkillResponse toSkillResponseUseSimpleText(String version) {
 
-        SkillTemplate<T> template = new SkillTemplate<>();
-        template.setOutputs(new ArrayList<T>());
+        StringBuilder sb = new StringBuilder();
+        sb.append(restaurantName).append("\n");
+        sb.append(mealType).append("\n");
+        sb.append(menu);
 
-        return SkillResponse.<T>builder()
+        SkillTemplate template = new SkillTemplate();
+        template.setOutputs(List.of(new SimpleText(sb.toString())));
+
+        return SkillResponse.builder()
                 .version(version)
                 .template(template)
                 .build();

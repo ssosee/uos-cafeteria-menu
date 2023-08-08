@@ -4,16 +4,23 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import seaung.uoscafeteriamenu.crawling.crawler.Crawler;
+import seaung.uoscafeteriamenu.crawling.crawler.UosRestaurantCrawlingResponse;
+import seaung.uoscafeteriamenu.crawling.service.CrawlingService;
+import seaung.uoscafeteriamenu.crawling.service.CrawlingStudentHallService;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurantName;
 import seaung.uoscafeteriamenu.domain.entity.CrawlingTarget;
 import seaung.uoscafeteriamenu.domain.repository.CrawlingTargetRepository;
 
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
 public class TestInitData {
     private final CrawlingTargetRepository crawlingTargetRepository;
+    private final Crawler crawler;
+    private final CrawlingStudentHallService crawlingStudentHallService;
 
     private final String studentHallCssQuery = "div.listType02#week table tbody tr";
 
@@ -23,9 +30,18 @@ public class TestInitData {
     private final String westernRestaurantUrl = "https://www.uos.ac.kr/food/placeList.do?rstcde=030&menuid=2000005006002000000";
     private final String welfareTeamTel = "02-6490-5855";
     @EventListener(ApplicationReadyEvent.class)
-    public void init() {
+    public void init() throws IOException {
+        // 크롤링 대상 정보 저장
         CrawlingTarget studentHall = createTarget(UosRestaurantName.STUDENT_HALL, studentHallUrl, welfareTeamTel, studentHallCssQuery);
         crawlingTargetRepository.saveAll(List.of(studentHall));
+
+        // 크롤링
+        List<UosRestaurantCrawlingResponse> crawlingResponses = crawler.crawlingFrom(UosRestaurantName.STUDENT_HALL.getKrName(),
+                studentHallUrl,
+                studentHallCssQuery);
+
+        // 크롤링 결과 저장
+        crawlingStudentHallService.saveAllCrawlingData(crawlingResponses);
     }
 
     private CrawlingTarget createTarget(UosRestaurantName uosRestaurantName, String url, String welfareTeamTel, String cssQuery) {

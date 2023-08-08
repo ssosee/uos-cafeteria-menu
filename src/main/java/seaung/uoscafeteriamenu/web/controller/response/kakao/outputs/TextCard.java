@@ -6,7 +6,7 @@ import seaung.uoscafeteriamenu.web.controller.response.kakao.Button;
 import java.util.List;
 
 @Data
-public class TextCard {
+public class TextCard extends Outputs {
     private String text;
     private List<Button> buttons;
 }

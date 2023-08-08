@@ -7,6 +7,7 @@ import seaung.uoscafeteriamenu.crawling.crawler.CrawlingMealType;
 import seaung.uoscafeteriamenu.crawling.crawler.UosRestaurantCrawlingResponse;
 import seaung.uoscafeteriamenu.domain.entity.MealType;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurant;
+import seaung.uoscafeteriamenu.domain.entity.UosRestaurantName;
 import seaung.uoscafeteriamenu.domain.repository.CrawlingTargetRepository;
 import seaung.uoscafeteriamenu.domain.repository.UosRestaurantRepository;
 
@@ -44,6 +45,7 @@ public class CrawlingStudentHallService extends CrawlingService {
         for(UosRestaurantCrawlingResponse response : responses) {
             UosRestaurant.UosRestaurantBuilder builder = UosRestaurant.builder();
             builder.crawlingDate(response.getRestaurantDate());
+            builder.restaurantName(UosRestaurantName.fromKrName(response.getRestaurantName()));
 
             // 조식, 중식, 석식에 매칭되는 메뉴 추출
             for(Map.Entry<CrawlingMealType, String> menu : response.getMenu().entrySet()) {

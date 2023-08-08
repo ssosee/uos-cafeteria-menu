@@ -12,7 +12,7 @@ import java.util.List;
  * 기본 카드는 제목과 설명 외에 썸네일 그룹, 프로필, 버튼 그룹, 소셜 정보를 추가로 포함합니다.
  */
 @Data
-public class BasicCard {
+public class BasicCard extends Outputs{
     private String title; // 최대 2줄
     private String description; // 최대 230자
     private Thumbnail thumbnail;

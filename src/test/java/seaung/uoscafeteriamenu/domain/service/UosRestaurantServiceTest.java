@@ -4,17 +4,20 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 import seaung.uoscafeteriamenu.domain.entity.MealType;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurant;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurantName;
 import seaung.uoscafeteriamenu.domain.repository.UosRestaurantRepository;
 import seaung.uoscafeteriamenu.domain.service.request.UosRestaurantInput;
 import seaung.uoscafeteriamenu.domain.service.response.UosRestaurantMenuResponse;
+import seaung.uoscafeteriamenu.web.exception.UosRestaurantMenuException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
+@Transactional
 class UosRestaurantServiceTest {
 
     @Autowired
@@ -43,6 +46,21 @@ class UosRestaurantServiceTest {
                 () -> assertThat(uosRestaurantMenu.getRestaurantName()).isEqualTo("학생회관 1층"),
                 () -> assertThat(uosRestaurantMenu.getMealType()).isEqualTo("조식")
         );
+    }
+
+    @Test
+    @DisplayName("학생회관1층 메뉴 정보가 없을 경우 예외가 발생한다.")
+    void getUosRestaurantMenuUosRestaurantMenuException() {
+        // given
+        UosRestaurantInput input = UosRestaurantInput.builder()
+                .restaurantName(UosRestaurantName.STUDENT_HALL)
+                .mealType(MealType.BREAKFAST)
+                .build();
+
+        // when // then
+        assertThatThrownBy(() -> uosRestaurantService.getUosRestaurantMenu(input))
+                .isInstanceOf(UosRestaurantMenuException.class)
+                .hasMessage(UosRestaurantMenuException.NOT_FOUND_MENU);
     }
 
     private UosRestaurant createUosRestaurant(UosRestaurantName uosRestaurantName, MealType mealType, String menu) {

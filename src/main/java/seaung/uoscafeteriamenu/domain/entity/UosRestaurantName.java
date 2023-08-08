@@ -12,4 +12,14 @@ public enum UosRestaurantName {
     MUSEUM_OF_NATURAL_SCIENCE("자연과학관");
 
     private final String krName;
+
+    // 재정의한 valueOf 메서드
+    public static UosRestaurantName fromKrName(String krName) {
+        for (UosRestaurantName restaurant : UosRestaurantName.values()) {
+            if (restaurant.krName.equals(krName)) {
+                return restaurant;
+            }
+        }
+        throw new IllegalArgumentException("No enum constant with krName: " + krName);
+    }
 }
