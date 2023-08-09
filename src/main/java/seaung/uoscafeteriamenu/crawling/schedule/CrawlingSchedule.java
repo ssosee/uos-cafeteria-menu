@@ -39,6 +39,7 @@ public class CrawlingSchedule {
         CrawlingTarget uosRestaurantsCrawlingInfo =
                 crawlingStudentHallService.findCrawlingTargetBy(UosRestaurantName.STUDENT_HALL);
 
+        // 크롤링
         List<UosRestaurantCrawlingResponse> crawlingResponses = crawler.crawlingFrom(UosRestaurantName.STUDENT_HALL.getKrName(),
                         uosRestaurantsCrawlingInfo.getUrl(),
                         uosRestaurantsCrawlingInfo.getCssQuery());

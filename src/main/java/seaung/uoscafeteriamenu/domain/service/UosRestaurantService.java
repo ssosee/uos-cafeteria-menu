@@ -9,6 +9,8 @@ import seaung.uoscafeteriamenu.domain.service.request.UosRestaurantInput;
 import seaung.uoscafeteriamenu.domain.service.response.UosRestaurantMenuResponse;
 import seaung.uoscafeteriamenu.web.exception.UosRestaurantMenuException;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -17,7 +19,7 @@ public class UosRestaurantService {
     private final UosRestaurantRepository uosRestaurantRepository;
 
     public UosRestaurantMenuResponse getUosRestaurantMenu(UosRestaurantInput input) {
-        UosRestaurant findUosRestaurant = uosRestaurantRepository.findByRestaurantNameAndMealType(input.getRestaurantName(), input.getMealType())
+        UosRestaurant findUosRestaurant = uosRestaurantRepository.findByCrawlingDateAndRestaurantNameAndMealType(input.getDate(), input.getRestaurantName(), input.getMealType())
                 . orElseThrow(() -> new UosRestaurantMenuException(UosRestaurantMenuException.NOT_FOUND_MENU));
 
         return UosRestaurantMenuResponse.builder()

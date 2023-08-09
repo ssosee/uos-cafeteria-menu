@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.SkillResponse;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.SkillTemplate;
+import seaung.uoscafeteriamenu.web.controller.response.kakao.outputs.Outputs;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.outputs.SimpleText;
 
 import java.util.List;
@@ -18,8 +19,12 @@ public class ApiControllerAdvice {
     @ExceptionHandler(UosRestaurantMenuException.class)
     public ResponseEntity<SkillResponse> uosRestaurantMenuException(UosRestaurantMenuException e) {
 
+        Outputs outputs = Outputs.builder()
+                .simpleText(new SimpleText(e.getMessage()))
+                .build();
+
         SkillTemplate template = new SkillTemplate();
-        template.setOutputs(List.of(new SimpleText(e.getMessage())));
+        template.setOutputs(List.of(outputs));
 
         SkillResponse skillResponse = SkillResponse.builder()
                 .version("2.0")

@@ -25,17 +25,31 @@ public class UosRestaurantMenuResponse {
 
     public SkillResponse toSkillResponseUseSimpleText(String version) {
 
-        StringBuilder sb = new StringBuilder();
-        sb.append(restaurantName).append("\n");
-        sb.append(mealType).append("\n");
-        sb.append(menu);
+        String text = getText();
+
+        Outputs outputs = createOutputsUseSimpleText(text);
 
         SkillTemplate template = new SkillTemplate();
-        template.setOutputs(List.of(new SimpleText(sb.toString())));
+        template.setOutputs(List.of(outputs));
 
         return SkillResponse.builder()
                 .version(version)
                 .template(template)
                 .build();
+    }
+
+    private static Outputs createOutputsUseSimpleText(String text) {
+        return Outputs.builder()
+                .simpleText(new SimpleText(text))
+                .build();
+    }
+
+    private String getText() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(restaurantName);
+        sb.append("(").append(mealType).append(")\n\n");
+        sb.append(menu);
+
+        return sb.toString();
     }
 }

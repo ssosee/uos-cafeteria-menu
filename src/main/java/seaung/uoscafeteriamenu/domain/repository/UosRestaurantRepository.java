@@ -9,4 +9,5 @@ import java.util.Optional;
 
 public interface UosRestaurantRepository extends JpaRepository<UosRestaurant, Long> {
     Optional<UosRestaurant> findByRestaurantNameAndMealType(UosRestaurantName restaurantName, MealType mealType);
+    Optional<UosRestaurant> findByCrawlingDateAndRestaurantNameAndMealType(String crawlingDate, UosRestaurantName restaurantName, MealType mealType);
 }

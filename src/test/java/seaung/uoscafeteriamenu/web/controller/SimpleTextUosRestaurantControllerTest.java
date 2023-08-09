@@ -12,8 +12,11 @@ import seaung.uoscafeteriamenu.domain.entity.MealType;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurant;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurantName;
 import seaung.uoscafeteriamenu.domain.repository.UosRestaurantRepository;
+import seaung.uoscafeteriamenu.utils.CrawlingDateUtils;
 import seaung.uoscafeteriamenu.web.controller.request.kakao.*;
+import seaung.uoscafeteriamenu.web.controller.response.kakao.SkillResponse;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,18 +35,29 @@ class SimpleTextUosRestaurantControllerTest extends ControllerTestSupport {
     @DisplayName("학생회관1층 조식 메뉴를 조회한다.")
     void getUosRestaurantMenu() throws Exception {
         // given
-//        UosRestaurant uosRestaurant = createUosRestaurant(UosRestaurantName.STUDENT_HALL, MealType.BREAKFAST, "라면");
-//        uosRestaurantRepository.save(uosRestaurant);
-//
-//        SkillPayload skillPayload = createSkillPayload();
-//
-//        // when // then
-//        mockMvc.perform(post("/api/v1/simple-text/uos/restaurant/menu")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(om.writeValueAsBytes(skillPayload)))
-//                .andDo(print())
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$."))
+        UosRestaurant uosRestaurant = createUosRestaurant(CrawlingDateUtils.toString(LocalDateTime.now()), UosRestaurantName.STUDENT_HALL, MealType.BREAKFAST, "라면");
+        uosRestaurantRepository.save(uosRestaurant);
+
+        SkillPayload skillPayload = createSkillPayload();
+
+        // when // then
+        mockMvc.perform(post("/api/v1/simple-text/uos/restaurant/menu")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(om.writeValueAsBytes(skillPayload)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.version").value(SkillResponse.apiVersion))
+                .andExpect(jsonPath("$.template").isNotEmpty())
+                .andExpect(jsonPath("$.template.outputs").isArray())
+                .andExpect(jsonPath("$.template.outputs[0].simpleText").isNotEmpty())
+                .andExpect(jsonPath("$.template.outputs[0].simpleText.text")
+                        .value(UosRestaurantName.STUDENT_HALL.getKrName()+"\n"+MealType.BREAKFAST.getKrName()+"\n라면"))
+                .andExpect(jsonPath("$.template.outputs[1].simpleImage").doesNotExist())
+                .andExpect(jsonPath("$.template.outputs[2].basicCard").doesNotExist())
+                .andExpect(jsonPath("$.template.outputs[3].textCard").doesNotExist())
+                .andExpect(jsonPath("$.template.quickReplies").isEmpty())
+                .andExpect(jsonPath("$.context").isEmpty())
+                .andExpect(jsonPath("$.data").isEmpty());
     }
 
     private SkillPayload createSkillPayload() {
@@ -87,8 +101,9 @@ class SimpleTextUosRestaurantControllerTest extends ControllerTestSupport {
                 .build();
     }
 
-    private UosRestaurant createUosRestaurant(UosRestaurantName uosRestaurantName, MealType mealType, String menu) {
+    private UosRestaurant createUosRestaurant(String date, UosRestaurantName uosRestaurantName, MealType mealType, String menu) {
         return UosRestaurant.builder()
+                .crawlingDate(date)
                 .restaurantName(uosRestaurantName)
                 .mealType(mealType)
                 .menuDesc(menu)

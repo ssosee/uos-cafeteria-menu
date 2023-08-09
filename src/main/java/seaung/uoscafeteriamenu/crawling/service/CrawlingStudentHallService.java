@@ -3,6 +3,7 @@ package seaung.uoscafeteriamenu.crawling.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import seaung.uoscafeteriamenu.crawling.crawler.CrawlingMealType;
 import seaung.uoscafeteriamenu.crawling.crawler.UosRestaurantCrawlingResponse;
 import seaung.uoscafeteriamenu.domain.entity.MealType;
@@ -50,7 +51,9 @@ public class CrawlingStudentHallService extends CrawlingService {
             // 조식, 중식, 석식에 매칭되는 메뉴 추출
             for(Map.Entry<CrawlingMealType, String> menu : response.getMenu().entrySet()) {
                 builder.mealType(MealType.valueOf(menu.getKey().name()));
-                builder.menuDesc(menu.getValue());
+
+                // 메뉴 검증
+                validationMenu(menu, builder);
 
                 UosRestaurant studentHall = builder.build();
                 studentHalls.add(studentHall);
@@ -58,6 +61,15 @@ public class CrawlingStudentHallService extends CrawlingService {
         }
 
         uosRestaurantRepository.saveAll(studentHalls);
+    }
+
+    private void validationMenu(Map.Entry<CrawlingMealType, String> menu, UosRestaurant.UosRestaurantBuilder builder) {
+        // 메뉴가 공백이거나 null 이면
+        if(StringUtils.hasText(menu.getValue())) {
+            builder.menuDesc(menu.getValue());
+        } else {
+            builder.menuDesc("학교에서 메뉴를 제공하지 않았다.. 휴먼.");
+        }
     }
 
     /**

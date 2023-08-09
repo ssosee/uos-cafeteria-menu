@@ -2,6 +2,7 @@ package seaung.uoscafeteriamenu.domain.entity;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import seaung.uoscafeteriamenu.web.exception.UosRestaurantMenuException;
 
 @Getter
 @RequiredArgsConstructor
@@ -20,6 +21,16 @@ public enum UosRestaurantName {
                 return restaurant;
             }
         }
-        throw new IllegalArgumentException("No enum constant with krName: " + krName);
+        throw new UosRestaurantMenuException("지원하지 않는 식당 입니다. " + krName);
+    }
+
+    // 재정의한 valueOf 메서드
+    public static UosRestaurantName fromName(String name) {
+        for (UosRestaurantName restaurant : UosRestaurantName.values()) {
+            if (restaurant.name().equals(name)) {
+                return restaurant;
+            }
+        }
+        throw new UosRestaurantMenuException("지원하지 않는 식당 입니다.");
     }
 }
