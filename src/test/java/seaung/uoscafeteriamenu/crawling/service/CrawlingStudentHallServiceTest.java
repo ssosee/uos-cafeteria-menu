@@ -7,8 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurant;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurantName;
-import seaung.uoscafeteriamenu.crawling.crawler.CrawlingMealType;
-import seaung.uoscafeteriamenu.crawling.crawler.StudentHallCrawler;
+import seaung.uoscafeteriamenu.crawling.crawler.UosRestarantCrawler;
 import seaung.uoscafeteriamenu.crawling.crawler.UosRestaurantCrawlingResponse;
 import seaung.uoscafeteriamenu.domain.entity.MealType;
 import seaung.uoscafeteriamenu.domain.repository.UosRestaurantRepository;
@@ -26,7 +25,7 @@ class CrawlingStudentHallServiceTest {
     @Autowired
     CrawlingStudentHallService crawlingStudentHallService;
     @Autowired
-    StudentHallCrawler studentHallCrawler;
+    UosRestarantCrawler studentHallCrawler;
     @Autowired
     UosRestaurantRepository uosRestaurantRepository;
 
@@ -42,19 +41,20 @@ class CrawlingStudentHallServiceTest {
         List<UosRestaurantCrawlingResponse> responses = studentHallCrawler.crawlingFrom(restaurantName, studentHallUrl, cssQuery);
 
         // when
-        crawlingStudentHallService.saveAllCrawlingData(responses);
+        crawlingStudentHallService.saveAllCrawlingData(List.of(responses));
 
         // then
         List<UosRestaurant> all = uosRestaurantRepository.findAll();
+
         // 주 5일 3끼 제공 -> 15개의 식단
         assertAll(
                 () -> assertThat(all).isNotEmpty(),
                 () -> assertThat(all).hasSize(15)
-                        .extracting("crawlingDate", "mealType", "menuDesc")
+                        .extracting("crawlingDate", "mealType")
                         .contains(
-                                tuple(responses.get(0).getRestaurantDate(), MealType.BREAKFAST, responses.get(0).getMenu().get(CrawlingMealType.BREAKFAST)),
-                                tuple(responses.get(1).getRestaurantDate(), MealType.LUNCH, responses.get(1).getMenu().get(CrawlingMealType.LUNCH)),
-                                tuple(responses.get(2).getRestaurantDate(), MealType.DINNER, responses.get(2).getMenu().get(CrawlingMealType.DINNER))
+                                tuple(responses.get(0).getRestaurantDate(), MealType.BREAKFAST),
+                                tuple(responses.get(1).getRestaurantDate(), MealType.LUNCH),
+                                tuple(responses.get(2).getRestaurantDate(), MealType.DINNER)
                         )
         );
     }

@@ -12,23 +12,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
-public class UosRestaurantMenuResponse {
-    private String restaurantName;
-    private String mealType;
-    private String menu;
+public class UosRestaurantsMenuResponse {
 
-    @Builder
-    private UosRestaurantMenuResponse(String restaurantName, String mealType, String menu) {
-        this.restaurantName = restaurantName;
-        this.mealType = mealType;
-        this.menu = menu;
+    private List<UosRestaurantMenuResponse> uosRestaurantsMenu;
+
+    public UosRestaurantsMenuResponse(List<UosRestaurantMenuResponse> uosRestaurantsMenu) {
+        this.uosRestaurantsMenu = uosRestaurantsMenu;
     }
 
     public SkillResponse toSkillResponseUseSimpleText(String version) {
 
-        String text = getText();
+        String texts = joinMenuTexts();
 
-        Outputs outputs = createOutputsUseSimpleText(text);
+        Outputs outputs = createOutputsUseSimpleText(texts);
 
         SkillTemplate template = new SkillTemplate();
         template.setOutputs(List.of(outputs));
@@ -39,18 +35,15 @@ public class UosRestaurantMenuResponse {
                 .build();
     }
 
+    private String joinMenuTexts() {
+        return this.uosRestaurantsMenu.stream()
+                .map(UosRestaurantMenuResponse::getText)
+                .collect(Collectors.joining("\n\n\n"));
+    }
+
     private Outputs createOutputsUseSimpleText(String text) {
         return Outputs.builder()
                 .simpleText(new SimpleText(text))
                 .build();
-    }
-
-    public String getText() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(restaurantName);
-        sb.append("(").append(mealType).append(")\n\n");
-        sb.append(menu);
-
-        return sb.toString();
     }
 }

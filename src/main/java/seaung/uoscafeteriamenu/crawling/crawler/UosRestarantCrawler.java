@@ -1,6 +1,5 @@
 package seaung.uoscafeteriamenu.crawling.crawler;
 
-import lombok.RequiredArgsConstructor;
 import org.jsoup.Connection;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -17,13 +16,13 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class StudentHallCrawler extends Crawler {
+public class UosRestarantCrawler extends Crawler {
 
     private final Connection conn;
     // 크롤링 위치 때문에 생성
 
     @Autowired
-    public StudentHallCrawler(Connection conn) {
+    public UosRestarantCrawler(Connection conn) {
         this.conn = conn;
     }
 
@@ -46,6 +45,7 @@ public class StudentHallCrawler extends Crawler {
                 addMenu(dateAndMealType.get(i), CrawlingMealType.LUNCH, mealDesc, menu);
                 addMenu(dateAndMealType.get(i), CrawlingMealType.DINNER, mealDesc, menu);
             }
+
             response.setMenu(menu);
             responses.add(response);
         }

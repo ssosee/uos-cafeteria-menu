@@ -39,28 +39,30 @@ public class CrawlingStudentHallService extends CrawlingService {
      * @Since 2023/08/06
      */
     @Transactional
-    public void saveAllCrawlingData(List<UosRestaurantCrawlingResponse> responses) {
+    public void saveAllCrawlingData(List<List<UosRestaurantCrawlingResponse>> responsesList) {
 
-        List<UosRestaurant> studentHalls = new ArrayList<>();
+        List<UosRestaurant> uosRestaurants = new ArrayList<>();
 
-        for(UosRestaurantCrawlingResponse response : responses) {
-            UosRestaurant.UosRestaurantBuilder builder = UosRestaurant.builder();
-            builder.crawlingDate(response.getRestaurantDate());
-            builder.restaurantName(UosRestaurantName.fromKrName(response.getRestaurantName()));
+        for(List<UosRestaurantCrawlingResponse> responses: responsesList) {
+            for (UosRestaurantCrawlingResponse response : responses) {
+                UosRestaurant.UosRestaurantBuilder builder = UosRestaurant.builder();
+                builder.crawlingDate(response.getRestaurantDate());
+                builder.restaurantName(UosRestaurantName.fromKrName(response.getRestaurantName()));
 
-            // 조식, 중식, 석식에 매칭되는 메뉴 추출
-            for(Map.Entry<CrawlingMealType, String> menu : response.getMenu().entrySet()) {
-                builder.mealType(MealType.valueOf(menu.getKey().name()));
+                // 조식, 중식, 석식에 매칭되는 메뉴 추출
+                for (Map.Entry<CrawlingMealType, String> menu : response.getMenu().entrySet()) {
+                    builder.mealType(MealType.valueOf(menu.getKey().name()));
 
-                // 메뉴 검증
-                validationMenu(menu, builder);
+                    // 메뉴 검증
+                    validationMenu(menu, builder);
 
-                UosRestaurant studentHall = builder.build();
-                studentHalls.add(studentHall);
+                    UosRestaurant studentHall = builder.build();
+                    uosRestaurants.add(studentHall);
+                }
             }
         }
 
-        uosRestaurantRepository.saveAll(studentHalls);
+        uosRestaurantRepository.saveAll(uosRestaurants);
     }
 
     private void validationMenu(Map.Entry<CrawlingMealType, String> menu, UosRestaurant.UosRestaurantBuilder builder) {

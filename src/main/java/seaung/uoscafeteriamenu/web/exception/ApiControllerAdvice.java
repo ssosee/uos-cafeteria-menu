@@ -27,12 +27,13 @@ public class ApiControllerAdvice {
         template.setOutputs(List.of(outputs));
 
         SkillResponse skillResponse = SkillResponse.builder()
-                .version("2.0")
+                .version(SkillResponse.apiVersion)
                 .template(template)
                 .build();
 
         log.error("[학교식당 메뉴 조회 예외 발생] ", e);
 
-        return new ResponseEntity<>(skillResponse, HttpStatus.BAD_REQUEST);
+        // 400으로 보내면 챗봇이 응답을 안준다.
+        return new ResponseEntity<>(skillResponse, HttpStatus.OK);
     }
 }

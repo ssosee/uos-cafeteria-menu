@@ -5,6 +5,7 @@ import lombok.Data;
 import seaung.uoscafeteriamenu.domain.entity.MealType;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurantName;
 import seaung.uoscafeteriamenu.domain.service.request.UosRestaurantInput;
+import seaung.uoscafeteriamenu.domain.service.request.UosRestaurantsInput;
 import seaung.uoscafeteriamenu.utils.CrawlingDateUtils;
 
 import java.time.LocalDateTime;
@@ -28,6 +29,13 @@ public class SkillPayload {
         return UosRestaurantInput.builder()
                 .date(CrawlingDateUtils.toString(LocalDateTime.now()))
                 .restaurantName(UosRestaurantName.fromName(action.getParams().get("restaurantName")))
+                .mealType(MealType.valueOf(action.getParams().get("mealType")))
+                .build();
+    }
+
+    public UosRestaurantsInput toUosRestaurantsInput() {
+        return UosRestaurantsInput.builder()
+                .date(CrawlingDateUtils.toString(LocalDateTime.now()))
                 .mealType(MealType.valueOf(action.getParams().get("mealType")))
                 .build();
     }

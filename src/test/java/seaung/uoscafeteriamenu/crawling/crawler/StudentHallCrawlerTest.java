@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 class StudentHallCrawlerTest {
 
     @Autowired
-    StudentHallCrawler studentHallCrawler;
+    UosRestarantCrawler studentHallCrawler;
 
     @Test
     @DisplayName("서울시립대학교 학생회관 1층 식당 주간식단표를 크롤링 한다.")

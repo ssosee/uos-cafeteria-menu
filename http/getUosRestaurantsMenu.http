@@ -1,6 +1,6 @@
 ## 학교 식당 메뉴 조회
 
-POST http://localhost:8080/api/v1/simple-text/uos/restaurant/menu
+POST http://localhost:8080/api/v1/simple-text/uos/restaurant/menus
 Content-Type: application/json
 
 {
@@ -33,7 +33,6 @@ Content-Type: application/json
     "name": "ymbjlorhkc",
     "clientExtra": null,
     "params": {
-      "restaurantName": "MUSEUM_OF_NATURAL_SCIENCE",
       "mealType": "BREAKFAST"
     },
     "id": "2eej1w0k1qfo4hs3z7xddvyo",
