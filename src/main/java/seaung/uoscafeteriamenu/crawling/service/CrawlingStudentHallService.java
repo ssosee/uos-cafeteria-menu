@@ -48,6 +48,7 @@ public class CrawlingStudentHallService extends CrawlingService {
                 UosRestaurant.UosRestaurantBuilder builder = UosRestaurant.builder();
                 builder.crawlingDate(response.getRestaurantDate());
                 builder.restaurantName(UosRestaurantName.fromKrName(response.getRestaurantName()));
+                builder.view(0).likeCount(0);
 
                 // 조식, 중식, 석식에 매칭되는 메뉴 추출
                 for (Map.Entry<CrawlingMealType, String> menu : response.getMenu().entrySet()) {
@@ -56,8 +57,8 @@ public class CrawlingStudentHallService extends CrawlingService {
                     // 메뉴 검증
                     validationMenu(menu, builder);
 
-                    UosRestaurant studentHall = builder.build();
-                    uosRestaurants.add(studentHall);
+                    UosRestaurant uosRestaurant = builder.build();
+                    uosRestaurants.add(uosRestaurant);
                 }
             }
         }

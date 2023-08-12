@@ -1,11 +1,13 @@
 package seaung.uoscafeteriamenu.web.controller.response.kakao;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.outputs.Outputs;
 
 import java.util.List;
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SkillTemplate {
     /**
      * [simpleText(간단 텍스트),

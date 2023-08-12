@@ -9,4 +9,9 @@ import java.util.List;
 public class TextCard {
     private String text;
     private List<Button> buttons;
+
+    public TextCard(String text, List<Button> buttons) {
+        this.text = text;
+        this.buttons = buttons;
+    }
 }

@@ -37,11 +37,6 @@ Content-Type: application/json
     },
     "id": "2eej1w0k1qfo4hs3z7xddvyo",
     "detailParams": {
-      "restaurantName": {
-        "origin": "MUSEUM_OF_NATURAL_SCIENCE",
-        "value": "MUSEUM_OF_NATURAL_SCIENCE",
-        "groupName": ""
-      },
       "mealType": {
         "origin": "BREAKFAST",
         "value": "BREAKFAST",

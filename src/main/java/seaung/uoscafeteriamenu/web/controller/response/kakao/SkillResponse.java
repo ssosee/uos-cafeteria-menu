@@ -1,11 +1,13 @@
 package seaung.uoscafeteriamenu.web.controller.response.kakao;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Data;
 
 import java.util.Map;
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SkillResponse {
     public static String apiVersion = "2.0";
     private String version;

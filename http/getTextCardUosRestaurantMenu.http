@@ -1,0 +1,53 @@
+## 학교 식당 메뉴 조회
+
+POST http://localhost:8080/api/v1/text-card/uos/restaurant/menu
+Content-Type: application/json
+
+{
+  "intent": {
+    "id": "pd3lca5py4y4dj43a00nwafk",
+    "name": "블록 이름"
+  },
+  "userRequest": {
+    "timezone": "Asia/Seoul",
+    "params": {
+      "ignoreMe": "true"
+    },
+    "block": {
+      "id": "pd3lca5py4y4dj43a00nwafk",
+      "name": "블록 이름"
+    },
+    "utterance": "발화 내용",
+    "lang": null,
+    "user": {
+      "id": "034623",
+      "type": "accountId",
+      "properties": {}
+    }
+  },
+  "bot": {
+    "id": "64ad4e834bc96323949bfb11",
+    "name": "봇 이름"
+  },
+  "action": {
+    "name": "ymbjlorhkc",
+    "clientExtra": null,
+    "params": {
+      "restaurantName": "MUSEUM_OF_NATURAL_SCIENCE",
+      "mealType": "BREAKFAST"
+    },
+    "id": "2eej1w0k1qfo4hs3z7xddvyo",
+    "detailParams": {
+      "restaurantName": {
+        "origin": "MUSEUM_OF_NATURAL_SCIENCE",
+        "value": "MUSEUM_OF_NATURAL_SCIENCE",
+        "groupName": ""
+      },
+      "mealType": {
+        "origin": "BREAKFAST",
+        "value": "BREAKFAST",
+        "groupName": ""
+      }
+    }
+  }
+}

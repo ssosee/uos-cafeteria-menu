@@ -27,7 +27,7 @@ public class SkillPayload {
 
     public UosRestaurantInput toUosRestaurantInput() {
         return UosRestaurantInput.builder()
-                .date(CrawlingDateUtils.toString(LocalDateTime.now()))
+                .date(CrawlingDateUtils.toString(LocalDateTime.now().minusDays(5)))
                 .restaurantName(UosRestaurantName.fromName(action.getParams().get("restaurantName")))
                 .mealType(MealType.valueOf(action.getParams().get("mealType")))
                 .build();

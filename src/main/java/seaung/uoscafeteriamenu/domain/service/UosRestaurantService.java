@@ -22,30 +22,45 @@ public class UosRestaurantService {
 
     // 학교식당의 식사종류의 학식 메뉴 조회
     // e.g) 학생회관 조식 라면
+    @Transactional
     public UosRestaurantMenuResponse getUosRestaurantMenu(UosRestaurantInput input) {
         // 학식 조회
         UosRestaurant findUosRestaurant = uosRestaurantRepository.findByCrawlingDateAndRestaurantNameAndMealType(input.getDate(), input.getRestaurantName(), input.getMealType())
                 . orElseThrow(() -> new UosRestaurantMenuException(UosRestaurantMenuException.NOT_FOUND_MENU));
 
+        // 조회수 증가
+        findUosRestaurant.increaseView();
+
         return UosRestaurantMenuResponse.builder()
                 .restaurantName(findUosRestaurant.getRestaurantName().getKrName())
                 .menu(findUosRestaurant.getMenuDesc())
                 .mealType(findUosRestaurant.getMealType().getKrName())
+                .view(findUosRestaurant.getView())
                 .build();
     }
 
     // 금일 식사종류별 학식 조회
     // [학생회관 조식 라면, 양식당 조식 돈까스, 자연과학관 조식 제육]
+    @Transactional
     public List<UosRestaurantMenuResponse> getUosRestaurantsMenu(UosRestaurantsInput input) {
         // 학식들 조회
         List<UosRestaurant> findUosRestaurants = uosRestaurantRepository.findByCrawlingDateAndAndMealType(input.getDate(), input.getMealType());
+
+        // 조회수 증가
+        findUosRestaurants.forEach(UosRestaurant::increaseView);
 
         return findUosRestaurants.stream()
                 .map(r -> UosRestaurantMenuResponse.builder()
                         .restaurantName(r.getRestaurantName().getKrName())
                         .mealType(r.getMealType().getKrName())
                         .menu(r.getMenuDesc())
+                        .view(r.getView())
                         .build())
                 .collect(Collectors.toList());
     }
+
+    // 사용자들이 가장 많이 조회한 식사메뉴를 조회
+//    public UosRestaurantMenuResponse getTop1RestaurantMenu() {
+//        // 학식 조회
+//    }
 }

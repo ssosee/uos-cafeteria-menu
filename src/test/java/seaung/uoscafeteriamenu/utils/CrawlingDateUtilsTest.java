@@ -19,9 +19,9 @@ class CrawlingDateUtilsTest {
         LocalDateTime now = LocalDateTime.of(2023, Month.AUGUST, 9, 0 ,0);
 
         // when
-        String result = CrawlingDateUtils.toString(now);
+        String result = CrawlingDateUtils.toString(now.minusDays(5));
 
         // then
-        assertThat(result).isEqualTo("8/9 (수)");
+        assertThat(result).isEqualTo("8/4 (수)");
     }
 }
