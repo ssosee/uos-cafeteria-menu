@@ -1,5 +1,6 @@
 package seaung.uoscafeteriamenu.crawling.crawler;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Connection;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -10,11 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+@Slf4j
 @Component
 public class UosRestarantCrawler extends Crawler {
 
@@ -26,31 +25,37 @@ public class UosRestarantCrawler extends Crawler {
         this.conn = conn;
     }
 
-    public List<UosRestaurantCrawlingResponse> crawlingFrom(String restaurantName, String crawlingUrl, String cssQuery) throws IOException {
+    public List<UosRestaurantCrawlingResponse> crawlingFrom(String restaurantName, String crawlingUrl, String cssQuery) {
 
-        List<UosRestaurantCrawlingResponse> responses = new ArrayList<>();
+        try {
+            List<UosRestaurantCrawlingResponse> responses = new ArrayList<>();
+            Elements elements = getElements(crawlingUrl, cssQuery);
 
-        Elements elements = getElements(crawlingUrl, cssQuery);
+            for (Element e : elements) {
+                Elements dateAndMealType = e.select("th");
+                Elements mealDesc = e.select("td");
 
-        for(Element e : elements) {
-            Elements dateAndMealType = e.select("th");
-            Elements mealDesc = e.select("td");
+                String date = "";
+                if(!dateAndMealType.isEmpty()) date = dateAndMealType.get(0).text();
+                UosRestaurantCrawlingResponse response = new UosRestaurantCrawlingResponse(restaurantName, date);
+                Map<CrawlingMealType, String> menu = new HashMap<>();
 
-            String date = dateAndMealType.get(0).text();
-            UosRestaurantCrawlingResponse response = new UosRestaurantCrawlingResponse(restaurantName, date);
-            Map<CrawlingMealType, String> menu = new HashMap<>();
+                for (int i = 1; i < dateAndMealType.size(); i++) {
+                    Element mealType = dateAndMealType.get(i);
+                    Arrays.stream(CrawlingMealType.values())
+                            .forEach(crawlingMealType -> addMenu(mealType, crawlingMealType, mealDesc, menu));
+                }
 
-            for(int i = 1; i < dateAndMealType.size(); i++) {
-                addMenu(dateAndMealType.get(i), CrawlingMealType.BREAKFAST, mealDesc, menu);
-                addMenu(dateAndMealType.get(i), CrawlingMealType.LUNCH, mealDesc, menu);
-                addMenu(dateAndMealType.get(i), CrawlingMealType.DINNER, mealDesc, menu);
+                response.setMenu(menu);
+                responses.add(response);
             }
 
-            response.setMenu(menu);
-            responses.add(response);
-        }
+            return responses;
 
-        return responses;
+        } catch (IOException e) {
+            log.error("크롤링 정보가 없습니다. url={}", crawlingUrl, e);
+            return new ArrayList<>();
+        }
     }
 
 

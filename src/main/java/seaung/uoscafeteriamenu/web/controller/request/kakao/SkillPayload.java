@@ -4,9 +4,10 @@ import lombok.Builder;
 import lombok.Data;
 import seaung.uoscafeteriamenu.domain.entity.MealType;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurantName;
+import seaung.uoscafeteriamenu.domain.service.request.RecommendUosRestaurantMenuInput;
 import seaung.uoscafeteriamenu.domain.service.request.UosRestaurantInput;
 import seaung.uoscafeteriamenu.domain.service.request.UosRestaurantsInput;
-import seaung.uoscafeteriamenu.utils.CrawlingDateUtils;
+import seaung.uoscafeteriamenu.crawling.utils.CrawlingUtils;
 
 import java.time.LocalDateTime;
 
@@ -27,15 +28,24 @@ public class SkillPayload {
 
     public UosRestaurantInput toUosRestaurantInput() {
         return UosRestaurantInput.builder()
-                .date(CrawlingDateUtils.toString(LocalDateTime.now().minusDays(5)))
+                .date(CrawlingUtils.toDateString(LocalDateTime.now()))
                 .restaurantName(UosRestaurantName.fromName(action.getParams().get("restaurantName")))
                 .mealType(MealType.valueOf(action.getParams().get("mealType")))
                 .build();
     }
 
+    public RecommendUosRestaurantMenuInput toUosRestaurantInputUseActionClientExtra() {
+        return RecommendUosRestaurantMenuInput.builder()
+                .botUserId(userRequest.getUser().getId())
+                .date(CrawlingUtils.toDateString(LocalDateTime.now()))
+                .restaurantName(UosRestaurantName.fromName(action.getClientExtra().get("restaurantName")))
+                .mealType(MealType.valueOf(action.getClientExtra().get("mealType")))
+                .build();
+    }
+
     public UosRestaurantsInput toUosRestaurantsInput() {
         return UosRestaurantsInput.builder()
-                .date(CrawlingDateUtils.toString(LocalDateTime.now()))
+                .date(CrawlingUtils.toDateString(LocalDateTime.now()))
                 .mealType(MealType.valueOf(action.getParams().get("mealType")))
                 .build();
     }

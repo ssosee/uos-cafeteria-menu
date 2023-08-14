@@ -2,12 +2,11 @@ package seaung.uoscafeteriamenu.crawling.schedule;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurantName;
 import seaung.uoscafeteriamenu.crawling.crawler.Crawler;
 import seaung.uoscafeteriamenu.crawling.crawler.UosRestaurantCrawlingResponse;
-import seaung.uoscafeteriamenu.crawling.service.CrawlingStudentHallService;
+import seaung.uoscafeteriamenu.crawling.service.CrawlingUosRestaurantService;
 import seaung.uoscafeteriamenu.domain.entity.CrawlingTarget;
 
 import java.io.IOException;
@@ -20,7 +19,7 @@ public class CrawlingSchedule {
 
     private final Crawler crawler;
 
-    private final CrawlingStudentHallService crawlingStudentHallService;
+    private final CrawlingUosRestaurantService crawlingStudentHallService;
 
     /**
      * cron = "1 2 3 4 5 6"

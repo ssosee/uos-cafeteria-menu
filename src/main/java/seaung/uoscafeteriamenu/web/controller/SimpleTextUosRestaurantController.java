@@ -22,29 +22,36 @@ import static seaung.uoscafeteriamenu.web.controller.response.kakao.SkillRespons
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/simple-text/uos/restaurant")
+@RequestMapping("/api/v1/simple-text/uos")
 public class SimpleTextUosRestaurantController {
 
     private final UosRestaurantService uosRestaurantService;
 
-    // 식당이름, 식사종류로 금일 식당 메뉴 조회
-    @PostMapping("/menu")
+    /**
+     * 식당이름, 식사종류로 금일 식당 메뉴 조회
+     * 추천을 받기 위해 textCard를 사용해야함.
+     * @param payload
+     * @return
+     * @Deprecated
+     */
+    @Deprecated
+    @PostMapping("/restaurant/menu")
     public ResponseEntity<SkillResponse> getUosRestaurantMenu(@RequestBody SkillPayload payload) {
         UosRestaurantMenuResponse uosRestaurantMenu = uosRestaurantService.getUosRestaurantMenu(payload.toUosRestaurantInput());
 
         log.info("request={}", payload);
 
-        return new ResponseEntity(uosRestaurantMenu.toSkillResponseUseSimpleText(apiVersion), HttpStatus.OK);
+        return new ResponseEntity<>(uosRestaurantMenu.toSkillResponseUseSimpleText(apiVersion), HttpStatus.OK);
     }
 
-    // 식사종류로 금익 식당 메뉴 조회
-    @PostMapping("/menus")
+    // 식사종류로 금일 식당 메뉴 조회
+    @PostMapping("/restaurants/menu")
     public ResponseEntity<SkillResponse> getUosRestaurantsMenu(@RequestBody SkillPayload payload) {
         List<UosRestaurantMenuResponse> uosRestaurantsMenu = uosRestaurantService.getUosRestaurantsMenu(payload.toUosRestaurantsInput());
         UosRestaurantsMenuResponse response = new UosRestaurantsMenuResponse(uosRestaurantsMenu);
 
         log.info("request={}", payload);
 
-        return new ResponseEntity(response.toSkillResponseUseSimpleText(apiVersion), HttpStatus.OK);
+        return new ResponseEntity<>(response.toSkillResponseUseSimpleText(apiVersion), HttpStatus.OK);
     }
 }

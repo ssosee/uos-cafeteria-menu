@@ -25,10 +25,10 @@ public class Action {
 
     // 용자의 발화가 추가적인 정보를 제공하는 경우가 있습니다 (예. 바로가기 응답)
     // 그 값들이 clientExtra 필드를 통해서 스킬 서버에 전달됩니다.
-    private Map<String, Object> clientExtra;
+    private Map<String, String> clientExtra;
 
     @Builder
-    private Action(String id, String name, Map<String, String> params, Map<String, DetailParam> detailParams, Map<String, Object> clientExtra) {
+    private Action(String id, String name, Map<String, String> params, Map<String, DetailParam> detailParams, Map<String, String> clientExtra) {
         this.id = id;
         this.name = name;
         this.params = params;

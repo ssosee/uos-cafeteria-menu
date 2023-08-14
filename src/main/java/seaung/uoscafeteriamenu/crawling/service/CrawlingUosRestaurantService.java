@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import seaung.uoscafeteriamenu.crawling.crawler.CrawlingMealType;
 import seaung.uoscafeteriamenu.crawling.crawler.UosRestaurantCrawlingResponse;
+import seaung.uoscafeteriamenu.crawling.utils.CrawlingUtils;
 import seaung.uoscafeteriamenu.domain.entity.MealType;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurant;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurantName;
@@ -19,12 +20,12 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
-public class CrawlingStudentHallService extends CrawlingService {
+public class CrawlingUosRestaurantService extends CrawlingService {
 
     private final UosRestaurantRepository uosRestaurantRepository;
 
     @Autowired
-    public CrawlingStudentHallService(CrawlingTargetRepository uosRestaurantsCrawlingInfoRepository, UosRestaurantRepository uosRestaurantRepository) {
+    public CrawlingUosRestaurantService(CrawlingTargetRepository uosRestaurantsCrawlingInfoRepository, UosRestaurantRepository uosRestaurantRepository) {
         super(uosRestaurantsCrawlingInfoRepository);
         this.uosRestaurantRepository = uosRestaurantRepository;
     }
@@ -44,11 +45,13 @@ public class CrawlingStudentHallService extends CrawlingService {
         List<UosRestaurant> uosRestaurants = new ArrayList<>();
 
         for(List<UosRestaurantCrawlingResponse> responses: responsesList) {
+
             for (UosRestaurantCrawlingResponse response : responses) {
                 UosRestaurant.UosRestaurantBuilder builder = UosRestaurant.builder();
                 builder.crawlingDate(response.getRestaurantDate());
                 builder.restaurantName(UosRestaurantName.fromKrName(response.getRestaurantName()));
-                builder.view(0).likeCount(0);
+                builder.view(0);
+                builder.likeCount(0);
 
                 // 조식, 중식, 석식에 매칭되는 메뉴 추출
                 for (Map.Entry<CrawlingMealType, String> menu : response.getMenu().entrySet()) {
@@ -67,11 +70,10 @@ public class CrawlingStudentHallService extends CrawlingService {
     }
 
     private void validationMenu(Map.Entry<CrawlingMealType, String> menu, UosRestaurant.UosRestaurantBuilder builder) {
-        // 메뉴가 공백이거나 null 이면
-        if(StringUtils.hasText(menu.getValue())) {
+        if(CrawlingUtils.hasMenu(menu.getValue())) {
             builder.menuDesc(menu.getValue());
         } else {
-            builder.menuDesc("학교에서 메뉴를 제공하지 않았다.. 휴먼.");
+            builder.menuDesc(CrawlingUtils.NOT_PROVIDED_MENU);
         }
     }
 

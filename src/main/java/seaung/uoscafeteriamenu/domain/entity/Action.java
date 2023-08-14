@@ -15,6 +15,6 @@ import javax.persistence.Id;
 public class Action extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String skillId; // 스킬의 고유한 식별자
-    private String skillName; // 스킬 이름
+    private String blockId; // 블록 아이디
+    private BlockName blockName; // 블록 이름
 }

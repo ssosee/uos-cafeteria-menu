@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.*;
 class CrawlingStudentHallServiceTest {
 
     @Autowired
-    CrawlingStudentHallService crawlingStudentHallService;
+    CrawlingUosRestaurantService crawlingStudentHallService;
     @Autowired
     UosRestarantCrawler studentHallCrawler;
     @Autowired

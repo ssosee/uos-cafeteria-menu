@@ -2,11 +2,11 @@ package seaung.uoscafeteriamenu.utils;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import seaung.uoscafeteriamenu.crawling.utils.CrawlingUtils;
 
 import java.time.LocalDateTime;
 import java.time.Month;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
 
 class CrawlingDateUtilsTest {
@@ -19,7 +19,7 @@ class CrawlingDateUtilsTest {
         LocalDateTime now = LocalDateTime.of(2023, Month.AUGUST, 9, 0 ,0);
 
         // when
-        String result = CrawlingDateUtils.toString(now.minusDays(5));
+        String result = CrawlingUtils.toDateString(now.minusDays(5));
 
         // then
         assertThat(result).isEqualTo("8/4 (수)");

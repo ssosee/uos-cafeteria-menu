@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import seaung.uoscafeteriamenu.web.exception.UosRestaurantMenuException;
 
+import static seaung.uoscafeteriamenu.web.exception.UosRestaurantMenuException.NOT_FOUND_RESTAURANT;
+
 @Getter
 @RequiredArgsConstructor
 public enum UosRestaurantName {
@@ -17,20 +19,16 @@ public enum UosRestaurantName {
     // 재정의한 valueOf 메서드
     public static UosRestaurantName fromKrName(String krName) {
         for (UosRestaurantName restaurant : UosRestaurantName.values()) {
-            if (restaurant.krName.equals(krName)) {
-                return restaurant;
-            }
+            if (restaurant.krName.equals(krName)) return restaurant;
         }
-        throw new UosRestaurantMenuException("지원하지 않는 식당 입니다. " + krName);
+        throw new UosRestaurantMenuException(NOT_FOUND_RESTAURANT);
     }
 
     // 재정의한 valueOf 메서드
     public static UosRestaurantName fromName(String name) {
         for (UosRestaurantName restaurant : UosRestaurantName.values()) {
-            if (restaurant.name().equals(name)) {
-                return restaurant;
-            }
+            if (restaurant.name().equals(name)) return restaurant;
         }
-        throw new UosRestaurantMenuException("지원하지 않는 식당 입니다.");
+        throw new UosRestaurantMenuException(NOT_FOUND_RESTAURANT);
     }
 }

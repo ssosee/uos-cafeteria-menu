@@ -19,17 +19,29 @@ import static seaung.uoscafeteriamenu.web.controller.response.kakao.SkillRespons
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/text-card/uos/restaurant")
-public class TextCartUosRestaurantController {
+public class TextCardUosRestaurantController {
 
     private final UosRestaurantService uosRestaurantService;
 
     // 식당이름, 식사종류로 금일 식당 메뉴 조회
     @PostMapping("/menu")
     public ResponseEntity<SkillResponse> getUosRestaurantMenu(@RequestBody SkillPayload payload) {
-        UosRestaurantMenuResponse uosRestaurantMenu = uosRestaurantService.getUosRestaurantMenu(payload.toUosRestaurantInput());
 
         log.info("request={}", payload);
 
-        return new ResponseEntity(uosRestaurantMenu.toSkillResponseUseTextCard(apiVersion), HttpStatus.OK);
+        UosRestaurantMenuResponse uosRestaurantMenu = uosRestaurantService.getUosRestaurantMenu(payload.toUosRestaurantInput());
+
+        return new ResponseEntity<>(uosRestaurantMenu.toSkillResponseUseTextCard(apiVersion, "64d75083c800862a54172c4a", payload.toUosRestaurantInput()), HttpStatus.OK);
+    }
+
+    // 메뉴 추천
+    @PostMapping("/menu/recommend")
+    public ResponseEntity<SkillResponse> recommendUosRestaurantMenu(@RequestBody SkillPayload payload) {
+
+        log.info("request={}", payload);
+
+        String response = uosRestaurantService.recommendUosRestaurantMenu(payload.toUosRestaurantInputUseActionClientExtra());
+
+        return new ResponseEntity<>(SkillResponse.createSkillResponseUseSimpleText(apiVersion, response), HttpStatus.OK);
     }
 }

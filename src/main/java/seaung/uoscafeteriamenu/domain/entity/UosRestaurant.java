@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -23,6 +26,9 @@ public class UosRestaurant extends BaseTimeEntity {
     private Integer view;
     private Integer likeCount;
 
+    @OneToMany(mappedBy = "uosRestaurant")
+    private List<MenuLike> menuLikes = new ArrayList<>();
+
     @Builder
     private UosRestaurant(UosRestaurantName restaurantName, String crawlingDate, MealType mealType, String menuDesc, Integer view, Integer likeCount) {
         this.restaurantName = restaurantName;
@@ -36,5 +42,10 @@ public class UosRestaurant extends BaseTimeEntity {
     // 조회수 증가
     public void increaseView() {
         this.view++;
+    }
+
+    // 추천수 증가
+    public void increaseLikeCount() {
+        this.likeCount++;
     }
 }

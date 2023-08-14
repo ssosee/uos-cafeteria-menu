@@ -7,7 +7,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import seaung.uoscafeteriamenu.domain.entity.MealType;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurant;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurantName;
-import seaung.uoscafeteriamenu.utils.CrawlingDateUtils;
+import seaung.uoscafeteriamenu.crawling.utils.CrawlingUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -45,7 +45,7 @@ class UosRestaurantRepositoryTest {
     void findByCrawlingDateAndRestaurantNameAndMealType() {
         // given
         LocalDateTime now = LocalDateTime.now();
-        String date = CrawlingDateUtils.toString(now);
+        String date = CrawlingUtils.toDateString(now);
 
         UosRestaurant uosRestaurant = createUosRestaurant(date, UosRestaurantName.STUDENT_HALL, MealType.BREAKFAST, "라면");
         uosRestaurantRepository.save(uosRestaurant);
@@ -67,7 +67,7 @@ class UosRestaurantRepositoryTest {
     void findByCrawlingDateAndAndMealType() {
         // given
         LocalDateTime now = LocalDateTime.now();
-        String date = CrawlingDateUtils.toString(now);
+        String date = CrawlingUtils.toDateString(now);
 
         UosRestaurant uosRestaurant1 = createUosRestaurant(date, UosRestaurantName.STUDENT_HALL, MealType.BREAKFAST, "라면");
         UosRestaurant uosRestaurant2 = createUosRestaurant(date, UosRestaurantName.MAIN_BUILDING, MealType.BREAKFAST, "김밥");

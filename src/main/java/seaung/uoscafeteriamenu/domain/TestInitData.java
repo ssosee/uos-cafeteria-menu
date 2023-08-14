@@ -6,7 +6,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import seaung.uoscafeteriamenu.crawling.crawler.Crawler;
 import seaung.uoscafeteriamenu.crawling.crawler.UosRestaurantCrawlingResponse;
-import seaung.uoscafeteriamenu.crawling.service.CrawlingStudentHallService;
+import seaung.uoscafeteriamenu.crawling.service.CrawlingUosRestaurantService;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurantName;
 import seaung.uoscafeteriamenu.domain.entity.CrawlingTarget;
 import seaung.uoscafeteriamenu.domain.repository.CrawlingTargetRepository;
@@ -19,7 +19,7 @@ import java.util.List;
 public class TestInitData {
     private final CrawlingTargetRepository crawlingTargetRepository;
     private final Crawler crawler;
-    private final CrawlingStudentHallService crawlingStudentHallService;
+    private final CrawlingUosRestaurantService crawlingStudentHallService;
 
     private final String uosRestaurantCssQuery = "div.listType02#week table tbody tr";
 
