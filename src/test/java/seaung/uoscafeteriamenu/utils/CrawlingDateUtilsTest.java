@@ -19,9 +19,31 @@ class CrawlingDateUtilsTest {
         LocalDateTime now = LocalDateTime.of(2023, Month.AUGUST, 9, 0 ,0);
 
         // when
-        String result = CrawlingUtils.toDateString(now.minusDays(5));
+        String result = CrawlingUtils.toDateString(now);
 
         // then
-        assertThat(result).isEqualTo("8/4 (수)");
+        assertThat(result).isEqualTo("8/9 (수)");
+    }
+
+    @Test
+    @DisplayName("메뉴가 빈문자열이면 false를 반환한다.")
+    void hasMenuIsBlank() {
+        // given
+        String menu = "";
+        // when
+        boolean result = CrawlingUtils.hasMenu(menu);
+        // then
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    @DisplayName("메뉴의 글자수가 25보다 작으면 false를 반환한다.")
+    void hasMenuIsLengthLess25() {
+        // given
+        String menu = "금일은 학교 사정상 운영하지 않습니다.";
+        // when
+        boolean result = CrawlingUtils.hasMenu(menu);
+        // then
+        assertThat(result).isFalse();
     }
 }

@@ -17,7 +17,7 @@ public class CrawlingUtils {
     }
 
     public static boolean hasMenu(String menu) {
-        if(StringUtils.hasText(menu) || menu.length() > 20) {
+        if(StringUtils.hasText(menu) && menu.length() > 25) {
             return true;
         }
         return false;
