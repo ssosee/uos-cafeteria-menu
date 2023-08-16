@@ -2,7 +2,9 @@ package seaung.uoscafeteriamenu.web.controller;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import seaung.uoscafeteriamenu.crawling.utils.CrawlingUtils;
 import seaung.uoscafeteriamenu.domain.entity.MealType;
@@ -12,15 +14,21 @@ import seaung.uoscafeteriamenu.domain.repository.UosRestaurantRepository;
 import seaung.uoscafeteriamenu.web.controller.request.kakao.*;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.SkillResponse;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static seaung.uoscafeteriamenu.domain.entity.UosRestaurantName.*;
 
 
 class TextCardUosRestaurantControllerTest extends ControllerTestSupport {
@@ -52,7 +60,7 @@ class TextCardUosRestaurantControllerTest extends ControllerTestSupport {
                         .value(UosRestaurantName.STUDENT_HALL.getKrName()
                                 +"("+MealType.BREAKFAST.getKrName()+")"
                                 +"\n👀 조회수: 1"
-                                +"\n👍 좋아요: 0"
+                                +"\n👍 추천수: 0"
                                 +"\n\n라면"))
                 .andExpect(jsonPath("$.template.outputs[0].textCard.buttons[0]").isNotEmpty());
     }
@@ -81,8 +89,69 @@ class TextCardUosRestaurantControllerTest extends ControllerTestSupport {
                         .value(UosRestaurantName.STUDENT_HALL.getKrName()
                                 +"("+MealType.BREAKFAST.getKrName()+")"
                                 +"\n👀 조회수: 1"
-                                +"\n👍 좋아요: 0"
+                                +"\n👍 추천수: 0"
                                 +"\n\n"+CrawlingUtils.NOT_PROVIDED_MENU));
+    }
+
+    @Test
+    @DisplayName("추천수 가장 많은 메뉴를 1개 조회한다.")
+    void getTop1UosRestaurantMenuByView() throws Exception {
+        // given
+        // 현재 시간을 고정할 시간 생성
+        LocalDateTime fixedDateTime = LocalDateTime.of(2023, 8, 16, 10, 59, 59);
+        when(timeProvider.getCurrentLocalDateTime()).thenReturn(fixedDateTime);
+
+        String date = CrawlingUtils.toDateString(fixedDateTime);
+        UosRestaurant uosRestaurant1 = createUosRestaurant(date, STUDENT_HALL, MealType.BREAKFAST, "라면", 0, 0);
+        UosRestaurant uosRestaurant2 = createUosRestaurant(date, MAIN_BUILDING, MealType.BREAKFAST, "김밥", 1, 0);
+        UosRestaurant uosRestaurant3 = createUosRestaurant(date, WESTERN_RESTAURANT, MealType.BREAKFAST, "돈까스", 2, 0);
+        UosRestaurant uosRestaurant4 = createUosRestaurant(date, MUSEUM_OF_NATURAL_SCIENCE, MealType.BREAKFAST, "제육", 2, 1);
+        uosRestaurantRepository.saveAll(List.of(uosRestaurant1, uosRestaurant2, uosRestaurant3, uosRestaurant4));
+
+        SkillPayload skillPayload = createSkillPayload();
+
+        // when // then
+        mockMvc.perform(post("/api/v1/text-card/uos/restaurant/menu/top1-view")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(om.writeValueAsBytes(skillPayload))
+                        .content(om.writeValueAsString(PageRequest.of(0, 1))))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.version").value(SkillResponse.apiVersion))
+                .andExpect(jsonPath("$.template").isNotEmpty())
+                .andExpect(jsonPath("$.template.outputs").isArray())
+                .andExpect(jsonPath("$.template.outputs[0].textCard").isNotEmpty())
+                .andExpect(jsonPath("$.template.outputs[0].textCard.text")
+                        .value(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE.getKrName()
+                        +"("+MealType.BREAKFAST.getKrName()+")"
+                        +"\n👀 조회수: 3"
+                        +"\n👍 추천수: 1"
+                        +"\n\n제육"));
+    }
+
+
+    private SkillPayload createSkillPayload() {
+        User user = createUser();
+
+        UserRequest userRequest = createUserRequest(user);
+
+        Bot bot = createBot();
+
+        Intent intent = createIntent();
+
+        Map<String, String> param = new HashMap<>();
+
+        Action action = Action.builder()
+                .id("actionId")
+                .params(param)
+                .build();
+
+        return SkillPayload.builder()
+                .intent(intent)
+                .userRequest(userRequest)
+                .bot(bot)
+                .action(action)
+                .build();
     }
 
     private SkillPayload createSkillPayload(String restaurantName, String mealType) {

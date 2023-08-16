@@ -1,8 +1,12 @@
 package seaung.uoscafeteriamenu.domain.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import seaung.uoscafeteriamenu.crawling.utils.CrawlingUtils;
+import seaung.uoscafeteriamenu.domain.entity.MealType;
 import seaung.uoscafeteriamenu.domain.entity.Member;
 import seaung.uoscafeteriamenu.domain.entity.MenuLike;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurant;
@@ -16,6 +20,7 @@ import seaung.uoscafeteriamenu.domain.service.response.UosRestaurantMenuResponse
 import seaung.uoscafeteriamenu.web.exception.MenuLikeException;
 import seaung.uoscafeteriamenu.web.exception.UosRestaurantMenuException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,13 +44,7 @@ public class UosRestaurantService {
         // 조회수 증가
         findUosRestaurant.increaseView();
 
-        return UosRestaurantMenuResponse.builder()
-                .restaurantName(findUosRestaurant.getRestaurantName().getKrName())
-                .menu(findUosRestaurant.getMenuDesc())
-                .mealType(findUosRestaurant.getMealType().getKrName())
-                .view(findUosRestaurant.getView())
-                .likeCount(findUosRestaurant.getLikeCount())
-                .build();
+        return UosRestaurantMenuResponse.of(findUosRestaurant);
     }
 
     // 금일 식사종류별 학식 조회
@@ -58,15 +57,7 @@ public class UosRestaurantService {
         // 조회수 증가
         findUosRestaurants.forEach(UosRestaurant::increaseView);
 
-        return findUosRestaurants.stream()
-                .map(r -> UosRestaurantMenuResponse.builder()
-                        .restaurantName(r.getRestaurantName().getKrName())
-                        .mealType(r.getMealType().getKrName())
-                        .menu(r.getMenuDesc())
-                        .view(r.getView())
-                        .likeCount(r.getLikeCount())
-                        .build())
-                .collect(Collectors.toList());
+        return UosRestaurantMenuResponse.ofList(findUosRestaurants);
     }
 
     // 학식 추천하기
@@ -96,10 +87,32 @@ public class UosRestaurantService {
         return "추천 고맙다. 내친.구.휴.먼";
     }
 
+    // 추천수를 증가하고 추천이력을 저장
     private void increaseLikeCountAndSaveMenuLike(UosRestaurant findUosRestaurant, Member findMember) {
         findUosRestaurant.increaseLikeCount();
 
         MenuLike menuLike = MenuLike.create(findMember, findUosRestaurant);
         menuLikeRepository.save(menuLike);
     }
+
+    // 인기 메뉴 조회(조회수가 같으면 추천이 많은 순으로 조회)
+    @Transactional
+    public Page<UosRestaurantMenuResponse> findTop1UosRestaurantMenuByView(Pageable pageable, LocalDateTime now) {
+
+        MealType mealType = CrawlingUtils.localDateTimeToMealType(now);
+        String date = CrawlingUtils.toDateString(now);
+
+        // 인기 메뉴 조회
+        Page<UosRestaurant> findUosRestaurant = uosRestaurantRepository.findByCrawlingDateAndMealTypeOrderByViewDescLikeCountDesc(pageable, date, mealType);
+
+        // 조회수 증가
+        findUosRestaurant.getContent().forEach(UosRestaurant::increaseView);
+
+        return UosRestaurantMenuResponse.ofPage(findUosRestaurant);
+    }
+
+    // 추천수가 가장 많은 메뉴 조회(추천수가 같으면 조회수 많은 순으로 조회)
+//    public Page<UosRestaurantMenuResponse> findTop1UosRestaurantMenuByLikeCount(Pageable pageable, LocalDateTime now) {
+//
+//    }
 }

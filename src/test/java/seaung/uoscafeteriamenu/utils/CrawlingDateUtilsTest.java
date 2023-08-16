@@ -3,6 +3,7 @@ package seaung.uoscafeteriamenu.utils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import seaung.uoscafeteriamenu.crawling.utils.CrawlingUtils;
+import seaung.uoscafeteriamenu.domain.entity.MealType;
 
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -45,5 +46,44 @@ class CrawlingDateUtilsTest {
         boolean result = CrawlingUtils.hasMenu(menu);
         // then
         assertThat(result).isFalse();
+    }
+
+    @Test
+    @DisplayName("오전 6시 30분 ~ 11시 사이에는 아침타입을 반환한다.")
+    void localDateTimeToMealTypeIsBREAKFAST() {
+        // given
+        LocalDateTime now = LocalDateTime.of(2023, 8, 16, 10, 59, 59);
+
+        // when
+        MealType mealType = CrawlingUtils.localDateTimeToMealType(now);
+
+        // then
+        assertThat(mealType).isEqualTo(MealType.BREAKFAST);
+    }
+
+    @Test
+    @DisplayName("오전 11시 ~ 14시 사이에는 점심타입을 반환한다.")
+    void localDateTimeToMealTypeIsLUNCH() {
+        // given
+        LocalDateTime now = LocalDateTime.of(2023, 8, 16, 11, 0, 0);
+
+        // when
+        MealType mealType = CrawlingUtils.localDateTimeToMealType(now);
+
+        // then
+        assertThat(mealType).isEqualTo(MealType.LUNCH);
+    }
+
+    @Test
+    @DisplayName("14시 ~ 6시30분 사이에는 점심타입을 반환한다.")
+    void localDateTimeToMealTypeIsDINNER() {
+        // given
+        LocalDateTime now = LocalDateTime.of(2023, 8, 16, 14, 0, 0);
+
+        // when
+        MealType mealType = CrawlingUtils.localDateTimeToMealType(now);
+
+        // then
+        assertThat(mealType).isEqualTo(MealType.DINNER);
     }
 }

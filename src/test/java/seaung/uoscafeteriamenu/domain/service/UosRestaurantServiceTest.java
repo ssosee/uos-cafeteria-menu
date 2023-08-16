@@ -4,6 +4,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import seaung.uoscafeteriamenu.domain.entity.*;
 import seaung.uoscafeteriamenu.domain.repository.MemberRepository;
@@ -22,6 +25,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
+import static seaung.uoscafeteriamenu.domain.entity.UosRestaurantName.*;
+import static seaung.uoscafeteriamenu.domain.entity.UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE;
 
 @SpringBootTest
 @Transactional
@@ -154,6 +159,110 @@ class UosRestaurantServiceTest {
         assertThatThrownBy(() -> uosRestaurantService.recommendUosRestaurantMenu(input))
                 .isInstanceOf(MenuLikeException.class)
                 .hasMessage(MenuLikeException.CONFLICT_MENU);
+    }
+
+    @Test
+    @DisplayName("아침메뉴 중 가장 조회수가 많은 메뉴 1개를 조회한다.(조회수가 같으면 추천수가 많은 것을 조회)")
+    void findTop1BREAKFASTUosRestaurantMenuByView() {
+        // given
+        LocalDateTime now = LocalDateTime.of(2023, 8, 16, 10, 59, 59);
+        String date = CrawlingUtils.toDateString(now);
+
+        UosRestaurant uosRestaurant1 = createUosRestaurant(date, STUDENT_HALL, MealType.BREAKFAST, "라면", 0, 0);
+        UosRestaurant uosRestaurant2 = createUosRestaurant(date, MAIN_BUILDING, MealType.BREAKFAST, "김밥", 1, 0);
+        UosRestaurant uosRestaurant3 = createUosRestaurant(date, WESTERN_RESTAURANT, MealType.BREAKFAST, "돈까스", 2, 0);
+        UosRestaurant uosRestaurant4 = createUosRestaurant(date, MUSEUM_OF_NATURAL_SCIENCE, MealType.BREAKFAST, "제육", 2, 1);
+        uosRestaurantRepository.saveAll(List.of(uosRestaurant1, uosRestaurant2, uosRestaurant3, uosRestaurant4));
+
+        Pageable pageable = PageRequest.of(0, 1);
+
+        // when
+        Page<UosRestaurantMenuResponse> result = uosRestaurantService.findTop1UosRestaurantMenuByView(pageable, now);
+
+        // then
+        assertThat(result).hasSize(1)
+                .extracting("restaurantName", "mealType", "menu", "view", "likeCount")
+                .contains(
+                        tuple(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE.getKrName(), MealType.BREAKFAST.getKrName(), "제육", 3, 1)
+                );
+    }
+
+    @Test
+    @DisplayName("점심메뉴 중 가장 조회수가 많은 메뉴 1개를 조회한다.(조회수가 같으면 추천수가 많은 것을 조회)")
+    void findTop1LUNCHUosRestaurantMenuByView() {
+        // given
+        LocalDateTime now = LocalDateTime.of(2023, 8, 16, 11, 0, 0);
+        String date = CrawlingUtils.toDateString(now);
+
+        UosRestaurant uosRestaurant1 = createUosRestaurant(date, STUDENT_HALL, MealType.LUNCH, "라면", 0, 0);
+        UosRestaurant uosRestaurant2 = createUosRestaurant(date, MAIN_BUILDING, MealType.LUNCH, "김밥", 1, 0);
+        UosRestaurant uosRestaurant3 = createUosRestaurant(date, WESTERN_RESTAURANT, MealType.LUNCH, "돈까스", 2, 0);
+        UosRestaurant uosRestaurant4 = createUosRestaurant(date, MUSEUM_OF_NATURAL_SCIENCE, MealType.LUNCH, "제육", 2, 1);
+        uosRestaurantRepository.saveAll(List.of(uosRestaurant1, uosRestaurant2, uosRestaurant3, uosRestaurant4));
+
+        Pageable pageable = PageRequest.of(0, 1);
+
+        // when
+        Page<UosRestaurantMenuResponse> result = uosRestaurantService.findTop1UosRestaurantMenuByView(pageable, now);
+
+        // then
+        assertThat(result).hasSize(1)
+                .extracting("restaurantName", "mealType", "menu", "view", "likeCount")
+                .contains(
+                        tuple(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE.getKrName(), MealType.LUNCH.getKrName(), "제육", 3, 1)
+                );
+    }
+
+    @Test
+    @DisplayName("저녁메뉴 중 가장 조회수가 많은 메뉴 1개를 조회한다.(조회수가 같으면 추천수가 많은 것을 조회)")
+    void findTop1DINNERUosRestaurantMenuByView() {
+        // given
+        LocalDateTime now = LocalDateTime.of(2023, 8, 16, 14, 0, 0);
+        String date = CrawlingUtils.toDateString(now);
+
+        UosRestaurant uosRestaurant1 = createUosRestaurant(date, STUDENT_HALL, MealType.DINNER, "라면", 0, 0);
+        UosRestaurant uosRestaurant2 = createUosRestaurant(date, MAIN_BUILDING, MealType.DINNER, "김밥", 1, 0);
+        UosRestaurant uosRestaurant3 = createUosRestaurant(date, WESTERN_RESTAURANT, MealType.DINNER, "돈까스", 2, 0);
+        UosRestaurant uosRestaurant4 = createUosRestaurant(date, MUSEUM_OF_NATURAL_SCIENCE, MealType.DINNER, "제육", 2, 1);
+        uosRestaurantRepository.saveAll(List.of(uosRestaurant1, uosRestaurant2, uosRestaurant3, uosRestaurant4));
+
+        Pageable pageable = PageRequest.of(0, 1);
+
+        // when
+        Page<UosRestaurantMenuResponse> result = uosRestaurantService.findTop1UosRestaurantMenuByView(pageable, now);
+
+        // then
+        assertThat(result).hasSize(1)
+                .extracting("restaurantName", "mealType", "menu", "view", "likeCount")
+                .contains(
+                        tuple(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE.getKrName(), MealType.DINNER.getKrName(), "제육", 3, 1)
+                );
+    }
+
+    @Test
+    @DisplayName("아침메뉴 중 가장 추천수가 많은 메뉴 1개를 조회한다.(추천수가 같으면 조회수가 많은 것을 조회)")
+    void findTop1DINNERUosRestaurantMenuByLikeCount() {
+        // given
+        LocalDateTime now = LocalDateTime.of(2023, 8, 16, 14, 0, 0);
+        String date = CrawlingUtils.toDateString(now);
+
+        UosRestaurant uosRestaurant1 = createUosRestaurant(date, STUDENT_HALL, MealType.DINNER, "라면", 0, 0);
+        UosRestaurant uosRestaurant2 = createUosRestaurant(date, MAIN_BUILDING, MealType.DINNER, "김밥", 1, 0);
+        UosRestaurant uosRestaurant3 = createUosRestaurant(date, WESTERN_RESTAURANT, MealType.DINNER, "돈까스", 2, 0);
+        UosRestaurant uosRestaurant4 = createUosRestaurant(date, MUSEUM_OF_NATURAL_SCIENCE, MealType.DINNER, "제육", 2, 1);
+        uosRestaurantRepository.saveAll(List.of(uosRestaurant1, uosRestaurant2, uosRestaurant3, uosRestaurant4));
+
+        Pageable pageable = PageRequest.of(0, 1);
+
+        // when
+        Page<UosRestaurantMenuResponse> result = uosRestaurantService.findTop1UosRestaurantMenuByView(pageable, now);
+
+        // then
+        assertThat(result).hasSize(1)
+                .extracting("restaurantName", "mealType", "menu", "view", "likeCount")
+                .contains(
+                        tuple(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE.getKrName(), MealType.DINNER.getKrName(), "제육", 3, 1)
+                );
     }
 
     private RecommendUosRestaurantMenuInput createRecommendUosRestaurantMenuInput(String botUserId, String date, UosRestaurantName restaurantName, MealType mealType) {
