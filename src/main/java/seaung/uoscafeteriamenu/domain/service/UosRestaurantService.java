@@ -113,6 +113,7 @@ public class UosRestaurantService {
 
     // 추천수가 가장 많은 메뉴 조회(추천수가 같으면 조회수 많은 순으로 조회)
     public Page<UosRestaurantMenuResponse> findTop1UosRestaurantMenuByLikeCount(Pageable pageable, LocalDateTime now) {
+
         MealType mealType = CrawlingUtils.localDateTimeToMealType(now);
         String date = CrawlingUtils.toDateString(now);
 

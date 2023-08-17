@@ -1,4 +1,4 @@
-package seaung.uoscafeteriamenu.provider;
+package seaung.uoscafeteriamenu.global.provider;
 
 import java.time.LocalDateTime;
 

@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-import seaung.uoscafeteriamenu.provider.TimeProvider;
+import seaung.uoscafeteriamenu.global.provider.TimeProvider;
 
 @SpringBootTest
 @AutoConfigureMockMvc

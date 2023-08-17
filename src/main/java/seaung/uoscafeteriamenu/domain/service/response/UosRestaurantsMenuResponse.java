@@ -8,6 +8,7 @@ import seaung.uoscafeteriamenu.domain.service.request.UosRestaurantsInput;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.SkillResponse;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.SkillTemplate;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.outputs.Outputs;
+import seaung.uoscafeteriamenu.web.exception.UosRestaurantMenuException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,9 +42,12 @@ public class UosRestaurantsMenuResponse {
 
         List<UosRestaurantInput> uosRestaurantInputs = getUosRestaurantInputs();
 
-        Outputs outputs = Outputs.createOutputsUseTextCard(texts, blockId, uosRestaurantInputs.get(0));
+        UosRestaurantInput input = uosRestaurantInputs.stream()
+                .findFirst().orElseThrow(RuntimeException::new);
+        Outputs outputs = Outputs.createOutputsUseTextCard(texts, blockId, input);
 
         SkillTemplate template = new SkillTemplate();
+        assert outputs != null;
         template.setOutputs(List.of(outputs));
 
         return SkillResponse.builder()

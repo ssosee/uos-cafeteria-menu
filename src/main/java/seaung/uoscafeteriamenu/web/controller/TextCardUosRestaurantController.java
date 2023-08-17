@@ -14,12 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import seaung.uoscafeteriamenu.domain.service.UosRestaurantService;
 import seaung.uoscafeteriamenu.domain.service.response.UosRestaurantMenuResponse;
 import seaung.uoscafeteriamenu.domain.service.response.UosRestaurantsMenuResponse;
-import seaung.uoscafeteriamenu.provider.TimeProvider;
+import seaung.uoscafeteriamenu.global.provider.TimeProvider;
 import seaung.uoscafeteriamenu.web.controller.request.kakao.SkillPayload;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.SkillResponse;
-
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 import static seaung.uoscafeteriamenu.web.controller.response.kakao.SkillResponse.apiVersion;
 
@@ -39,8 +36,6 @@ public class TextCardUosRestaurantController {
     @PostMapping("/menu")
     public ResponseEntity<SkillResponse> getUosRestaurantMenu(@RequestBody SkillPayload payload) {
 
-        log.info("request={}", payload);
-
         UosRestaurantMenuResponse response = uosRestaurantService.getUosRestaurantMenu(payload.toUosRestaurantInput());
 
         return new ResponseEntity<>(response.toSkillResponseUseTextCard(apiVersion, bockId, payload.toUosRestaurantInput()), HttpStatus.OK);
@@ -51,8 +46,6 @@ public class TextCardUosRestaurantController {
      */
     @PostMapping("/menu/recommend")
     public ResponseEntity<SkillResponse> recommendUosRestaurantMenu(@RequestBody SkillPayload payload) {
-
-        log.info("request={}", payload);
 
         String response = uosRestaurantService.recommendUosRestaurantMenu(payload.toUosRestaurantInputUseActionClientExtra());
 
@@ -66,7 +59,6 @@ public class TextCardUosRestaurantController {
     @PostMapping("/menu/top1-view")
     public ResponseEntity<SkillResponse> getTop1UosRestaurantMenuByView(@RequestBody SkillPayload payload,
                                                                         @PageableDefault(page = 0, size = 1) Pageable pageable) {
-        log.info("request={}", payload);
 
         Page<UosRestaurantMenuResponse> top1UosRestaurantMenuByView
                 = uosRestaurantService.findTop1UosRestaurantMenuByView(pageable, timeProvider.getCurrentLocalDateTime());
@@ -82,7 +74,6 @@ public class TextCardUosRestaurantController {
     @PostMapping("/menu/top1-like")
     public ResponseEntity<SkillResponse> getTop1UosRestaurantMenuByLikeCount(@RequestBody SkillPayload payload,
                                                                         @PageableDefault(page = 0, size = 1) Pageable pageable) {
-        log.info("request={}", payload);
 
         Page<UosRestaurantMenuResponse> top1UosRestaurantMenuByView
                 = uosRestaurantService.findTop1UosRestaurantMenuByLikeCount(pageable, timeProvider.getCurrentLocalDateTime());

@@ -1,11 +1,10 @@
-package seaung.uoscafeteriamenu.config;
+package seaung.uoscafeteriamenu.global.config;
 
 import org.jsoup.Connection;
-import org.jsoup.Jsoup;
 import org.jsoup.helper.HttpConnection;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import seaung.uoscafeteriamenu.provider.TimeProvider;
+import seaung.uoscafeteriamenu.global.provider.TimeProvider;
 
 @Configuration
 public class AppConfig {

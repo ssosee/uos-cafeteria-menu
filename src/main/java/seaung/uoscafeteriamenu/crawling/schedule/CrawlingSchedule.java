@@ -2,6 +2,8 @@ package seaung.uoscafeteriamenu.crawling.schedule;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurantName;
 import seaung.uoscafeteriamenu.crawling.crawler.Crawler;
@@ -32,8 +34,10 @@ public class CrawlingSchedule {
      */
     // 매주 월요일마다 실행
     // @Scheduled(cron = "0 1 0 * * MON", zone = "Asia/Seoul")
-    //@Scheduled(cron = "*/30 * * * * *", zone = "Asia/Seoul")
+    // @Scheduled(cron = "*/10 * * * * *", zone = "Asia/Seoul")
+    @Async("crawlingAsyncExecutor")
     public void crawlingStudentHall() throws IOException {
+        log.info("크롤링 실행...");
         // 크롤링 대상 정보 조회
         CrawlingTarget studentHallCrawlingTarget =
                 crawlingStudentHallService.findCrawlingTargetBy(UosRestaurantName.STUDENT_HALL);
