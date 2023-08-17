@@ -31,6 +31,7 @@ public class TextCardUosRestaurantController {
 
     private final UosRestaurantService uosRestaurantService;
     private final TimeProvider timeProvider;
+    private final String bockId = "64d75083c800862a54172c4a"; // 추천하기 블록 아이디
 
     /**
      * 식당이름, 식사종류로 금일 식당 메뉴 조회
@@ -42,7 +43,7 @@ public class TextCardUosRestaurantController {
 
         UosRestaurantMenuResponse response = uosRestaurantService.getUosRestaurantMenu(payload.toUosRestaurantInput());
 
-        return new ResponseEntity<>(response.toSkillResponseUseTextCard(apiVersion, "64d75083c800862a54172c4a", payload.toUosRestaurantInput()), HttpStatus.OK);
+        return new ResponseEntity<>(response.toSkillResponseUseTextCard(apiVersion, bockId, payload.toUosRestaurantInput()), HttpStatus.OK);
     }
 
     /**
@@ -67,9 +68,26 @@ public class TextCardUosRestaurantController {
                                                                         @PageableDefault(page = 0, size = 1) Pageable pageable) {
         log.info("request={}", payload);
 
-        Page<UosRestaurantMenuResponse> top1UosRestaurantMenuByView = uosRestaurantService.findTop1UosRestaurantMenuByView(pageable, timeProvider.getCurrentLocalDateTime());
+        Page<UosRestaurantMenuResponse> top1UosRestaurantMenuByView
+                = uosRestaurantService.findTop1UosRestaurantMenuByView(pageable, timeProvider.getCurrentLocalDateTime());
         UosRestaurantsMenuResponse response = new UosRestaurantsMenuResponse(top1UosRestaurantMenuByView.getContent());
 
-        return new ResponseEntity<>(response.toSkillResponseUseTextCard(apiVersion, "64d75083c800862a54172c4a"), HttpStatus.OK);
+        return new ResponseEntity<>(response.toSkillResponseUseTextCard(apiVersion, bockId), HttpStatus.OK);
+    }
+
+    /**
+     * 추천 메뉴 조회
+     * 현재 시간대의 식사종류와 일치하는 가장 추천수가 많은 금일 식사 메뉴 조회
+     */
+    @PostMapping("/menu/top1-like")
+    public ResponseEntity<SkillResponse> getTop1UosRestaurantMenuByLikeCount(@RequestBody SkillPayload payload,
+                                                                        @PageableDefault(page = 0, size = 1) Pageable pageable) {
+        log.info("request={}", payload);
+
+        Page<UosRestaurantMenuResponse> top1UosRestaurantMenuByView
+                = uosRestaurantService.findTop1UosRestaurantMenuByLikeCount(pageable, timeProvider.getCurrentLocalDateTime());
+        UosRestaurantsMenuResponse response = new UosRestaurantsMenuResponse(top1UosRestaurantMenuByView.getContent());
+
+        return new ResponseEntity<>(response.toSkillResponseUseTextCard(apiVersion, bockId), HttpStatus.OK);
     }
 }

@@ -1,6 +1,6 @@
-## 식사종류로 학교 메뉴들 조회(simple-text)
+## 추천 메뉴 조회(text-card)
 
-POST http://localhost:8080/api/v1/simple-text/uos/restaurants/menu
+POST http://localhost:8080/api/v1/text-card/uos/restaurant/menu/top1-like
 Content-Type: application/json
 
 {
@@ -32,16 +32,8 @@ Content-Type: application/json
   "action": {
     "name": "ymbjlorhkc",
     "clientExtra": null,
-    "params": {
-      "mealType": "BREAKFAST"
-    },
+    "params": {},
     "id": "2eej1w0k1qfo4hs3z7xddvyo",
-    "detailParams": {
-      "mealType": {
-        "origin": "BREAKFAST",
-        "value": "BREAKFAST",
-        "groupName": ""
-      }
-    }
+    "detailParams": {}
   }
 }

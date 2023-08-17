@@ -103,16 +103,25 @@ public class UosRestaurantService {
         String date = CrawlingUtils.toDateString(now);
 
         // 인기 메뉴 조회
-        Page<UosRestaurant> findUosRestaurant = uosRestaurantRepository.findByCrawlingDateAndMealTypeOrderByViewDescLikeCountDesc(pageable, date, mealType);
+        Page<UosRestaurant> findMenu = uosRestaurantRepository.findByCrawlingDateAndMealTypeOrderByViewDescLikeCountDesc(pageable, date, mealType);
 
         // 조회수 증가
-        findUosRestaurant.getContent().forEach(UosRestaurant::increaseView);
+        findMenu.getContent().forEach(UosRestaurant::increaseView);
 
-        return UosRestaurantMenuResponse.ofPage(findUosRestaurant);
+        return UosRestaurantMenuResponse.ofPage(findMenu);
     }
 
     // 추천수가 가장 많은 메뉴 조회(추천수가 같으면 조회수 많은 순으로 조회)
-//    public Page<UosRestaurantMenuResponse> findTop1UosRestaurantMenuByLikeCount(Pageable pageable, LocalDateTime now) {
-//
-//    }
+    public Page<UosRestaurantMenuResponse> findTop1UosRestaurantMenuByLikeCount(Pageable pageable, LocalDateTime now) {
+        MealType mealType = CrawlingUtils.localDateTimeToMealType(now);
+        String date = CrawlingUtils.toDateString(now);
+
+        // 추천 메뉴 조회
+        Page<UosRestaurant> findMenu = uosRestaurantRepository.findByCrawlingDateAndMealTypeOrderByLikeCountDescViewDesc(pageable, date, mealType);
+
+        // 조회수 증가
+        findMenu.getContent().forEach(UosRestaurant::increaseView);
+
+        return UosRestaurantMenuResponse.ofPage(findMenu);
+    }
 }

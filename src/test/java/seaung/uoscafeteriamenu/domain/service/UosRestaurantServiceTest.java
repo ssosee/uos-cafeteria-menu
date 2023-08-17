@@ -241,27 +241,79 @@ class UosRestaurantServiceTest {
 
     @Test
     @DisplayName("아침메뉴 중 가장 추천수가 많은 메뉴 1개를 조회한다.(추천수가 같으면 조회수가 많은 것을 조회)")
+    void findTop1BREAKFASTUosRestaurantMenuByLikeCount() {
+        // given
+        LocalDateTime now = LocalDateTime.of(2023, 8, 16, 10, 59, 59);
+        String date = CrawlingUtils.toDateString(now);
+
+        UosRestaurant uosRestaurant1 = createUosRestaurant(date, STUDENT_HALL, MealType.BREAKFAST, "라면", 0, 0);
+        UosRestaurant uosRestaurant2 = createUosRestaurant(date, MAIN_BUILDING, MealType.BREAKFAST, "김밥", 1, 1);
+        UosRestaurant uosRestaurant3 = createUosRestaurant(date, WESTERN_RESTAURANT, MealType.BREAKFAST, "돈까스", 2, 2);
+        UosRestaurant uosRestaurant4 = createUosRestaurant(date, MUSEUM_OF_NATURAL_SCIENCE, MealType.BREAKFAST, "제육", 3, 2);
+        uosRestaurantRepository.saveAll(List.of(uosRestaurant1, uosRestaurant2, uosRestaurant3, uosRestaurant4));
+
+        Pageable pageable = PageRequest.of(0, 1);
+
+        // when
+        Page<UosRestaurantMenuResponse> result = uosRestaurantService.findTop1UosRestaurantMenuByLikeCount(pageable, now);
+
+        // then
+        assertThat(result).hasSize(1)
+                .extracting("restaurantName", "mealType", "menu", "view", "likeCount")
+                .contains(
+                        tuple(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE.getKrName(), MealType.BREAKFAST.getKrName(), "제육", 4, 2)
+                );
+    }
+
+    @Test
+    @DisplayName("아침메뉴 중 가장 추천수가 많은 메뉴 1개를 조회한다.(추천수가 같으면 조회수가 많은 것을 조회)")
+    void findTop1LUNCHUosRestaurantMenuByLikeCount() {
+        // given
+        LocalDateTime now = LocalDateTime.of(2023, 8, 16, 11, 0, 0);
+        String date = CrawlingUtils.toDateString(now);
+
+        UosRestaurant uosRestaurant1 = createUosRestaurant(date, STUDENT_HALL, MealType.LUNCH, "라면", 0, 0);
+        UosRestaurant uosRestaurant2 = createUosRestaurant(date, MAIN_BUILDING, MealType.LUNCH, "김밥", 1, 1);
+        UosRestaurant uosRestaurant3 = createUosRestaurant(date, WESTERN_RESTAURANT, MealType.LUNCH, "돈까스", 2, 2);
+        UosRestaurant uosRestaurant4 = createUosRestaurant(date, MUSEUM_OF_NATURAL_SCIENCE, MealType.LUNCH, "제육", 3, 2);
+        uosRestaurantRepository.saveAll(List.of(uosRestaurant1, uosRestaurant2, uosRestaurant3, uosRestaurant4));
+
+        Pageable pageable = PageRequest.of(0, 1);
+
+        // when
+        Page<UosRestaurantMenuResponse> result = uosRestaurantService.findTop1UosRestaurantMenuByLikeCount(pageable, now);
+
+        // then
+        assertThat(result).hasSize(1)
+                .extracting("restaurantName", "mealType", "menu", "view", "likeCount")
+                .contains(
+                        tuple(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE.getKrName(), MealType.LUNCH.getKrName(), "제육", 4, 2)
+                );
+    }
+
+    @Test
+    @DisplayName("아침메뉴 중 가장 추천수가 많은 메뉴 1개를 조회한다.(추천수가 같으면 조회수가 많은 것을 조회)")
     void findTop1DINNERUosRestaurantMenuByLikeCount() {
         // given
         LocalDateTime now = LocalDateTime.of(2023, 8, 16, 14, 0, 0);
         String date = CrawlingUtils.toDateString(now);
 
         UosRestaurant uosRestaurant1 = createUosRestaurant(date, STUDENT_HALL, MealType.DINNER, "라면", 0, 0);
-        UosRestaurant uosRestaurant2 = createUosRestaurant(date, MAIN_BUILDING, MealType.DINNER, "김밥", 1, 0);
-        UosRestaurant uosRestaurant3 = createUosRestaurant(date, WESTERN_RESTAURANT, MealType.DINNER, "돈까스", 2, 0);
-        UosRestaurant uosRestaurant4 = createUosRestaurant(date, MUSEUM_OF_NATURAL_SCIENCE, MealType.DINNER, "제육", 2, 1);
+        UosRestaurant uosRestaurant2 = createUosRestaurant(date, MAIN_BUILDING, MealType.DINNER, "김밥", 1, 1);
+        UosRestaurant uosRestaurant3 = createUosRestaurant(date, WESTERN_RESTAURANT, MealType.DINNER, "돈까스", 2, 2);
+        UosRestaurant uosRestaurant4 = createUosRestaurant(date, MUSEUM_OF_NATURAL_SCIENCE, MealType.DINNER, "제육", 3, 2);
         uosRestaurantRepository.saveAll(List.of(uosRestaurant1, uosRestaurant2, uosRestaurant3, uosRestaurant4));
 
         Pageable pageable = PageRequest.of(0, 1);
 
         // when
-        Page<UosRestaurantMenuResponse> result = uosRestaurantService.findTop1UosRestaurantMenuByView(pageable, now);
+        Page<UosRestaurantMenuResponse> result = uosRestaurantService.findTop1UosRestaurantMenuByLikeCount(pageable, now);
 
         // then
         assertThat(result).hasSize(1)
                 .extracting("restaurantName", "mealType", "menu", "view", "likeCount")
                 .contains(
-                        tuple(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE.getKrName(), MealType.DINNER.getKrName(), "제육", 3, 1)
+                        tuple(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE.getKrName(), MealType.DINNER.getKrName(), "제육", 4, 2)
                 );
     }
 

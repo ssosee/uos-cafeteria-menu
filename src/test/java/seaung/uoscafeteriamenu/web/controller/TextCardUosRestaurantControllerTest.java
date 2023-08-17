@@ -94,7 +94,7 @@ class TextCardUosRestaurantControllerTest extends ControllerTestSupport {
     }
 
     @Test
-    @DisplayName("추천수 가장 많은 메뉴를 1개 조회한다.")
+    @DisplayName("조회수가 가장 많은 메뉴를 1개 조회한다.(조회수가 같으면 추천수가 많은 순으로 조회)")
     void getTop1UosRestaurantMenuByView() throws Exception {
         // given
         // 현재 시간을 고정할 시간 생성
@@ -127,6 +127,42 @@ class TextCardUosRestaurantControllerTest extends ControllerTestSupport {
                         +"\n👀 조회수: 3"
                         +"\n👍 추천수: 1"
                         +"\n\n제육"));
+    }
+
+    @Test
+    @DisplayName("추천수가 가장 많은 메뉴를 1개 조회한다.(추천수가 같으면 조회수가 많은 순으로 조회)")
+    void getTop1UosRestaurantMenuByLikeCount() throws Exception {
+        // given
+        // 현재 시간을 고정할 시간 생성
+        LocalDateTime fixedDateTime = LocalDateTime.of(2023, 8, 16, 10, 59, 59);
+        when(timeProvider.getCurrentLocalDateTime()).thenReturn(fixedDateTime);
+
+        String date = CrawlingUtils.toDateString(fixedDateTime);
+        UosRestaurant uosRestaurant1 = createUosRestaurant(date, STUDENT_HALL, MealType.BREAKFAST, "라면", 0, 0);
+        UosRestaurant uosRestaurant2 = createUosRestaurant(date, MAIN_BUILDING, MealType.BREAKFAST, "김밥", 1, 1);
+        UosRestaurant uosRestaurant3 = createUosRestaurant(date, WESTERN_RESTAURANT, MealType.BREAKFAST, "돈까스", 2, 2);
+        UosRestaurant uosRestaurant4 = createUosRestaurant(date, MUSEUM_OF_NATURAL_SCIENCE, MealType.BREAKFAST, "제육", 3, 2);
+        uosRestaurantRepository.saveAll(List.of(uosRestaurant1, uosRestaurant2, uosRestaurant3, uosRestaurant4));
+
+        SkillPayload skillPayload = createSkillPayload();
+
+        // when // then
+        mockMvc.perform(post("/api/v1/text-card/uos/restaurant/menu/top1-like")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(om.writeValueAsBytes(skillPayload))
+                        .content(om.writeValueAsString(PageRequest.of(0, 1))))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.version").value(SkillResponse.apiVersion))
+                .andExpect(jsonPath("$.template").isNotEmpty())
+                .andExpect(jsonPath("$.template.outputs").isArray())
+                .andExpect(jsonPath("$.template.outputs[0].textCard").isNotEmpty())
+                .andExpect(jsonPath("$.template.outputs[0].textCard.text")
+                        .value(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE.getKrName()
+                                +"("+MealType.BREAKFAST.getKrName()+")"
+                                +"\n👀 조회수: 4"
+                                +"\n👍 추천수: 2"
+                                +"\n\n제육"));
     }
 
 
