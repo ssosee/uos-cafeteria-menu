@@ -28,7 +28,7 @@ public class Outputs {
         this.textCard = textCard;
     }
 
-    public static Outputs createOutputsUseTextCard(String text, String blockId, UosRestaurantInput input) {
+    private static Outputs createOutputsUseTextCard(String text, String blockId, UosRestaurantInput input) {
 
         Map<String, String> extra = new HashMap<>();
         extra.put("restaurantName", input.getRestaurantName().name());
@@ -46,17 +46,19 @@ public class Outputs {
                 .build();
     }
 
-    // 메뉴를 찾을 수 없거나 학교에서 제공한 메뉴가 없으면 simpleText를 반환한다.
-    public static Outputs findOutputs(String blockId, UosRestaurantInput input, String text) {
-        if(text.contains(UosRestaurantMenuException.NOT_FOUND_MENU) || text.contains(CrawlingUtils.NOT_PROVIDED_MENU)) {
-            return createOutputsUseSimpleText(text);
-        }
-        return createOutputsUseTextCard(text, blockId, input);
-    }
-
-    public static Outputs createOutputsUseSimpleText(String text) {
+    private static Outputs createOutputsUseSimpleText(String text) {
         return Outputs.builder()
                 .simpleText(new SimpleText(text))
                 .build();
+    }
+
+    // 메뉴를 찾을 수 없거나 학교에서 제공한 메뉴가 없으면 simpleText를 반환한다.
+    public static Outputs findOutputs(OutputsDto dto) {
+        if(dto.getText().contains(UosRestaurantMenuException.NOT_FOUND_MENU) || dto.getText().contains(CrawlingUtils.NOT_PROVIDED_MENU)) {
+            return createOutputsUseSimpleText(dto.getText());
+        } else if (dto.getInput() == null && dto.getBlockId() == null) {
+            return createOutputsUseSimpleText(dto.getText());
+        }
+        return createOutputsUseTextCard(dto.getText(), dto.getBlockId(), dto.getInput());
     }
 }

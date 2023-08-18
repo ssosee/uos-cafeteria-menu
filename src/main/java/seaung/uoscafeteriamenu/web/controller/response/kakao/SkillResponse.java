@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import seaung.uoscafeteriamenu.domain.service.request.UosRestaurantInput;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.outputs.Outputs;
+import seaung.uoscafeteriamenu.web.controller.response.kakao.outputs.OutputsDto;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.outputs.SimpleText;
 
 import java.util.List;
@@ -29,7 +30,11 @@ public class SkillResponse {
 
     public static SkillResponse createSkillResponseUseSimpleText(String version, String text) {
 
-        Outputs outputs = createOutputsUseSimpleText(text);
+        OutputsDto outputsDto = OutputsDto.builder()
+                .text(text)
+                .build();
+
+        Outputs outputs = Outputs.findOutputs(outputsDto);
 
         SkillTemplate template = new SkillTemplate();
         template.setOutputs(List.of(outputs));
@@ -37,12 +42,6 @@ public class SkillResponse {
         return SkillResponse.builder()
                 .version(version)
                 .template(template)
-                .build();
-    }
-
-    private static Outputs createOutputsUseSimpleText(String text) {
-        return Outputs.builder()
-                .simpleText(new SimpleText(text))
                 .build();
     }
 }

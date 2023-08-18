@@ -11,6 +11,7 @@ import seaung.uoscafeteriamenu.web.controller.response.kakao.Button;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.SkillResponse;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.SkillTemplate;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.outputs.Outputs;
+import seaung.uoscafeteriamenu.web.controller.response.kakao.outputs.OutputsDto;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.outputs.SimpleText;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.outputs.TextCard;
 import seaung.uoscafeteriamenu.web.exception.UosRestaurantMenuException;
@@ -62,7 +63,11 @@ public class UosRestaurantMenuResponse {
 
         String text = getText();
 
-        Outputs outputs = Outputs.createOutputsUseSimpleText(text);
+        OutputsDto outputsDto = OutputsDto.builder()
+                .text(text)
+                .build();
+
+        Outputs outputs = Outputs.findOutputs(outputsDto);
 
         SkillTemplate template = new SkillTemplate();
         template.setOutputs(List.of(outputs));
@@ -76,7 +81,14 @@ public class UosRestaurantMenuResponse {
     public SkillResponse toSkillResponseUseTextCard(String version, String blockId, UosRestaurantInput input) {
 
         String text = getText();
-        Outputs outputs = Outputs.findOutputs(blockId, input, text);
+
+        OutputsDto outputsDto = OutputsDto.builder()
+                .text(text)
+                .blockId(blockId)
+                .input(input)
+                .build();
+
+        Outputs outputs = Outputs.findOutputs(outputsDto);
 
         SkillTemplate template = new SkillTemplate();
         template.setOutputs(List.of(outputs));

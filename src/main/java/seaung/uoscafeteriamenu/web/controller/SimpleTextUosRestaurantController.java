@@ -37,9 +37,9 @@ public class SimpleTextUosRestaurantController {
     @Deprecated
     @PostMapping("/restaurant/menu")
     public ResponseEntity<SkillResponse> getUosRestaurantMenu(@RequestBody SkillPayload payload) {
-        UosRestaurantMenuResponse uosRestaurantMenu = uosRestaurantService.getUosRestaurantMenu(payload.toUosRestaurantInput());
+        UosRestaurantMenuResponse response = uosRestaurantService.getUosRestaurantMenu(payload.toUosRestaurantInput());
 
-        return new ResponseEntity<>(uosRestaurantMenu.toSkillResponseUseSimpleText(apiVersion), HttpStatus.OK);
+        return new ResponseEntity<>(response.toSkillResponseUseSimpleText(apiVersion), HttpStatus.OK);
     }
 
     /**

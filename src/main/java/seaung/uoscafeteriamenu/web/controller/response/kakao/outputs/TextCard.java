@@ -1,7 +1,6 @@
 package seaung.uoscafeteriamenu.web.controller.response.kakao.outputs;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Builder;
 import lombok.Data;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.Button;
 

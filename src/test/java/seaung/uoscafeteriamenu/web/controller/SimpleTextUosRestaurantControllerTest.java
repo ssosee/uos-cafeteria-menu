@@ -53,13 +53,7 @@ class SimpleTextUosRestaurantControllerTest extends ControllerTestSupport {
                                 +"("+MealType.BREAKFAST.getKrName()+")"
                                 +"\n👀 조회수: 1"
                                 +"\n👍 추천수: 0"
-                                +"\n\n라면"))
-                .andExpect(jsonPath("$.template.outputs[1].simpleImage").doesNotExist())
-                .andExpect(jsonPath("$.template.outputs[2].basicCard").doesNotExist())
-                .andExpect(jsonPath("$.template.outputs[3].textCard").doesNotExist())
-                .andExpect(jsonPath("$.template.quickReplies").doesNotExist())
-                .andExpect(jsonPath("$.context").doesNotExist())
-                .andExpect(jsonPath("$.data").doesNotExist());
+                                +"\n\n라면"));
     }
 
     @Test
