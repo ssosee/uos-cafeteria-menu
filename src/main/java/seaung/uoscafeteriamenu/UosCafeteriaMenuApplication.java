@@ -22,7 +22,7 @@ public class UosCafeteriaMenuApplication {
     }
 
     @Bean
-    @Profile("local")
+    @Profile("prod")
     public TestInitData testInitData(CrawlingTargetRepository crawlingTargetRepository, Crawler crawler, CrawlingUosRestaurantService crawlingStudentHallService) {
         return new TestInitData(crawlingTargetRepository, crawler, crawlingStudentHallService);
     }

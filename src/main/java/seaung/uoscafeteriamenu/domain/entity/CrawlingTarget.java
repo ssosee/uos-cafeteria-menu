@@ -17,6 +17,7 @@ public class CrawlingTarget extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Enumerated(EnumType.STRING)
+    @Column(unique = true)
     private UosRestaurantName restaurantsName; // [학생회관 1층, 본관 8층, 양식당, 자연과학관]
     private String url;
     private String welfareTeamTel;
