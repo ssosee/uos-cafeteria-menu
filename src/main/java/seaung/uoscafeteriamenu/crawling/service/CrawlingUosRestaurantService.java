@@ -47,20 +47,29 @@ public class CrawlingUosRestaurantService extends CrawlingService {
         for(List<UosRestaurantCrawlingResponse> responses: responsesList) {
 
             for (UosRestaurantCrawlingResponse response : responses) {
+
+                String crawlingDate = response.getRestaurantDate();
+                String restaurantName = response.getRestaurantName();
+
                 UosRestaurant.UosRestaurantBuilder builder = UosRestaurant.builder();
-                builder.crawlingDate(response.getRestaurantDate());
-                builder.restaurantName(UosRestaurantName.fromKrName(response.getRestaurantName()));
+                builder.crawlingDate(crawlingDate);
+                builder.restaurantName(CrawlingUtils.toUosRestaurantName(restaurantName));
                 builder.view(0);
                 builder.likeCount(0);
 
                 // 조식, 중식, 석식에 매칭되는 메뉴 추출
                 for (Map.Entry<CrawlingMealType, String> menu : response.getMenu().entrySet()) {
-                    builder.mealType(MealType.valueOf(menu.getKey().name()));
 
-                    // 메뉴 검증
-                    validationMenu(menu, builder);
+                    MealType mealType = MealType.fromName(menu.getKey().name());
 
+                    // 크롤링한 데이터가 있으면 탈출
+                    if(isSameDateInDataBase(crawlingDate, CrawlingUtils.toUosRestaurantName(restaurantName), mealType)) break;
+
+                    // 메뉴 전처d
+                    pretreatmentMenu(menu, builder);
+                    builder.mealType(mealType);
                     UosRestaurant uosRestaurant = builder.build();
+
                     uosRestaurants.add(uosRestaurant);
                 }
             }
@@ -69,7 +78,16 @@ public class CrawlingUosRestaurantService extends CrawlingService {
         uosRestaurantRepository.saveAll(uosRestaurants);
     }
 
-    private void validationMenu(Map.Entry<CrawlingMealType, String> menu, UosRestaurant.UosRestaurantBuilder builder) {
+    private boolean isSameDateInDataBase(String crawlingDate, UosRestaurantName restaurantName, MealType mealType) {
+        boolean queryResult = uosRestaurantRepository.findByCrawlingDateAndRestaurantNameAndMealType(crawlingDate, restaurantName, mealType)
+                .isPresent();
+
+        if(queryResult) return true;
+
+        return false;
+    }
+
+    private void pretreatmentMenu(Map.Entry<CrawlingMealType, String> menu, UosRestaurant.UosRestaurantBuilder builder) {
         if(CrawlingUtils.hasMenu(menu.getValue())) {
             builder.menuDesc(menu.getValue());
         } else {

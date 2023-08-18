@@ -21,7 +21,7 @@ public class UosRestaurant extends BaseTimeEntity {
     private String crawlingDate; // 크롤링 대상에 명시되어있는 날짜
     @Enumerated(EnumType.STRING)
     private MealType mealType;
-    @Lob
+    @Column(columnDefinition = "varchar(1200)")
     private String menuDesc;
     private Integer view;
     private Integer likeCount;

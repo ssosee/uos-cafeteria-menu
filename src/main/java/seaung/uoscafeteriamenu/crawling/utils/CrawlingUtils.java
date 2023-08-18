@@ -2,6 +2,7 @@ package seaung.uoscafeteriamenu.crawling.utils;
 
 import org.springframework.util.StringUtils;
 import seaung.uoscafeteriamenu.domain.entity.MealType;
+import seaung.uoscafeteriamenu.domain.entity.UosRestaurantName;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -40,5 +41,9 @@ public class CrawlingUtils {
         }
         // 저녁
         return MealType.DINNER;
+    }
+
+    public static UosRestaurantName toUosRestaurantName(String restaurantName) {
+        return UosRestaurantName.fromKrName(restaurantName);
     }
 }

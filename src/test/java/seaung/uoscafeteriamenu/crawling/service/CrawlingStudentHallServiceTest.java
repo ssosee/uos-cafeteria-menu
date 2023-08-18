@@ -58,4 +58,35 @@ class CrawlingStudentHallServiceTest {
                         )
         );
     }
+
+    @Test
+    @DisplayName("이미 크롤링한 데이터가 있으면 데이터베이스에 저장하지 않는다.")
+    void saveNotDuplicateCrawlingData() throws IOException {
+        // given
+        String restaurantName = UosRestaurantName.STUDENT_HALL.getKrName();
+        String cssQuery = "div.listType02#week table tbody tr";
+        String studentHallUrl = "https://english.uos.ac.kr/food/placeList.do";
+
+        // 의존하는게 좋을까...?
+        List<UosRestaurantCrawlingResponse> responses = studentHallCrawler.crawlingFrom(restaurantName, studentHallUrl, cssQuery);
+
+        // when
+        crawlingStudentHallService.saveAllCrawlingData(List.of(responses));
+        crawlingStudentHallService.saveAllCrawlingData(List.of(responses));
+
+        // then
+        List<UosRestaurant> all = uosRestaurantRepository.findAll();
+
+        // 주 5일 3끼 제공 -> 15개의 식단
+        assertAll(
+                () -> assertThat(all).isNotEmpty(),
+                () -> assertThat(all).hasSize(15)
+                        .extracting("crawlingDate", "mealType")
+                        .contains(
+                                tuple(responses.get(0).getRestaurantDate(), MealType.BREAKFAST),
+                                tuple(responses.get(1).getRestaurantDate(), MealType.LUNCH),
+                                tuple(responses.get(2).getRestaurantDate(), MealType.DINNER)
+                        )
+        );
+    }
 }
