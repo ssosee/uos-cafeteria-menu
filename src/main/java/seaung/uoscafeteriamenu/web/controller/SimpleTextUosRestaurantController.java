@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import seaung.uoscafeteriamenu.domain.service.UosRestaurantService;
 import seaung.uoscafeteriamenu.domain.service.response.UosRestaurantMenuResponse;
 import seaung.uoscafeteriamenu.domain.service.response.UosRestaurantsMenuResponse;
+import seaung.uoscafeteriamenu.global.provider.TimeProvider;
 import seaung.uoscafeteriamenu.web.controller.request.kakao.SkillPayload;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.SkillResponse;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.SkillTemplate;
@@ -26,6 +27,7 @@ import static seaung.uoscafeteriamenu.web.controller.response.kakao.SkillRespons
 public class SimpleTextUosRestaurantController {
 
     private final UosRestaurantService uosRestaurantService;
+    private final TimeProvider timeProvider;
 
     /**
      * 식당이름, 식사종류로 금일 식당 메뉴 조회
@@ -37,7 +39,7 @@ public class SimpleTextUosRestaurantController {
     @Deprecated
     @PostMapping("/restaurant/menu")
     public ResponseEntity<SkillResponse> getUosRestaurantMenu(@RequestBody SkillPayload payload) {
-        UosRestaurantMenuResponse response = uosRestaurantService.getUosRestaurantMenu(payload.toUosRestaurantInput());
+        UosRestaurantMenuResponse response = uosRestaurantService.getUosRestaurantMenu(payload.toUosRestaurantInput(timeProvider));
 
         return new ResponseEntity<>(response.toSkillResponseUseSimpleText(apiVersion), HttpStatus.OK);
     }
@@ -48,7 +50,7 @@ public class SimpleTextUosRestaurantController {
     @PostMapping("/restaurants/menu")
     public ResponseEntity<SkillResponse> getUosRestaurantsMenu(@RequestBody SkillPayload payload) {
 
-        List<UosRestaurantMenuResponse> uosRestaurantsMenu = uosRestaurantService.getUosRestaurantsMenu(payload.toUosRestaurantsInput());
+        List<UosRestaurantMenuResponse> uosRestaurantsMenu = uosRestaurantService.getUosRestaurantsMenu(payload.toUosRestaurantsInput(timeProvider));
         UosRestaurantsMenuResponse response = new UosRestaurantsMenuResponse(uosRestaurantsMenu);
 
 

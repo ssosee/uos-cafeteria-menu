@@ -8,6 +8,7 @@ import seaung.uoscafeteriamenu.domain.service.request.RecommendUosRestaurantMenu
 import seaung.uoscafeteriamenu.domain.service.request.UosRestaurantInput;
 import seaung.uoscafeteriamenu.domain.service.request.UosRestaurantsInput;
 import seaung.uoscafeteriamenu.crawling.utils.CrawlingUtils;
+import seaung.uoscafeteriamenu.global.provider.TimeProvider;
 
 import java.time.LocalDateTime;
 
@@ -26,26 +27,26 @@ public class SkillPayload {
         this.action = action;
     }
 
-    public UosRestaurantInput toUosRestaurantInput() {
+    public UosRestaurantInput toUosRestaurantInput(TimeProvider timeProvider) {
         return UosRestaurantInput.builder()
-                .date(CrawlingUtils.toDateString(LocalDateTime.now()))
+                .date(CrawlingUtils.toDateString(timeProvider.getCurrentLocalDateTime()))
                 .restaurantName(UosRestaurantName.fromName(action.getParams().get("restaurantName")))
                 .mealType(MealType.valueOf(action.getParams().get("mealType")))
                 .build();
     }
 
-    public RecommendUosRestaurantMenuInput toUosRestaurantInputUseActionClientExtra() {
+    public RecommendUosRestaurantMenuInput toUosRestaurantInputUseActionClientExtra(TimeProvider timeProvider) {
         return RecommendUosRestaurantMenuInput.builder()
                 .botUserId(userRequest.getUser().getId())
-                .date(CrawlingUtils.toDateString(LocalDateTime.now()))
+                .date(CrawlingUtils.toDateString(timeProvider.getCurrentLocalDateTime()))
                 .restaurantName(UosRestaurantName.fromName(action.getClientExtra().get("restaurantName")))
                 .mealType(MealType.valueOf(action.getClientExtra().get("mealType")))
                 .build();
     }
 
-    public UosRestaurantsInput toUosRestaurantsInput() {
+    public UosRestaurantsInput toUosRestaurantsInput(TimeProvider timeProvider) {
         return UosRestaurantsInput.builder()
-                .date(CrawlingUtils.toDateString(LocalDateTime.now()))
+                .date(CrawlingUtils.toDateString(timeProvider.getCurrentLocalDateTime()))
                 .mealType(MealType.valueOf(action.getParams().get("mealType")))
                 .build();
     }

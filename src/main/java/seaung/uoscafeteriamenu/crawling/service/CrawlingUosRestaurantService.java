@@ -65,7 +65,7 @@ public class CrawlingUosRestaurantService extends CrawlingService {
                     // 크롤링한 데이터가 있으면 탈출
                     if(isSameDateInDataBase(crawlingDate, CrawlingUtils.toUosRestaurantName(restaurantName), mealType)) break;
 
-                    // 메뉴 전처d
+                    // 메뉴 전처리
                     pretreatmentMenu(menu, builder);
                     builder.mealType(mealType);
                     UosRestaurant uosRestaurant = builder.build();

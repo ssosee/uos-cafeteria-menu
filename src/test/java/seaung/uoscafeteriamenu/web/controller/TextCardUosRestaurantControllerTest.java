@@ -11,6 +11,7 @@ import seaung.uoscafeteriamenu.domain.entity.MealType;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurant;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurantName;
 import seaung.uoscafeteriamenu.domain.repository.UosRestaurantRepository;
+import seaung.uoscafeteriamenu.global.provider.TimeProvider;
 import seaung.uoscafeteriamenu.web.controller.request.kakao.*;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.SkillResponse;
 
@@ -40,7 +41,10 @@ class TextCardUosRestaurantControllerTest extends ControllerTestSupport {
     @DisplayName("학교식당이름과 식사종류로 메뉴를 조회하고 textCard 형식의 응답을 준다.")
     void getUosRestaurantMenu() throws Exception {
         // given
-        String date = CrawlingUtils.toDateString(LocalDateTime.now());
+        LocalDateTime fixedDateTime = LocalDateTime.of(2023, 8, 16, 10, 59, 59);
+        when(timeProvider.getCurrentLocalDateTime()).thenReturn(fixedDateTime);
+
+        String date = CrawlingUtils.toDateString(fixedDateTime);
         UosRestaurant uosRestaurant = createUosRestaurant(date, UosRestaurantName.STUDENT_HALL, MealType.BREAKFAST, "라면", 0, 0);
         uosRestaurantRepository.save(uosRestaurant);
 
@@ -69,7 +73,10 @@ class TextCardUosRestaurantControllerTest extends ControllerTestSupport {
     @DisplayName("학교식당이름과 식사종류로 메뉴를 조회할 때 진짜 메뉴를 제공받지 못했으면(e.g] 금일 학교사정상 운영안함) simpleText 형식의 응답을 준다.")
     void getUosRestaurantMenuException() throws Exception {
         // given
-        String date = CrawlingUtils.toDateString(LocalDateTime.now());
+        LocalDateTime fixedDateTime = LocalDateTime.of(2023, 8, 16, 10, 59, 59);
+        when(timeProvider.getCurrentLocalDateTime()).thenReturn(fixedDateTime);
+
+        String date = CrawlingUtils.toDateString(fixedDateTime);
         UosRestaurant uosRestaurant = createUosRestaurant(date, UosRestaurantName.STUDENT_HALL, MealType.BREAKFAST, CrawlingUtils.NOT_PROVIDED_MENU, 0, 0);
         uosRestaurantRepository.save(uosRestaurant);
 
@@ -164,7 +171,6 @@ class TextCardUosRestaurantControllerTest extends ControllerTestSupport {
                                 +"\n👍 추천수: 2"
                                 +"\n\n제육"));
     }
-
 
     private SkillPayload createSkillPayload() {
         User user = createUser();

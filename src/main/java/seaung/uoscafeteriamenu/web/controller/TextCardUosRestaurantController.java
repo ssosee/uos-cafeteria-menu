@@ -36,9 +36,9 @@ public class TextCardUosRestaurantController {
     @PostMapping("/menu")
     public ResponseEntity<SkillResponse> getUosRestaurantMenu(@RequestBody SkillPayload payload) {
 
-        UosRestaurantMenuResponse response = uosRestaurantService.getUosRestaurantMenu(payload.toUosRestaurantInput());
+        UosRestaurantMenuResponse response = uosRestaurantService.getUosRestaurantMenu(payload.toUosRestaurantInput(timeProvider));
 
-        return new ResponseEntity<>(response.toSkillResponseUseTextCard(apiVersion, bockId, payload.toUosRestaurantInput()), HttpStatus.OK);
+        return new ResponseEntity<>(response.toSkillResponseUseTextCard(apiVersion, bockId, payload.toUosRestaurantInput(timeProvider)), HttpStatus.OK);
     }
 
     /**
@@ -47,7 +47,7 @@ public class TextCardUosRestaurantController {
     @PostMapping("/menu/recommend")
     public ResponseEntity<SkillResponse> recommendUosRestaurantMenu(@RequestBody SkillPayload payload) {
 
-        String response = uosRestaurantService.recommendUosRestaurantMenu(payload.toUosRestaurantInputUseActionClientExtra());
+        String response = uosRestaurantService.recommendUosRestaurantMenu(payload.toUosRestaurantInputUseActionClientExtra(timeProvider));
 
         return new ResponseEntity<>(SkillResponse.createSkillResponseUseSimpleText(apiVersion, response), HttpStatus.OK);
     }

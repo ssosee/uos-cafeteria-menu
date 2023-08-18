@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -32,7 +33,10 @@ class SimpleTextUosRestaurantControllerTest extends ControllerTestSupport {
     @DisplayName("학교식당이름과 식사종류로 메뉴를 조회하고 simpleText 형식으로 응답을 준다.")
     void getUosRestaurantMenu() throws Exception {
         // given
-        String date = CrawlingUtils.toDateString(LocalDateTime.now());
+        LocalDateTime fixedDateTime = LocalDateTime.of(2023, 8, 16, 10, 59, 59);
+        when(timeProvider.getCurrentLocalDateTime()).thenReturn(fixedDateTime);
+
+        String date = CrawlingUtils.toDateString(fixedDateTime);
         UosRestaurant uosRestaurant = createUosRestaurant(date, UosRestaurantName.STUDENT_HALL, MealType.BREAKFAST, "라면", 0, 0);
         uosRestaurantRepository.save(uosRestaurant);
 
@@ -60,6 +64,9 @@ class SimpleTextUosRestaurantControllerTest extends ControllerTestSupport {
     @DisplayName("학교식당이름과 식사종류 알맞은 메뉴가 없으면 예외(200)가 발생하고 simpleText 형식으로 응답을 준다.")
     void getUosRestaurantMenuException() throws Exception {
         // given
+        LocalDateTime fixedDateTime = LocalDateTime.of(2023, 8, 16, 10, 59, 59);
+        when(timeProvider.getCurrentLocalDateTime()).thenReturn(fixedDateTime);
+
         SkillPayload skillPayload = createSkillPayload(UosRestaurantName.STUDENT_HALL.name(), MealType.BREAKFAST.name());
 
         // when // then
@@ -86,7 +93,10 @@ class SimpleTextUosRestaurantControllerTest extends ControllerTestSupport {
     @DisplayName("식사종류로 메뉴들을 조회하고 simpleText 형식으로 응답을 준다.")
     void getUosRestaurantsMenu() throws Exception {
         // given
-        String date = CrawlingUtils.toDateString(LocalDateTime.now());
+        LocalDateTime fixedDateTime = LocalDateTime.of(2023, 8, 16, 10, 59, 59);
+        when(timeProvider.getCurrentLocalDateTime()).thenReturn(fixedDateTime);
+
+        String date = CrawlingUtils.toDateString(fixedDateTime);
 
         UosRestaurant uosRestaurant1 = createUosRestaurant(date, UosRestaurantName.STUDENT_HALL, MealType.BREAKFAST, "라면", 0, 0);
         UosRestaurant uosRestaurant2 = createUosRestaurant(date, UosRestaurantName.MAIN_BUILDING, MealType.BREAKFAST, "김밥", 0, 0);
