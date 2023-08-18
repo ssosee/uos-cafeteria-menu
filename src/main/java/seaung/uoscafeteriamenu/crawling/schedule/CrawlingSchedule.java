@@ -32,9 +32,8 @@ public class CrawlingSchedule {
      * @5: 월(1-12)
      * @6: 요일(0-7) 0과 7은 일요일, 1은 월요일 6은 토요일
      */
-    // 매주 월요일마다 실행
-    // @Scheduled(cron = "0 1 0 * * MON", zone = "Asia/Seoul")
     // @Scheduled(cron = "*/10 * * * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 1 0 * * MON", zone = "Asia/Seoul") // 매주 월요일 0시 1분에 실행
     @Async("crawlingAsyncExecutor")
     public void crawlingStudentHall() throws IOException {
         log.info("크롤링 실행...");
@@ -46,10 +45,10 @@ public class CrawlingSchedule {
                 crawlingStudentHallService.findCrawlingTargetBy(UosRestaurantName.MAIN_BUILDING);
 
         CrawlingTarget museumOfNaturalScienceCrawlingTarget =
-                crawlingStudentHallService.findCrawlingTargetBy(UosRestaurantName.STUDENT_HALL);
+                crawlingStudentHallService.findCrawlingTargetBy(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE);
 
         CrawlingTarget westernRestaurantCrawlingTarget =
-                crawlingStudentHallService.findCrawlingTargetBy(UosRestaurantName.STUDENT_HALL);
+                crawlingStudentHallService.findCrawlingTargetBy(UosRestaurantName.WESTERN_RESTAURANT);
 
         // 학생회관 크롤링
         List<UosRestaurantCrawlingResponse> studentHallCrawlingResponse = crawler.crawlingFrom(UosRestaurantName.STUDENT_HALL.getKrName(),
