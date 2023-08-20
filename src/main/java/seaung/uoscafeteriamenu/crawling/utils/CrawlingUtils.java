@@ -30,16 +30,16 @@ public class CrawlingUtils {
 
     public static MealType localDateTimeToMealType(LocalDateTime localDateTime) {
         LocalTime localTime = localDateTime.toLocalTime();
-        // 아침(6:30 ~ 11:00)
+        // 아침(6:30 ~ 10:59)
         if(localTime.isAfter(LocalTime.of(6, 30)) && localTime.isBefore(LocalTime.of(11, 0))) {
             return MealType.BREAKFAST;
         }
-        // 점심(11:00 ~ 14:00)
+        // 점심(11:00 ~ 13:59)
         else if(localTime.equals(LocalTime.of(11, 0)) ||
                 (localTime.isAfter(LocalTime.of(11, 1)) && localTime.isBefore(LocalTime.of(14, 0)))) {
             return MealType.LUNCH;
         }
-        // 저녁
+        // 저녁(14:00 ~ 18:29)
         return MealType.DINNER;
     }
 

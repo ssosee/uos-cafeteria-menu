@@ -6,6 +6,7 @@ import org.jsoup.helper.HttpConnection;
 import org.jsoup.nodes.*;
 import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -19,6 +20,7 @@ public class CrawlingTest {
     private final String westernRestaurantUrl = "https://www.uos.ac.kr/food/placeList.do?rstcde=030&menuid=2000005006002000000";
     private Connection conn;
 
+    @Disabled
     @Test
     @DisplayName("학생회관1층 식단표 크롤링")
     void crawlingStudentHall() throws IOException {

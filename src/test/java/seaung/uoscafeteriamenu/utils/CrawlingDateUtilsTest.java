@@ -75,7 +75,7 @@ class CrawlingDateUtilsTest {
     }
 
     @Test
-    @DisplayName("14시 ~ 6시30분 사이에는 점심타입을 반환한다.")
+    @DisplayName("14시 ~ 6시30분 사이에는 저녁타입을 반환한다.")
     void localDateTimeToMealTypeIsDINNER() {
         // given
         LocalDateTime now = LocalDateTime.of(2023, 8, 16, 14, 0, 0);

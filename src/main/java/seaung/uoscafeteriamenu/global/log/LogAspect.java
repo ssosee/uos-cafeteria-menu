@@ -7,6 +7,9 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
+import seaung.uoscafeteriamenu.crawling.utils.CrawlingUtils;
+import seaung.uoscafeteriamenu.domain.entity.MealType;
+import seaung.uoscafeteriamenu.domain.entity.OperatingTime;
 import seaung.uoscafeteriamenu.global.provider.TimeProvider;
 import seaung.uoscafeteriamenu.web.exception.UosRestaurantMenuException;
 
@@ -24,7 +27,10 @@ public class LogAspect {
     public Object doLogInfo(ProceedingJoinPoint joinPoint) throws Throwable {
         try {
             log.info("[LOG]={}", joinPoint.getSignature());
+            // 주말 확인
             checkWeekend();
+            // 운영시간 확인
+            checkRestaurantOperationTime();
         } catch (Exception e) {
             log.error("[LOG]={}", joinPoint.getSignature(), e);
             throw e;
@@ -36,6 +42,12 @@ public class LogAspect {
     private void checkWeekend() {
         if(TimeProvider.isWeekend(timeProvider.getCurrentLocalDateTime())) {
             throw new UosRestaurantMenuException(UosRestaurantMenuException.NOT_PROVIDE_MENU_AT_WEEKEND);
+        }
+    }
+
+    private void checkRestaurantOperationTime() {
+        if(!OperatingTime.isOperatingTime(timeProvider.getCurrentLocalDateTime())) {
+            throw new UosRestaurantMenuException(UosRestaurantMenuException.CLOSED);
         }
     }
 }
