@@ -292,7 +292,7 @@ class UosRestaurantServiceTest {
     }
 
     @Test
-    @DisplayName("아침메뉴 중 가장 추천수가 많은 메뉴 1개를 조회한다.(추천수가 같으면 조회수가 많은 것을 조회)")
+    @DisplayName("저녁메뉴 중 가장 추천수가 많은 메뉴 1개를 조회한다.(추천수가 같으면 조회수가 많은 것을 조회)")
     void findTop1DINNERUosRestaurantMenuByLikeCount() {
         // given
         LocalDateTime now = LocalDateTime.of(2023, 8, 16, 14, 0, 0);
@@ -315,6 +315,32 @@ class UosRestaurantServiceTest {
                 .contains(
                         tuple(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE.getKrName(), MealType.DINNER.getKrName(), "제육", 4, 2)
                 );
+    }
+
+    @Test
+    @DisplayName("운영시간이 아니면 조회수가 많은 메뉴 1개를 조회할때 예외가 발생한다.")
+    void findTop1UosRestaurantMenuByViewException() {
+        // given
+        LocalDateTime now = LocalDateTime.of(2023, 8, 16, 18, 30, 0);
+        Pageable pageable = PageRequest.of(0, 1);
+
+        // when // then
+        assertThatThrownBy(() -> uosRestaurantService.findTop1UosRestaurantMenuByView(pageable, now))
+                .isInstanceOf(UosRestaurantMenuException.class)
+                .hasMessage(UosRestaurantMenuException.CLOSED);
+    }
+
+    @Test
+    @DisplayName("운영시간이 아니면 추천수가 많은 메뉴 1개를 조회할때 예외가 발생한다.")
+    void findTop1UosRestaurantMenuByLikeCountException() {
+        // given
+        LocalDateTime now = LocalDateTime.of(2023, 8, 16, 18, 30, 0);
+        Pageable pageable = PageRequest.of(0, 1);
+
+        // when // then
+        assertThatThrownBy(() -> uosRestaurantService.findTop1UosRestaurantMenuByLikeCount(pageable, now))
+                .isInstanceOf(UosRestaurantMenuException.class)
+                .hasMessage(UosRestaurantMenuException.CLOSED);
     }
 
     private RecommendUosRestaurantMenuInput createRecommendUosRestaurantMenuInput(String botUserId, String date, UosRestaurantName restaurantName, MealType mealType) {

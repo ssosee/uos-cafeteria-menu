@@ -77,5 +77,6 @@ public class CrawlingSchedule {
                 westernRestaurantCrawlingResponse);
 
         crawlingStudentHallService.saveAllCrawlingData(crawlingResponseList);
+        log.info("크롤링 종료...");
     }
 }

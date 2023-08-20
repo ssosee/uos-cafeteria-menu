@@ -49,7 +49,7 @@ class CrawlingDateUtilsTest {
     }
 
     @Test
-    @DisplayName("오전 6시 30분 ~ 11시 사이에는 아침타입을 반환한다.")
+    @DisplayName("오전 8시 30분 ~ 11시 사이에는 아침타입을 반환한다.")
     void localDateTimeToMealTypeIsBREAKFAST() {
         // given
         LocalDateTime now = LocalDateTime.of(2023, 8, 16, 10, 59, 59);

@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import seaung.uoscafeteriamenu.web.exception.UosRestaurantMenuException;
 
+import java.time.LocalTime;
+
 import static seaung.uoscafeteriamenu.web.exception.UosRestaurantMenuException.NOT_FOUND_MEAL_TYPE;
 
 @Getter
