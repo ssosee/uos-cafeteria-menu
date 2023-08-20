@@ -14,6 +14,7 @@ import seaung.uoscafeteriamenu.domain.repository.UosRestaurantRepository;
 import seaung.uoscafeteriamenu.global.provider.TimeProvider;
 import seaung.uoscafeteriamenu.web.controller.request.kakao.*;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.SkillResponse;
+import seaung.uoscafeteriamenu.web.exception.UosRestaurantMenuException;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -170,6 +171,50 @@ class TextCardUosRestaurantControllerTest extends ControllerTestSupport {
                                 +"\n👀 조회수: 4"
                                 +"\n👍 추천수: 2"
                                 +"\n\n제육"));
+    }
+
+    @Test
+    @DisplayName("추천메뉴 조회시 운영시간이 아닌 경우 simpleText 형식으로 예외응답을 준다.")
+    void getTop1LikeUosRestaurantsMenuCLOSED() throws Exception {
+        // given
+        LocalDateTime fixedDateTime = LocalDateTime.of(2023, 8, 16, 18, 30, 0);
+        when(timeProvider.getCurrentLocalDateTime()).thenReturn(fixedDateTime);
+
+        SkillPayload skillPayload = createSkillPayload();
+
+        // when // then
+        mockMvc.perform(post("/api/v1/text-card/uos/restaurant/menu/top1-like")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(om.writeValueAsBytes(skillPayload)))
+                .andDo(print())
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.version").value(SkillResponse.apiVersion))
+                .andExpect(jsonPath("$.template").isNotEmpty())
+                .andExpect(jsonPath("$.template.outputs").isArray())
+                .andExpect(jsonPath("$.template.outputs[0].simpleText").isNotEmpty())
+                .andExpect(jsonPath("$.template.outputs[0].simpleText.text").value(UosRestaurantMenuException.CLOSED));
+    }
+
+    @Test
+    @DisplayName("친기메뉴 조회시 운영시간이 아닌 경우 simpleText 형식으로 예외응답을 준다.")
+    void getTop1ViewUosRestaurantsMenuCLOSED() throws Exception {
+        // given
+        LocalDateTime fixedDateTime = LocalDateTime.of(2023, 8, 16, 18, 30, 0);
+        when(timeProvider.getCurrentLocalDateTime()).thenReturn(fixedDateTime);
+
+        SkillPayload skillPayload = createSkillPayload();
+
+        // when // then
+        mockMvc.perform(post("/api/v1/text-card/uos/restaurant/menu/top1-view")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(om.writeValueAsBytes(skillPayload)))
+                .andDo(print())
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.version").value(SkillResponse.apiVersion))
+                .andExpect(jsonPath("$.template").isNotEmpty())
+                .andExpect(jsonPath("$.template.outputs").isArray())
+                .andExpect(jsonPath("$.template.outputs[0].simpleText").isNotEmpty())
+                .andExpect(jsonPath("$.template.outputs[0].simpleText.text").value(UosRestaurantMenuException.CLOSED));
     }
 
     private SkillPayload createSkillPayload() {

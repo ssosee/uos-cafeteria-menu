@@ -29,8 +29,7 @@ public class LogAspect {
             log.info("[LOG]={}", joinPoint.getSignature());
             // 주말 확인
             checkWeekend();
-            // 운영시간 확인
-            checkRestaurantOperationTime();
+
         } catch (Exception e) {
             log.error("[LOG]={}", joinPoint.getSignature(), e);
             throw e;
@@ -42,12 +41,6 @@ public class LogAspect {
     private void checkWeekend() {
         if(TimeProvider.isWeekend(timeProvider.getCurrentLocalDateTime())) {
             throw new UosRestaurantMenuException(UosRestaurantMenuException.NOT_PROVIDE_MENU_AT_WEEKEND);
-        }
-    }
-
-    private void checkRestaurantOperationTime() {
-        if(!OperatingTime.isOperatingTime(timeProvider.getCurrentLocalDateTime())) {
-            throw new UosRestaurantMenuException(UosRestaurantMenuException.CLOSED);
         }
     }
 }

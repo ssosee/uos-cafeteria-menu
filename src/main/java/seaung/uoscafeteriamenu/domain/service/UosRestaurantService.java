@@ -6,10 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import seaung.uoscafeteriamenu.crawling.utils.CrawlingUtils;
-import seaung.uoscafeteriamenu.domain.entity.MealType;
-import seaung.uoscafeteriamenu.domain.entity.Member;
-import seaung.uoscafeteriamenu.domain.entity.MenuLike;
-import seaung.uoscafeteriamenu.domain.entity.UosRestaurant;
+import seaung.uoscafeteriamenu.domain.entity.*;
 import seaung.uoscafeteriamenu.domain.repository.MemberRepository;
 import seaung.uoscafeteriamenu.domain.repository.MenuLikeRepository;
 import seaung.uoscafeteriamenu.domain.repository.UosRestaurantRepository;
@@ -99,6 +96,9 @@ public class UosRestaurantService {
     @Transactional
     public Page<UosRestaurantMenuResponse> findTop1UosRestaurantMenuByView(Pageable pageable, LocalDateTime now) {
 
+        // 운영시간 확인
+        checkRestaurantOperationTime(now);
+
         MealType mealType = CrawlingUtils.localDateTimeToMealType(now);
         String date = CrawlingUtils.toDateString(now);
 
@@ -115,6 +115,9 @@ public class UosRestaurantService {
     @Transactional
     public Page<UosRestaurantMenuResponse> findTop1UosRestaurantMenuByLikeCount(Pageable pageable, LocalDateTime now) {
 
+        // 운영시간 확인
+        checkRestaurantOperationTime(now);
+
         MealType mealType = CrawlingUtils.localDateTimeToMealType(now);
         String date = CrawlingUtils.toDateString(now);
 
@@ -125,5 +128,11 @@ public class UosRestaurantService {
         findMenu.getContent().forEach(UosRestaurant::increaseView);
 
         return UosRestaurantMenuResponse.ofPage(findMenu);
+    }
+
+    private void checkRestaurantOperationTime(LocalDateTime now) {
+        if(!OperatingTime.isOperatingTime(now)) {
+            throw new UosRestaurantMenuException(UosRestaurantMenuException.CLOSED);
+        }
     }
 }
