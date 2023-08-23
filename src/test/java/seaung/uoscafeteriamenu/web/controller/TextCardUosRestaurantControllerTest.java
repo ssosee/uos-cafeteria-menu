@@ -1,5 +1,6 @@
 package seaung.uoscafeteriamenu.web.controller;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -7,9 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import seaung.uoscafeteriamenu.crawling.utils.CrawlingUtils;
-import seaung.uoscafeteriamenu.domain.entity.MealType;
-import seaung.uoscafeteriamenu.domain.entity.UosRestaurant;
-import seaung.uoscafeteriamenu.domain.entity.UosRestaurantName;
+import seaung.uoscafeteriamenu.domain.entity.*;
+import seaung.uoscafeteriamenu.domain.repository.SkillBlockRepository;
 import seaung.uoscafeteriamenu.domain.repository.UosRestaurantRepository;
 import seaung.uoscafeteriamenu.global.provider.TimeProvider;
 import seaung.uoscafeteriamenu.web.controller.request.kakao.*;
@@ -39,7 +39,7 @@ class TextCardUosRestaurantControllerTest extends ControllerTestSupport {
     UosRestaurantRepository uosRestaurantRepository;
 
     @Test
-    @DisplayName("학교식당이름과 식사종류로 메뉴를 조회하고 textCard 형식의 응답을 준다.")
+    @DisplayName("학교 식당이름과 식사종류로 메뉴를 조회하고 textCard 형식의 응답을 준다.")
     void getUosRestaurantMenu() throws Exception {
         // given
         LocalDateTime fixedDateTime = LocalDateTime.of(2023, 8, 16, 10, 59, 59);
@@ -67,7 +67,8 @@ class TextCardUosRestaurantControllerTest extends ControllerTestSupport {
                                 +"\n👀 조회수: 1"
                                 +"\n👍 추천수: 0"
                                 +"\n\n라면"))
-                .andExpect(jsonPath("$.template.outputs[0].textCard.buttons[0]").isNotEmpty());
+                .andExpect(jsonPath("$.template.outputs[0].textCard.buttons[0]").isNotEmpty())
+                .andExpect(jsonPath("$.template.quickReplies").isArray());
     }
 
     @Test
@@ -196,7 +197,7 @@ class TextCardUosRestaurantControllerTest extends ControllerTestSupport {
     }
 
     @Test
-    @DisplayName("친기메뉴 조회시 운영시간이 아닌 경우 simpleText 형식으로 예외응답을 준다.")
+    @DisplayName("인기메뉴 조회시 운영시간이 아닌 경우 simpleText 형식으로 예외응답을 준다.")
     void getTop1ViewUosRestaurantsMenuCLOSED() throws Exception {
         // given
         LocalDateTime fixedDateTime = LocalDateTime.of(2023, 8, 16, 18, 30, 0);

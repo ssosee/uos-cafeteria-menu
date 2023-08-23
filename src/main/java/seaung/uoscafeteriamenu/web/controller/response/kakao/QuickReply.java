@@ -1,16 +1,20 @@
 package seaung.uoscafeteriamenu.web.controller.response.kakao;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Data;
 import seaung.uoscafeteriamenu.domain.entity.BlockName;
+import seaung.uoscafeteriamenu.domain.entity.SkillBlock;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurantName;
 import seaung.uoscafeteriamenu.domain.repository.memory.SkillBlockMemoryRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class QuickReply {
     private String label;
     private String action;
@@ -27,15 +31,14 @@ public class QuickReply {
         this.extra = extra;
     }
 
-    public static List<QuickReply> createQuickRepliesUosRestaurantBlock(List<BlockName> blockNames) {
-        List<QuickReply> quickReplies = new ArrayList<>();
-
-//        for(BlockName name : blockNames) {
-//            QuickReply quickReply = QuickReply.builder()
-//                    .blockId()
-//                    .build();
-//        }
-
-        return quickReplies;
+    public static List<QuickReply> ofList(List<SkillBlock> skillBlocks) {
+        return skillBlocks.stream()
+                .map(s -> QuickReply.builder()
+                        .blockId(s.getBlockId())
+                        .label(s.getLabel())
+                        .action(s.getAction())
+                        .messageText(s.getMessageText())
+                        .build())
+                .collect(Collectors.toList());
     }
 }

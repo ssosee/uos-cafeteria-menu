@@ -33,8 +33,8 @@ Content-Type: application/json
     "name": "ymbjlorhkc",
     "clientExtra": null,
     "params": {
-      "restaurantName": "MUSEUM_OF_NATURAL_SCIENCE",
-      "mealType": "BREAKFAST"
+      "restaurantName": "STUDENT_HALL",
+      "mealType": "LUNCH"
     },
     "id": "2eej1w0k1qfo4hs3z7xddvyo",
     "detailParams": {

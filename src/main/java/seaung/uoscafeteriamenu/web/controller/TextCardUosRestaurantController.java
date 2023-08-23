@@ -17,6 +17,7 @@ import seaung.uoscafeteriamenu.domain.service.response.UosRestaurantsMenuRespons
 import seaung.uoscafeteriamenu.global.provider.TimeProvider;
 import seaung.uoscafeteriamenu.web.controller.request.kakao.SkillPayload;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.SkillResponse;
+import seaung.uoscafeteriamenu.web.converter.UosRestaurantServiceResponseConverter;
 
 import static seaung.uoscafeteriamenu.web.controller.response.kakao.SkillResponse.apiVersion;
 
@@ -28,7 +29,8 @@ public class TextCardUosRestaurantController {
 
     private final UosRestaurantService uosRestaurantService;
     private final TimeProvider timeProvider;
-    private final String bockId = "64d75083c800862a54172c4a"; // 추천하기 블록 아이디
+    private final UosRestaurantServiceResponseConverter uosRestaurantServiceResponseConverter;
+    private final String recommendBockId = "64d75083c800862a54172c4a"; // 추천하기 블록 아이디
 
     /**
      * 식당이름, 식사종류로 금일 식당 메뉴 조회
@@ -36,9 +38,10 @@ public class TextCardUosRestaurantController {
     @PostMapping("/menu")
     public ResponseEntity<SkillResponse> getUosRestaurantMenu(@RequestBody SkillPayload payload) {
 
-        UosRestaurantMenuResponse response = uosRestaurantService.getUosRestaurantMenu(payload.toUosRestaurantInput(timeProvider));
+        SkillResponse response = uosRestaurantServiceResponseConverter
+                .getUosRestaurantMenuToSkillResponseUseTextCardWithButtonAndQuickReplies(apiVersion, payload.toUosRestaurantInput(timeProvider));
 
-        return new ResponseEntity<>(response.toSkillResponseUseTextCard(apiVersion, bockId, payload.toUosRestaurantInput(timeProvider)), HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
@@ -64,7 +67,7 @@ public class TextCardUosRestaurantController {
                 = uosRestaurantService.findTop1UosRestaurantMenuByView(pageable, timeProvider.getCurrentLocalDateTime());
         UosRestaurantsMenuResponse response = new UosRestaurantsMenuResponse(top1UosRestaurantMenuByView.getContent());
 
-        return new ResponseEntity<>(response.toSkillResponseUseTextCard(apiVersion, bockId), HttpStatus.OK);
+        return new ResponseEntity<>(response.toSkillResponseUseTextCard(apiVersion, recommendBockId), HttpStatus.OK);
     }
 
     /**
@@ -79,6 +82,6 @@ public class TextCardUosRestaurantController {
                 = uosRestaurantService.findTop1UosRestaurantMenuByLikeCount(pageable, timeProvider.getCurrentLocalDateTime());
         UosRestaurantsMenuResponse response = new UosRestaurantsMenuResponse(top1UosRestaurantMenuByView.getContent());
 
-        return new ResponseEntity<>(response.toSkillResponseUseTextCard(apiVersion, bockId), HttpStatus.OK);
+        return new ResponseEntity<>(response.toSkillResponseUseTextCard(apiVersion, recommendBockId), HttpStatus.OK);
     }
 }

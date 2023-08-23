@@ -16,4 +16,12 @@ public class OutputsDto {
         this.blockId = blockId;
         this.input = input;
     }
+
+    public static OutputsDto createOutputDto(String text, String blockId, UosRestaurantInput input) {
+        return OutputsDto.builder()
+                .text(text)
+                .blockId(blockId)
+                .input(input)
+                .build();
+    }
 }
