@@ -30,4 +30,13 @@ public class Button {
         this.blockId = blockId;
         this.extra = extra;
     }
+
+    public static Button createRecommendButton(String blockId, Map<String, String > extra) {
+        return Button.builder()
+                .label("추천 😋")
+                .action("block")
+                .blockId(blockId)
+                .extra(extra)
+                .build();
+    }
 }

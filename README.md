@@ -13,6 +13,7 @@
 ## 제공 기능
 ## 시스템 구조
 * 학교측에서 학식 메뉴에 대한 `API`를 제공하지 않기 때문에 `크롤링`하는 방법을 채택
+
 ![system-architecture.png](docs%2Fimages%2Fsystem-architecture.png)
 
 

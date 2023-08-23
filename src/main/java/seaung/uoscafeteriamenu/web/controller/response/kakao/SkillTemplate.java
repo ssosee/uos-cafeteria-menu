@@ -19,5 +19,5 @@ public class SkillTemplate {
      *  listCard(리스트 카드)]
      */
     private List<Outputs> outputs = new ArrayList<>(Arrays.asList(new Outputs[3])); // 최대 3개 까지 가능
-    private List<String> quickReplies; // 바로가기 그룹
+    private List<QuickReply> quickReplies; // 바로가기 그룹
 }

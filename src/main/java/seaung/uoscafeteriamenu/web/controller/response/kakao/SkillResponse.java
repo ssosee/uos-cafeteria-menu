@@ -8,6 +8,7 @@ import seaung.uoscafeteriamenu.web.controller.response.kakao.outputs.Outputs;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.outputs.OutputsDto;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.outputs.SimpleText;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +36,7 @@ public class SkillResponse {
                 .build();
 
         Outputs outputs = Outputs.findOutputs(outputsDto);
+        List<String> quickReplies = new ArrayList<>();
 
         SkillTemplate template = new SkillTemplate();
         template.setOutputs(List.of(outputs));

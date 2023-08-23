@@ -28,18 +28,13 @@ public class Outputs {
         this.textCard = textCard;
     }
 
-    private static Outputs createOutputsUseTextCard(String text, String blockId, UosRestaurantInput input) {
+    private static Outputs createOutputsUseTextCardWithButton(String text, String blockId, UosRestaurantInput input) {
 
         Map<String, String> extra = new HashMap<>();
         extra.put("restaurantName", input.getRestaurantName().name());
         extra.put("mealType", input.getMealType().name());
 
-        Button button = Button.builder()
-                .label("추천 😋")
-                .action("block")
-                .blockId(blockId)
-                .extra(extra)
-                .build();
+        Button button = Button.createRecommendButton(blockId, extra);
 
         return Outputs.builder()
                 .textCard(new TextCard(text, List.of(button)))
@@ -59,6 +54,6 @@ public class Outputs {
         } else if (dto.getInput() == null && dto.getBlockId() == null) {
             return createOutputsUseSimpleText(dto.getText());
         }
-        return createOutputsUseTextCard(dto.getText(), dto.getBlockId(), dto.getInput());
+        return createOutputsUseTextCardWithButton(dto.getText(), dto.getBlockId(), dto.getInput());
     }
 }
