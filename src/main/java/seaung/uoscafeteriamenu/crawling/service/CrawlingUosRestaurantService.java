@@ -70,7 +70,7 @@ public class CrawlingUosRestaurantService extends CrawlingService {
                     builder.mealType(mealType);
                     UosRestaurant uosRestaurant = builder.build();
 
-                    // 학교에서 메뉴를 제공한 경우
+                    // 학교에서 메뉴를 제공한 경우에만 저장
                     addUosRestaurant(uosRestaurant, uosRestaurants);
                 }
             }

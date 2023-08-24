@@ -13,6 +13,7 @@ import seaung.uoscafeteriamenu.web.controller.request.kakao.SkillPayload;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.SkillResponse;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.SkillTemplate;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.outputs.Outputs;
+import seaung.uoscafeteriamenu.web.converter.UosRestaurantServiceResponseConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ public class SimpleTextUosRestaurantController {
 
     private final UosRestaurantService uosRestaurantService;
     private final TimeProvider timeProvider;
+    private final UosRestaurantServiceResponseConverter uosRestaurantServiceResponseConverter;
 
     /**
      * 식당이름, 식사종류로 금일 식당 메뉴 조회
@@ -50,10 +52,13 @@ public class SimpleTextUosRestaurantController {
     @PostMapping("/restaurants/menu")
     public ResponseEntity<SkillResponse> getUosRestaurantsMenu(@RequestBody SkillPayload payload) {
 
-        List<UosRestaurantMenuResponse> uosRestaurantsMenu = uosRestaurantService.getUosRestaurantsMenu(payload.toUosRestaurantsInput(timeProvider));
-        UosRestaurantsMenuResponse response = new UosRestaurantsMenuResponse(uosRestaurantsMenu);
+        // 식사 종류로 금일 식당 메뉴 조회
+        List<UosRestaurantMenuResponse> uosRestaurantsMenu = uosRestaurantService
+                .getUosRestaurantsMenu(payload.toUosRestaurantsInput(timeProvider));
 
+        // 카카오톡 응답으로 변경
+        SkillResponse response = uosRestaurantServiceResponseConverter.toSkillResponseUseSimpleText(apiVersion, uosRestaurantsMenu);
 
-        return new ResponseEntity<>(response.toSkillResponseUseSimpleText(apiVersion), HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

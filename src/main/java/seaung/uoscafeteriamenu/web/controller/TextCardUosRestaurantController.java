@@ -30,7 +30,6 @@ public class TextCardUosRestaurantController {
     private final UosRestaurantService uosRestaurantService;
     private final TimeProvider timeProvider;
     private final UosRestaurantServiceResponseConverter uosRestaurantServiceResponseConverter;
-    private final String recommendBockId = "64d75083c800862a54172c4a"; // 추천하기 블록 아이디
 
     /**
      * 식당이름, 식사종류로 금일 식당 메뉴 조회
@@ -38,8 +37,13 @@ public class TextCardUosRestaurantController {
     @PostMapping("/menu")
     public ResponseEntity<SkillResponse> getUosRestaurantMenu(@RequestBody SkillPayload payload) {
 
+        // 식당이름, 식사종류로 금일 식당 메뉴 조회
+        UosRestaurantMenuResponse uosRestaurantMenuResponse = uosRestaurantService
+                .getUosRestaurantMenu(payload.toUosRestaurantInput(timeProvider));
+
+        // 카카오톡 응답으로 변경
         SkillResponse response = uosRestaurantServiceResponseConverter
-                .getUosRestaurantMenuToSkillResponseUseTextCardWithButtonAndQuickReplies(apiVersion, payload.toUosRestaurantInput(timeProvider));
+                .toSkillResponseUseTextCardWithButtonAndQuickReplies(apiVersion, uosRestaurantMenuResponse);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -50,9 +54,15 @@ public class TextCardUosRestaurantController {
     @PostMapping("/menu/recommend")
     public ResponseEntity<SkillResponse> recommendUosRestaurantMenu(@RequestBody SkillPayload payload) {
 
-        String response = uosRestaurantService.recommendUosRestaurantMenu(payload.toUosRestaurantInputUseActionClientExtra(timeProvider));
+        // 메뉴 추천
+        String recommendUosRestaurantMenu = uosRestaurantService
+                .recommendUosRestaurantMenu(payload.toUosRestaurantInputUseActionClientExtra(timeProvider));
 
-        return new ResponseEntity<>(SkillResponse.createSkillResponseUseSimpleText(apiVersion, response), HttpStatus.OK);
+        // 카카오톡 응답으로 변경
+        SkillResponse response = uosRestaurantServiceResponseConverter
+                .toSkillResponseUseSimpleText(apiVersion, recommendUosRestaurantMenu);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
@@ -63,11 +73,15 @@ public class TextCardUosRestaurantController {
     public ResponseEntity<SkillResponse> getTop1UosRestaurantMenuByView(@RequestBody SkillPayload payload,
                                                                         @PageableDefault(page = 0, size = 1) Pageable pageable) {
 
+        // 인기 메뉴 조회
         Page<UosRestaurantMenuResponse> top1UosRestaurantMenuByView
                 = uosRestaurantService.findTop1UosRestaurantMenuByView(pageable, timeProvider.getCurrentLocalDateTime());
-        UosRestaurantsMenuResponse response = new UosRestaurantsMenuResponse(top1UosRestaurantMenuByView.getContent());
 
-        return new ResponseEntity<>(response.toSkillResponseUseTextCard(apiVersion, recommendBockId), HttpStatus.OK);
+        // 카카오톡 응답으로 변경
+        SkillResponse response = uosRestaurantServiceResponseConverter
+                .toSkillResponseUseTextCardWithButton(apiVersion, top1UosRestaurantMenuByView.getContent());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
@@ -78,10 +92,14 @@ public class TextCardUosRestaurantController {
     public ResponseEntity<SkillResponse> getTop1UosRestaurantMenuByLikeCount(@RequestBody SkillPayload payload,
                                                                         @PageableDefault(page = 0, size = 1) Pageable pageable) {
 
+        // 인기 메뉴 조회
         Page<UosRestaurantMenuResponse> top1UosRestaurantMenuByView
                 = uosRestaurantService.findTop1UosRestaurantMenuByLikeCount(pageable, timeProvider.getCurrentLocalDateTime());
-        UosRestaurantsMenuResponse response = new UosRestaurantsMenuResponse(top1UosRestaurantMenuByView.getContent());
 
-        return new ResponseEntity<>(response.toSkillResponseUseTextCard(apiVersion, recommendBockId), HttpStatus.OK);
+        // 카카오톡 응답으로 변경
+        SkillResponse response = uosRestaurantServiceResponseConverter
+                .toSkillResponseUseTextCardWithButton(apiVersion, top1UosRestaurantMenuByView.getContent());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

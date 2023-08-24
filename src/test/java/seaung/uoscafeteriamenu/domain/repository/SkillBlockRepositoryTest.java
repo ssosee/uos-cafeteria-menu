@@ -38,14 +38,14 @@ class SkillBlockRepositoryTest {
                 );
     }
 
-    private SkillBlock createSkillBlock(String blockId, BlockName blockName, String action, String label, String messageText, String relationalBlockName) {
+    private SkillBlock createSkillBlock(String blockId, BlockName blockName, String action, String label, String messageText, String parentBlockName) {
         SkillBlock skillBlock = SkillBlock.builder()
                 .blockId(blockId)
                 .blockName(blockName)
                 .action(action)
                 .label(label)
                 .messageText(messageText)
-                .relationalBlockName(relationalBlockName)
+                .parentBlockName(parentBlockName)
                 .build();
 
         return skillBlock;

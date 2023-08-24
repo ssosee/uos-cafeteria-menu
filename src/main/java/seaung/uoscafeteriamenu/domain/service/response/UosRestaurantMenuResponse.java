@@ -3,24 +3,14 @@ package seaung.uoscafeteriamenu.domain.service.response;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.domain.Page;
-import seaung.uoscafeteriamenu.crawling.utils.CrawlingUtils;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurant;
 import seaung.uoscafeteriamenu.domain.service.request.UosRestaurantInput;
-import seaung.uoscafeteriamenu.domain.service.request.UosRestaurantsInput;
-import seaung.uoscafeteriamenu.web.controller.response.kakao.Button;
-import seaung.uoscafeteriamenu.web.controller.response.kakao.QuickReply;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.SkillResponse;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.SkillTemplate;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.outputs.Outputs;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.outputs.OutputsDto;
-import seaung.uoscafeteriamenu.web.controller.response.kakao.outputs.SimpleText;
-import seaung.uoscafeteriamenu.web.controller.response.kakao.outputs.TextCard;
-import seaung.uoscafeteriamenu.web.exception.UosRestaurantMenuException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Data
@@ -68,35 +58,10 @@ public class UosRestaurantMenuResponse {
                 .text(text)
                 .build();
 
-        Outputs outputs = Outputs.findOutputs(outputsDto);
+        Outputs outputs = Outputs.createOutputs(outputsDto);
 
         SkillTemplate template = new SkillTemplate();
         template.setOutputs(List.of(outputs));
-
-        return SkillResponse.builder()
-                .version(version)
-                .template(template)
-                .build();
-    }
-
-    public SkillResponse toSkillResponseUseTextCard(String version, String blockId, UosRestaurantInput input) {
-
-        String text = getText();
-
-        OutputsDto outputsDto = OutputsDto.builder()
-                .text(text)
-                .blockId(blockId)
-                .input(input)
-                .build();
-
-        Outputs outputs = Outputs.findOutputs(outputsDto);
-
-        // 조식, 중식, 석식 quickReply 생성
-        //List<QuickReply> quickReplies = QuickReply.createQuickRepliesUosRestaurantBlock();
-
-        SkillTemplate template = new SkillTemplate();
-        template.setOutputs(List.of(outputs));
-        //template.setQuickReplies(quickReplies);
 
         return SkillResponse.builder()
                 .version(version)
