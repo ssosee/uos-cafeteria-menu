@@ -12,6 +12,7 @@ import seaung.uoscafeteriamenu.web.controller.response.kakao.outputs.OutputsDto;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Deprecated
 @Data
 public class UosRestaurantsMenuResponse {
 

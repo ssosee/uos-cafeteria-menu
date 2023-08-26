@@ -10,11 +10,13 @@ public class UosRestaurantInput {
     private String date;
     private UosRestaurantName restaurantName;
     private MealType mealType;
+    private String botUserId;
 
     @Builder
-    private UosRestaurantInput(String date, UosRestaurantName restaurantName, MealType mealType) {
+    private UosRestaurantInput(String date, UosRestaurantName restaurantName, MealType mealType, String botUserId) {
         this.date = date;
         this.restaurantName = restaurantName;
         this.mealType = mealType;
+        this.botUserId = botUserId;
     }
 }

@@ -31,14 +31,18 @@ public class QuickReply {
         this.extra = extra;
     }
 
+    public static QuickReply of(SkillBlock skillBlock) {
+        return QuickReply.builder()
+                .blockId(skillBlock.getBlockId())
+                .label(skillBlock.getLabel())
+                .action(skillBlock.getAction())
+                .messageText(skillBlock.getMessageText())
+                .build();
+    }
+
     public static List<QuickReply> ofList(List<SkillBlock> skillBlocks) {
         return skillBlocks.stream()
-                .map(s -> QuickReply.builder()
-                        .blockId(s.getBlockId())
-                        .label(s.getLabel())
-                        .action(s.getAction())
-                        .messageText(s.getMessageText())
-                        .build())
+                .map(QuickReply::of)
                 .collect(Collectors.toList());
     }
 }

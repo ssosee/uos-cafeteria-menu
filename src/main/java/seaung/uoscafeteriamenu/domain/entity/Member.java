@@ -36,4 +36,8 @@ public class Member extends BaseTimeEntity {
 
         return member;
     }
+
+    public void increaseVisitCount() {
+        this.visitCount++;
+    }
 }

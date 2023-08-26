@@ -12,6 +12,7 @@ import seaung.uoscafeteriamenu.crawling.service.CrawlingUosRestaurantService;
 import seaung.uoscafeteriamenu.domain.entity.CrawlingTarget;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -37,46 +38,22 @@ public class CrawlingSchedule {
     @Async("crawlingAsyncExecutor")
     public void crawlingStudentHall() throws IOException {
         log.info("크롤링 실행...");
-        // 크롤링 대상 정보 조회
-        CrawlingTarget studentHallCrawlingTarget =
-                crawlingStudentHallService.findCrawlingTargetBy(UosRestaurantName.STUDENT_HALL);
 
-        CrawlingTarget mainBuildingCrawlingTarget =
-                crawlingStudentHallService.findCrawlingTargetBy(UosRestaurantName.MAIN_BUILDING);
+        List<List<UosRestaurantCrawlingResponse>> crawlingResponseList = new ArrayList<>();
+        for(UosRestaurantName restaurantName : UosRestaurantName.values()) {
+            // 크롤링에 필요한 타겟 정보 조회
+            CrawlingTarget target = crawlingStudentHallService.findCrawlingTargetBy(restaurantName);
 
-        CrawlingTarget museumOfNaturalScienceCrawlingTarget =
-                crawlingStudentHallService.findCrawlingTargetBy(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE);
+            // 크롤링 타겟 크롤링
+            List<UosRestaurantCrawlingResponse> responses = crawler.crawlingFrom(restaurantName.getKrName(),
+                    target.getUrl(), target.getCssQuery());
 
-        CrawlingTarget westernRestaurantCrawlingTarget =
-                crawlingStudentHallService.findCrawlingTargetBy(UosRestaurantName.WESTERN_RESTAURANT);
+            crawlingResponseList.add(responses);
+        }
 
-        // 학생회관 크롤링
-        List<UosRestaurantCrawlingResponse> studentHallCrawlingResponse = crawler.crawlingFrom(UosRestaurantName.STUDENT_HALL.getKrName(),
-                studentHallCrawlingTarget.getUrl(),
-                studentHallCrawlingTarget.getCssQuery());
-
-        // 본관8층 크롤링
-        List<UosRestaurantCrawlingResponse> mainBuildingCrawlingResponse = crawler.crawlingFrom(UosRestaurantName.MAIN_BUILDING.getKrName(),
-                mainBuildingCrawlingTarget.getUrl(),
-                mainBuildingCrawlingTarget.getCssQuery());
-
-        // 자연과학관 크롤링
-        List<UosRestaurantCrawlingResponse> museumOfNaturalScienceCrawlingResponse = crawler.crawlingFrom(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE.getKrName(),
-                museumOfNaturalScienceCrawlingTarget.getUrl(),
-                museumOfNaturalScienceCrawlingTarget.getCssQuery());
-
-        // 양식당 크롤링
-        List<UosRestaurantCrawlingResponse> westernRestaurantCrawlingResponse = crawler.crawlingFrom(UosRestaurantName.WESTERN_RESTAURANT.getKrName(),
-                westernRestaurantCrawlingTarget.getUrl(),
-                westernRestaurantCrawlingTarget.getCssQuery());
-
-        // 크롤링 결과 저장
-        List<List<UosRestaurantCrawlingResponse>> crawlingResponseList = List.of(studentHallCrawlingResponse,
-                mainBuildingCrawlingResponse,
-                museumOfNaturalScienceCrawlingResponse,
-                westernRestaurantCrawlingResponse);
-
+        // 크롤링 데이터 저장
         crawlingStudentHallService.saveAllCrawlingData(crawlingResponseList);
+
         log.info("크롤링 종료...");
     }
 }

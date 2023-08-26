@@ -1,4 +1,4 @@
-package seaung.uoscafeteriamenu.domain;
+package seaung.uoscafeteriamenu;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

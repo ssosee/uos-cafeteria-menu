@@ -8,8 +8,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import seaung.uoscafeteriamenu.crawling.crawler.Crawler;
 import seaung.uoscafeteriamenu.crawling.service.CrawlingUosRestaurantService;
-import seaung.uoscafeteriamenu.domain.ProdInitData;
-import seaung.uoscafeteriamenu.domain.LocalInitData;
 import seaung.uoscafeteriamenu.domain.repository.CrawlingTargetRepository;
 import seaung.uoscafeteriamenu.domain.repository.SkillBlockRepository;
 

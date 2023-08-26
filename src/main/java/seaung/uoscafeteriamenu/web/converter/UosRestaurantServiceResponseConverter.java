@@ -84,6 +84,9 @@ public class UosRestaurantServiceResponseConverter {
                 .build();
     }
 
+    /**
+     * List&lt;UosRestaurantMenuResponse&gt;을 SkillResponse로 변환
+     */
     public SkillResponse toSkillResponseUseSimpleText(String version, List<UosRestaurantMenuResponse> responses) {
 
         // 발화 합치기
