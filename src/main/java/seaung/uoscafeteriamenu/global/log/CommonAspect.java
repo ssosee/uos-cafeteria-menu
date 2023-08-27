@@ -11,6 +11,9 @@ import seaung.uoscafeteriamenu.global.provider.TimeProvider;
 import seaung.uoscafeteriamenu.web.controller.request.kakao.SkillPayload;
 import seaung.uoscafeteriamenu.web.exception.UosRestaurantMenuException;
 
+/**
+ * <a href="https://kim-jong-hyun.tistory.com/143">참고</a>
+ */
 @Slf4j
 @Aspect
 @Component
@@ -21,7 +24,7 @@ public class CommonAspect {
     private final MemberService memberService;
 
     @Around("seaung.uoscafeteriamenu.global.log.AppPointCuts.allController() && args(skillPayload, ..)")
-    public Object doLogInfo(ProceedingJoinPoint joinPoint, SkillPayload skillPayload) throws Throwable {
+    public Object doControllerCommonLogic(ProceedingJoinPoint joinPoint, SkillPayload skillPayload) throws Throwable {
         try {
             log.info("[LOG]={}", joinPoint.getSignature());
 

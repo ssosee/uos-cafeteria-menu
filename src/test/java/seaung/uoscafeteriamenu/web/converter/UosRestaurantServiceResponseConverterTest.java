@@ -81,23 +81,22 @@ class UosRestaurantServiceResponseConverterTest {
                 .hasMessage("스킬 블록을 확인하세요.");
     }
 
-    @Disabled
     @Test
-    @DisplayName("")
-    void test() {
+    @DisplayName("String을 받아 SimpleText형태로 변환한다.")
+    void toSkillResponseUseSimpleText() {
         // given
+        String text = "추천";
 
         // when
-        SkillResponse skillResponse = uosRestaurantServiceResponseConverter.toSkillResponseUseSimpleText(apiVersion, "추천");
+        SkillResponse skillResponse = uosRestaurantServiceResponseConverter.toSkillResponseUseSimpleText(apiVersion, text);
 
         // then
         assertThat(skillResponse).isNotNull();
         assertThat(skillResponse.getTemplate()).isNotNull();
         assertAll(
                 () -> assertThat(skillResponse.getVersion()).isEqualTo("2.0"),
-                () -> assertThat(skillResponse.getTemplate().getOutputs().get(0).getTextCard()).isNotNull(),
-                () -> assertThat(skillResponse.getTemplate().getOutputs().get(0).getTextCard().getText()).contains("라면"),
-                () -> assertThat(skillResponse.getTemplate().getOutputs().get(0).getTextCard().getButtons().get(0)).isNotNull()
+                () -> assertThat(skillResponse.getTemplate().getOutputs().get(0).getSimpleText()).isNotNull(),
+                () -> assertThat(skillResponse.getTemplate().getOutputs().get(0).getSimpleText().getText()).contains(text)
         );
     }
 

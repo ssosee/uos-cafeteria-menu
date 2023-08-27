@@ -3,9 +3,11 @@ package seaung.uoscafeteriamenu.web.controller;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import seaung.uoscafeteriamenu.crawling.utils.CrawlingUtils;
 import seaung.uoscafeteriamenu.domain.entity.*;
+import seaung.uoscafeteriamenu.domain.repository.MemberRepository;
 import seaung.uoscafeteriamenu.domain.repository.SkillBlockRepository;
 import seaung.uoscafeteriamenu.domain.repository.UosRestaurantRepository;
 import seaung.uoscafeteriamenu.web.controller.request.kakao.*;
@@ -24,6 +26,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static seaung.uoscafeteriamenu.domain.entity.UosRestaurantName.*;
 import static seaung.uoscafeteriamenu.domain.entity.UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CommonControllerTest extends ControllerTestSupport {
 
@@ -32,6 +36,9 @@ public class CommonControllerTest extends ControllerTestSupport {
 
     @Autowired
     SkillBlockRepository skillBlockRepository;
+
+    @Autowired
+    MemberRepository memberRepository;
 
     @BeforeEach
     void setUp() {
@@ -56,12 +63,14 @@ public class CommonControllerTest extends ControllerTestSupport {
         uosRestaurantRepository.saveAll(List.of(uosRestaurant1, uosRestaurant2, uosRestaurant3, uosRestaurant4));
 
         SkillPayload skillPayload = createSkillPayload();
+        Pageable pageable = PageRequest.of(0, 1);
 
         // when // then
         mockMvc.perform(post("/api/v1/text-card/uos/restaurant/menu/top1-like")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsBytes(skillPayload))
-                        .content(om.writeValueAsString(PageRequest.of(0, 1))))
+                        .param("page", String.valueOf(pageable.getPageNumber()))
+                        .param("size", String.valueOf(pageable.getPageSize())))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.version").value(SkillResponse.apiVersion))
@@ -90,12 +99,14 @@ public class CommonControllerTest extends ControllerTestSupport {
         uosRestaurantRepository.saveAll(List.of(uosRestaurant1, uosRestaurant2, uosRestaurant3, uosRestaurant4));
 
         SkillPayload skillPayload = createSkillPayload();
+        Pageable pageable = PageRequest.of(0, 1);
 
         // when // then
         mockMvc.perform(post("/api/v1/text-card/uos/restaurant/menu/top1-like")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsBytes(skillPayload))
-                        .content(om.writeValueAsString(PageRequest.of(0, 1))))
+                        .param("page", String.valueOf(pageable.getPageNumber()))
+                        .param("size", String.valueOf(pageable.getPageSize())))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.version").value(SkillResponse.apiVersion))

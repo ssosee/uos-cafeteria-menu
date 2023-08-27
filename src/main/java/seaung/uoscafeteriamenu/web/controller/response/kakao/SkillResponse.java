@@ -28,11 +28,7 @@ public class SkillResponse {
 
     public static SkillResponse ofSimpleText(String version, String text) {
 
-        OutputsDto outputsDto = OutputsDto.builder()
-                .text(text)
-                .build();
-
-        Outputs outputs = Outputs.createOutputs(outputsDto);
+        Outputs outputs = Outputs.createOutputsUseSimpleText(text);
 
         SkillTemplate template = new SkillTemplate();
         template.setOutputs(List.of(outputs));

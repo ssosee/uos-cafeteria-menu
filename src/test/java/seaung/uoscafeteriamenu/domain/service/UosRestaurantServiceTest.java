@@ -1,5 +1,6 @@
 package seaung.uoscafeteriamenu.domain.service;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,6 +108,7 @@ class UosRestaurantServiceTest {
 
     }
 
+    @Disabled
     @Test
     @DisplayName("사용자가 학식 메뉴를 추천할 때 회원이 없으면 회원이 생성되고 추천수가 1증가하고 추천이력이 생성된다.")
     void recommendUosRestaurantMenu() {

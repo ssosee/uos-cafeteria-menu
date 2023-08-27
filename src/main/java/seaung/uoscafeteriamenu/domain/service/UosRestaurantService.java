@@ -37,7 +37,8 @@ public class UosRestaurantService {
     @Transactional
     public UosRestaurantMenuResponse getUosRestaurantMenu(UosRestaurantInput input) {
         // 학식 조회
-        UosRestaurant findUosRestaurant = uosRestaurantRepository.findByCrawlingDateAndRestaurantNameAndMealType(input.getDate(), input.getRestaurantName(), input.getMealType())
+        UosRestaurant findUosRestaurant = uosRestaurantRepository.findByCrawlingDateAndRestaurantNameAndMealType(input.getDate(),
+                        input.getRestaurantName(), input.getMealType())
                 . orElseThrow(() -> new UosRestaurantMenuException(UosRestaurantMenuException.NOT_FOUND_MENU));
 
         // 조회수 증가
@@ -64,12 +65,13 @@ public class UosRestaurantService {
     public String recommendUosRestaurantMenu(RecommendUosRestaurantMenuInput input) {
 
         // 학식 조회
-        UosRestaurant findUosRestaurant = uosRestaurantRepository.findByCrawlingDateAndRestaurantNameAndMealType(input.getDate(), input.getRestaurantName(), input.getMealType())
+        UosRestaurant findUosRestaurant = uosRestaurantRepository.findByCrawlingDateAndRestaurantNameAndMealType(input.getDate(),
+                        input.getRestaurantName(), input.getMealType())
                 .orElseThrow(() -> new UosRestaurantMenuException(UosRestaurantMenuException.NOT_FOUND_MENU));
 
         // 회원 조회
         Member findMember = memberRepository.findByBotUserId(input.getBotUserId())
-                .orElseThrow(() -> new Membe rException(MemberException.NOT_FOUND_MEMBER));
+                .orElseThrow(() -> new MemberException(MemberException.NOT_FOUND_MEMBER));
 
         // 추천 이력 조회
         boolean isMenuLike = menuLikeRepository

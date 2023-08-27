@@ -16,19 +16,21 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void registerMemberOrIncreaseMemberViewCount(String botUserId) {
+    public Member registerMemberOrIncreaseMemberViewCount(String botUserId) {
         // 회원 조회
         Optional<Member> findMember = memberRepository.findByBotUserId(botUserId);
 
         // 회원이 없으면 회원을 생성
         if(findMember.isEmpty()) {
             Member member = Member.create(botUserId, 1L);
-            memberRepository.save(member);
+            return memberRepository.save(member);
         }
         // 회원이 있으면 방문횟수 증가
         else {
             Member member = findMember.get();
             member.increaseVisitCount();
+
+            return member;
         }
     }
 }

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import seaung.uoscafeteriamenu.crawling.utils.CrawlingUtils;
 import seaung.uoscafeteriamenu.domain.entity.*;
@@ -147,12 +148,14 @@ class TextCardUosRestaurantControllerTest extends ControllerTestSupport {
         uosRestaurantRepository.saveAll(List.of(uosRestaurant1, uosRestaurant2, uosRestaurant3, uosRestaurant4));
 
         SkillPayload skillPayload = createSkillPayload();
+        Pageable pageable = PageRequest.of(0, 1);
 
         // when // then
         mockMvc.perform(post("/api/v1/text-card/uos/restaurant/menu/top1-view")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsBytes(skillPayload))
-                        .content(om.writeValueAsString(PageRequest.of(0, 1))))
+                        .param("page", String.valueOf(pageable.getPageNumber()))
+                        .param("size", String.valueOf(pageable.getPageSize())))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.version").value(SkillResponse.apiVersion))
@@ -183,12 +186,14 @@ class TextCardUosRestaurantControllerTest extends ControllerTestSupport {
         uosRestaurantRepository.saveAll(List.of(uosRestaurant1, uosRestaurant2, uosRestaurant3, uosRestaurant4));
 
         SkillPayload skillPayload = createSkillPayload();
+        Pageable pageable = PageRequest.of(0, 1);
 
         // when // then
         mockMvc.perform(post("/api/v1/text-card/uos/restaurant/menu/top1-like")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsBytes(skillPayload))
-                        .content(om.writeValueAsString(PageRequest.of(0, 1))))
+                        .param("page", String.valueOf(pageable.getPageNumber()))
+                        .param("size", String.valueOf(pageable.getPageSize())))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.version").value(SkillResponse.apiVersion))
@@ -325,11 +330,10 @@ class TextCardUosRestaurantControllerTest extends ControllerTestSupport {
     }
 
     private static User createUser() {
-        User user = User.builder()
+        return User.builder()
                 .id("botUserKey")
                 .type("botUserType")
                 .build();
-        return user;
     }
 
     private UosRestaurant createUosRestaurant(String date, UosRestaurantName uosRestaurantName, MealType mealType, String menu) {
