@@ -17,4 +17,8 @@ public class AppPointCuts {
     @Pointcut("execution(* *..*Schedule.*(..))")
     public void allSchedule() {}
 
+    // 클래스 패턴 이름이 *UosRestaurantService
+    @Pointcut("execution(* *..UosRestaurantService.*(..))")
+    public void uosRestaurantService() {}
+
 }

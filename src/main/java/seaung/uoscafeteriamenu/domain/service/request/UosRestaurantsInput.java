@@ -9,10 +9,12 @@ import seaung.uoscafeteriamenu.domain.entity.UosRestaurantName;
 public class UosRestaurantsInput {
     private String date;
     private MealType mealType;
+    private String botUserId;
 
     @Builder
-    private UosRestaurantsInput(String date, MealType mealType) {
+    private UosRestaurantsInput(String date, MealType mealType, String botUserId) {
         this.date = date;
         this.mealType = mealType;
+        this.botUserId = botUserId;
     }
 }

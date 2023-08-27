@@ -14,11 +14,13 @@ import seaung.uoscafeteriamenu.domain.service.request.RecommendUosRestaurantMenu
 import seaung.uoscafeteriamenu.domain.service.request.UosRestaurantInput;
 import seaung.uoscafeteriamenu.domain.service.request.UosRestaurantsInput;
 import seaung.uoscafeteriamenu.domain.service.response.UosRestaurantMenuResponse;
+import seaung.uoscafeteriamenu.web.exception.MemberException;
 import seaung.uoscafeteriamenu.web.exception.MenuLikeException;
 import seaung.uoscafeteriamenu.web.exception.UosRestaurantMenuException;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,7 +37,8 @@ public class UosRestaurantService {
     @Transactional
     public UosRestaurantMenuResponse getUosRestaurantMenu(UosRestaurantInput input) {
         // 학식 조회
-        UosRestaurant findUosRestaurant = uosRestaurantRepository.findByCrawlingDateAndRestaurantNameAndMealType(input.getDate(), input.getRestaurantName(), input.getMealType())
+        UosRestaurant findUosRestaurant = uosRestaurantRepository.findByCrawlingDateAndRestaurantNameAndMealType(input.getDate(),
+                        input.getRestaurantName(), input.getMealType())
                 . orElseThrow(() -> new UosRestaurantMenuException(UosRestaurantMenuException.NOT_FOUND_MENU));
 
         // 조회수 증가
@@ -62,13 +65,13 @@ public class UosRestaurantService {
     public String recommendUosRestaurantMenu(RecommendUosRestaurantMenuInput input) {
 
         // 학식 조회
-        UosRestaurant findUosRestaurant = uosRestaurantRepository.findByCrawlingDateAndRestaurantNameAndMealType(input.getDate(), input.getRestaurantName(), input.getMealType())
+        UosRestaurant findUosRestaurant = uosRestaurantRepository.findByCrawlingDateAndRestaurantNameAndMealType(input.getDate(),
+                        input.getRestaurantName(), input.getMealType())
                 .orElseThrow(() -> new UosRestaurantMenuException(UosRestaurantMenuException.NOT_FOUND_MENU));
 
-        // 회원 조회 / 회원이 없으면 회원 생성
+        // 회원 조회
         Member findMember = memberRepository.findByBotUserId(input.getBotUserId())
-                .orElseGet(() -> Member.create(input.getBotUserId()));
-        memberRepository.save(findMember);
+                .orElseThrow(() -> new MemberException(MemberException.NOT_FOUND_MEMBER));
 
         // 추천 이력 조회
         boolean isMenuLike = menuLikeRepository

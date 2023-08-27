@@ -1,4 +1,4 @@
-package seaung.uoscafeteriamenu.domain;
+package seaung.uoscafeteriamenu;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,9 +7,11 @@ import org.springframework.context.event.EventListener;
 import seaung.uoscafeteriamenu.crawling.crawler.Crawler;
 import seaung.uoscafeteriamenu.crawling.crawler.UosRestaurantCrawlingResponse;
 import seaung.uoscafeteriamenu.crawling.service.CrawlingUosRestaurantService;
+import seaung.uoscafeteriamenu.domain.entity.BlockName;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurantName;
 import seaung.uoscafeteriamenu.domain.entity.CrawlingTarget;
 import seaung.uoscafeteriamenu.domain.repository.CrawlingTargetRepository;
+import seaung.uoscafeteriamenu.domain.repository.SkillBlockRepository;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,11 +21,12 @@ import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
-public class TestInitData {
+public class ProdInitData {
 
     private final CrawlingTargetRepository crawlingTargetRepository;
     private final Crawler crawler;
     private final CrawlingUosRestaurantService crawlingStudentHallService;
+    private final SkillBlockRepository skillBlockRepository;
 
     private final String cssQuery = "div.listType02#week table tbody tr";
     private final String studentHallUrl = "https://www.uos.ac.kr/food/placeList.do?epTicket=INV";
@@ -33,6 +36,7 @@ public class TestInitData {
     private final String welfareTeamTel = "02-6490-5855";
 
     private final Map<UosRestaurantName, String> urlMap = new HashMap<>();
+    private final Map<BlockName, String> bockIdMap = new HashMap<>();
 
     @EventListener(ApplicationReadyEvent.class)
     public void init() throws IOException {

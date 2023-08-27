@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import seaung.uoscafeteriamenu.domain.service.UosRestaurantService;
 import seaung.uoscafeteriamenu.domain.service.response.UosRestaurantMenuResponse;
-import seaung.uoscafeteriamenu.domain.service.response.UosRestaurantsMenuResponse;
 import seaung.uoscafeteriamenu.global.provider.TimeProvider;
 import seaung.uoscafeteriamenu.web.controller.request.kakao.SkillPayload;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.SkillResponse;
+import seaung.uoscafeteriamenu.web.converter.UosRestaurantServiceResponseConverter;
 
 import static seaung.uoscafeteriamenu.web.controller.response.kakao.SkillResponse.apiVersion;
 
@@ -28,7 +28,7 @@ public class TextCardUosRestaurantController {
 
     private final UosRestaurantService uosRestaurantService;
     private final TimeProvider timeProvider;
-    private final String bockId = "64d75083c800862a54172c4a"; // 추천하기 블록 아이디
+    private final UosRestaurantServiceResponseConverter uosRestaurantServiceResponseConverter;
 
     /**
      * 식당이름, 식사종류로 금일 식당 메뉴 조회
@@ -36,9 +36,15 @@ public class TextCardUosRestaurantController {
     @PostMapping("/menu")
     public ResponseEntity<SkillResponse> getUosRestaurantMenu(@RequestBody SkillPayload payload) {
 
-        UosRestaurantMenuResponse response = uosRestaurantService.getUosRestaurantMenu(payload.toUosRestaurantInput(timeProvider));
+        // 식당이름, 식사종류로 금일 식당 메뉴 조회
+        UosRestaurantMenuResponse uosRestaurantMenuResponse = uosRestaurantService
+                .getUosRestaurantMenu(payload.toUosRestaurantInput(timeProvider));
 
-        return new ResponseEntity<>(response.toSkillResponseUseTextCard(apiVersion, bockId, payload.toUosRestaurantInput(timeProvider)), HttpStatus.OK);
+        // 카카오톡 응답으로 변경
+        SkillResponse response = uosRestaurantServiceResponseConverter
+                .toSkillResponseUseTextCardWithButtonAndQuickReplies(apiVersion, uosRestaurantMenuResponse);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
@@ -47,9 +53,15 @@ public class TextCardUosRestaurantController {
     @PostMapping("/menu/recommend")
     public ResponseEntity<SkillResponse> recommendUosRestaurantMenu(@RequestBody SkillPayload payload) {
 
-        String response = uosRestaurantService.recommendUosRestaurantMenu(payload.toUosRestaurantInputUseActionClientExtra(timeProvider));
+        // 메뉴 추천
+        String recommendUosRestaurantMenu = uosRestaurantService
+                .recommendUosRestaurantMenu(payload.toUosRestaurantInputUseActionClientExtra(timeProvider));
 
-        return new ResponseEntity<>(SkillResponse.createSkillResponseUseSimpleText(apiVersion, response), HttpStatus.OK);
+        // 카카오톡 응답으로 변경
+        SkillResponse response = uosRestaurantServiceResponseConverter
+                .toSkillResponseUseSimpleText(apiVersion, recommendUosRestaurantMenu);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
@@ -60,11 +72,15 @@ public class TextCardUosRestaurantController {
     public ResponseEntity<SkillResponse> getTop1UosRestaurantMenuByView(@RequestBody SkillPayload payload,
                                                                         @PageableDefault(page = 0, size = 1) Pageable pageable) {
 
+        // 인기 메뉴 조회
         Page<UosRestaurantMenuResponse> top1UosRestaurantMenuByView
                 = uosRestaurantService.findTop1UosRestaurantMenuByView(pageable, timeProvider.getCurrentLocalDateTime());
-        UosRestaurantsMenuResponse response = new UosRestaurantsMenuResponse(top1UosRestaurantMenuByView.getContent());
 
-        return new ResponseEntity<>(response.toSkillResponseUseTextCard(apiVersion, bockId), HttpStatus.OK);
+        // 카카오톡 응답으로 변경
+        SkillResponse response = uosRestaurantServiceResponseConverter
+                .toSkillResponseUseTextCardWithButton(apiVersion, top1UosRestaurantMenuByView.getContent());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
@@ -75,10 +91,14 @@ public class TextCardUosRestaurantController {
     public ResponseEntity<SkillResponse> getTop1UosRestaurantMenuByLikeCount(@RequestBody SkillPayload payload,
                                                                         @PageableDefault(page = 0, size = 1) Pageable pageable) {
 
+        // 인기 메뉴 조회
         Page<UosRestaurantMenuResponse> top1UosRestaurantMenuByView
                 = uosRestaurantService.findTop1UosRestaurantMenuByLikeCount(pageable, timeProvider.getCurrentLocalDateTime());
-        UosRestaurantsMenuResponse response = new UosRestaurantsMenuResponse(top1UosRestaurantMenuByView.getContent());
 
-        return new ResponseEntity<>(response.toSkillResponseUseTextCard(apiVersion, bockId), HttpStatus.OK);
+        // 카카오톡 응답으로 변경
+        SkillResponse response = uosRestaurantServiceResponseConverter
+                .toSkillResponseUseTextCardWithButton(apiVersion, top1UosRestaurantMenuByView.getContent());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

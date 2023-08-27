@@ -3,10 +3,8 @@ package seaung.uoscafeteriamenu.web.controller.response.kakao;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Data;
-import seaung.uoscafeteriamenu.domain.service.request.UosRestaurantInput;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.outputs.Outputs;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.outputs.OutputsDto;
-import seaung.uoscafeteriamenu.web.controller.response.kakao.outputs.SimpleText;
 
 import java.util.List;
 import java.util.Map;
@@ -28,13 +26,9 @@ public class SkillResponse {
         this.data = data;
     }
 
-    public static SkillResponse createSkillResponseUseSimpleText(String version, String text) {
+    public static SkillResponse ofSimpleText(String version, String text) {
 
-        OutputsDto outputsDto = OutputsDto.builder()
-                .text(text)
-                .build();
-
-        Outputs outputs = Outputs.findOutputs(outputsDto);
+        Outputs outputs = Outputs.createOutputsUseSimpleText(text);
 
         SkillTemplate template = new SkillTemplate();
         template.setOutputs(List.of(outputs));

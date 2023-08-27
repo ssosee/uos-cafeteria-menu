@@ -70,12 +70,20 @@ public class CrawlingUosRestaurantService extends CrawlingService {
                     builder.mealType(mealType);
                     UosRestaurant uosRestaurant = builder.build();
 
-                    uosRestaurants.add(uosRestaurant);
+                    // 학교에서 메뉴를 제공한 경우에만 저장
+                    addUosRestaurant(uosRestaurant, uosRestaurants);
                 }
             }
         }
 
         uosRestaurantRepository.saveAll(uosRestaurants);
+    }
+
+    // 학교에서 메뉴를 제공한 경우
+    private static void addUosRestaurant(UosRestaurant uosRestaurant, List<UosRestaurant> uosRestaurants) {
+        if(!uosRestaurant.getMenuDesc().equals(CrawlingUtils.NOT_PROVIDED_MENU)) {
+            uosRestaurants.add(uosRestaurant);
+        }
     }
 
     private boolean isSameDateInDataBase(String crawlingDate, UosRestaurantName restaurantName, MealType mealType) {

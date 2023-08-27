@@ -13,9 +13,7 @@ public abstract class CrawlingService {
     }
 
     public CrawlingTarget findCrawlingTargetBy(UosRestaurantName restaurantsName) {
-        CrawlingTarget uosRestaurantsCrawlingInfo = uosRestaurantsCrawlingInfoRepository.findByRestaurantsName(restaurantsName)
+        return uosRestaurantsCrawlingInfoRepository.findByRestaurantsName(restaurantsName)
                 .orElseThrow(() -> new IllegalArgumentException("식당 정보가 없습니다."));
-
-        return uosRestaurantsCrawlingInfo;
     }
 }

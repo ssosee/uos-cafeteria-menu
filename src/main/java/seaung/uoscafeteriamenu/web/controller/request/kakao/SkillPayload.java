@@ -29,6 +29,7 @@ public class SkillPayload {
 
     public UosRestaurantInput toUosRestaurantInput(TimeProvider timeProvider) {
         return UosRestaurantInput.builder()
+                .botUserId(userRequest.getUser().getId())
                 .date(CrawlingUtils.toDateString(timeProvider.getCurrentLocalDateTime()))
                 .restaurantName(UosRestaurantName.fromName(action.getParams().get("restaurantName")))
                 .mealType(MealType.valueOf(action.getParams().get("mealType")))
@@ -46,6 +47,7 @@ public class SkillPayload {
 
     public UosRestaurantsInput toUosRestaurantsInput(TimeProvider timeProvider) {
         return UosRestaurantsInput.builder()
+                .botUserId(userRequest.getUser().getId())
                 .date(CrawlingUtils.toDateString(timeProvider.getCurrentLocalDateTime()))
                 .mealType(MealType.valueOf(action.getParams().get("mealType")))
                 .build();

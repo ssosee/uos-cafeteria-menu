@@ -4,16 +4,15 @@ import lombok.Data;
 import seaung.uoscafeteriamenu.domain.entity.MealType;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurantName;
 import seaung.uoscafeteriamenu.domain.service.request.UosRestaurantInput;
-import seaung.uoscafeteriamenu.domain.service.request.UosRestaurantsInput;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.SkillResponse;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.SkillTemplate;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.outputs.Outputs;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.outputs.OutputsDto;
-import seaung.uoscafeteriamenu.web.exception.UosRestaurantMenuException;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Deprecated
 @Data
 public class UosRestaurantsMenuResponse {
 
@@ -31,7 +30,7 @@ public class UosRestaurantsMenuResponse {
                 .text(texts)
                 .build();
 
-        Outputs outputs = Outputs.findOutputs(outputsDto);
+        Outputs outputs = Outputs.createOutputs(outputsDto);
 
         SkillTemplate template = new SkillTemplate();
         template.setOutputs(List.of(outputs));
@@ -56,7 +55,7 @@ public class UosRestaurantsMenuResponse {
                 .input(input)
                 .build();
 
-        Outputs outputs = Outputs.findOutputs(outputsDto);
+        Outputs outputs = Outputs.createOutputs(outputsDto);
 
         SkillTemplate template = new SkillTemplate();
 

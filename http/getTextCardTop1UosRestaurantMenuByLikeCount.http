@@ -20,7 +20,7 @@ Content-Type: application/json
     "utterance": "발화 내용",
     "lang": null,
     "user": {
-      "id": "034623",
+      "id": "024623",
       "type": "accountId",
       "properties": {}
     }
