@@ -2,15 +2,15 @@ package seaung.uoscafeteriamenu;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import seaung.uoscafeteriamenu.crawling.crawler.Crawler;
 import seaung.uoscafeteriamenu.crawling.crawler.UosRestaurantCrawlingResponse;
 import seaung.uoscafeteriamenu.crawling.service.CrawlingUosRestaurantService;
-import seaung.uoscafeteriamenu.domain.entity.BlockName;
-import seaung.uoscafeteriamenu.domain.entity.CrawlingTarget;
-import seaung.uoscafeteriamenu.domain.entity.SkillBlock;
-import seaung.uoscafeteriamenu.domain.entity.UosRestaurantName;
+import seaung.uoscafeteriamenu.domain.entity.*;
+import seaung.uoscafeteriamenu.domain.repository.ApiUserMemberRepository;
+import seaung.uoscafeteriamenu.domain.repository.ApikeyRepository;
 import seaung.uoscafeteriamenu.domain.repository.CrawlingTargetRepository;
 import seaung.uoscafeteriamenu.domain.repository.SkillBlockRepository;
 
@@ -28,6 +28,8 @@ public class LocalInitData {
     private final Crawler crawler;
     private final CrawlingUosRestaurantService crawlingStudentHallService;
     private final SkillBlockRepository skillBlockRepository;
+    private final ApikeyRepository apikeyRepository;
+    private final ApiUserMemberRepository apiUserMemberRepository;
 
     private final String cssQuery = "div.listType02#week table tbody tr";
     private final String studentHallUrl = "https://www.uos.ac.kr/food/placeList.do?epTicket=INV";
@@ -36,11 +38,21 @@ public class LocalInitData {
     private final String westernRestaurantUrl = "https://www.uos.ac.kr/food/placeList.do?rstcde=030&menuid=2000005006002000000&epTicket=INV";
     private final String welfareTeamTel = "02-6490-5855";
 
+    @Value("${botApikey}")
+    private String key;
+
     private final Map<UosRestaurantName, String> urlMap = new HashMap<>();
-    private final Map<BlockName, String> bockIdMap = new HashMap<>();
 
     @EventListener(ApplicationReadyEvent.class)
     public void init() throws IOException {
+
+        // apikey 사용 회원 초기화
+        ApiUseMember apiUseMember = ApiUseMember.create("master", "howisitgoin@kakao.com");
+        apiUserMemberRepository.save(apiUseMember);
+
+        // apikey 초기화
+        Apikey apikey = Apikey.create(key, apiUseMember);
+        apikeyRepository.save(apikey);
 
         // 스킬블록 초기화
         skillBlockRepository.saveAll(createSkillBlocks());

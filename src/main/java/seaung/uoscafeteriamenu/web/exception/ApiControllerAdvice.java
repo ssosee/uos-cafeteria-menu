@@ -18,12 +18,21 @@ import java.util.List;
 @RestControllerAdvice
 public class ApiControllerAdvice {
 
+    public static String errorMessage = "시스템.. 에러 발생..\n나를 만든 휴.먼이 수리중 이다.\n\n내.친구. 조금만 기다려라..";
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<SkillResponse> runtimeException(RuntimeException e) {
-        String errorMessage = "시스템.. 에러 발생..\n나를 만든 휴.먼이 수리중 이다.\n\n내.친구. 조금만 기다려라..";
         SkillResponse skillResponse = createSimpleTextResponse(errorMessage);
 
         //log.error("[기타 예외 발생] ", e);
+
+        // 400으로 보내면 챗봇이 응답을 안준다.
+        return new ResponseEntity<>(skillResponse, HttpStatus.OK);
+    }
+
+    @ExceptionHandler(ApikeyException.class)
+    public ResponseEntity<SkillResponse> apikeyException(ApikeyException e) {
+        SkillResponse skillResponse = createSimpleTextResponse(e.getMessage()+" "+errorMessage);
 
         // 400으로 보내면 챗봇이 응답을 안준다.
         return new ResponseEntity<>(skillResponse, HttpStatus.OK);

@@ -37,6 +37,14 @@ class SimpleTextUosRestaurantControllerTest extends ControllerTestSupport {
     void setup() {
         // 스킬블록 초기화
         skillBlockRepository.saveAll(createSkillBlocks());
+
+        // apikey 사용 회원 초기화
+        ApiUseMember apiUseMember = ApiUseMember.create("master", "howisitgoin@kakao.com");
+        apiUserMemberRepository.save(apiUseMember);
+
+        // apikey 저장
+        Apikey apikey = Apikey.create(botApikey, apiUseMember);
+        apikeyRepository.save(apikey);
     }
 
     @Test
@@ -55,6 +63,7 @@ class SimpleTextUosRestaurantControllerTest extends ControllerTestSupport {
         // when // then
         mockMvc.perform(post("/api/v1/simple-text/uos/restaurant/menu")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("botApikey", botApikey)
                         .content(om.writeValueAsBytes(skillPayload)))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -82,6 +91,7 @@ class SimpleTextUosRestaurantControllerTest extends ControllerTestSupport {
         // when // then
         mockMvc.perform(post("/api/v1/simple-text/uos/restaurant/menu")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("botApikey", botApikey)
                         .content(om.writeValueAsBytes(skillPayload)))
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
@@ -119,6 +129,7 @@ class SimpleTextUosRestaurantControllerTest extends ControllerTestSupport {
         // when // then
         mockMvc.perform(post("/api/v1/simple-text/uos/restaurants/menu")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("botApikey", botApikey)
                         .content(om.writeValueAsBytes(skillPayload)))
                 .andDo(print())
                 .andExpect(status().isOk())

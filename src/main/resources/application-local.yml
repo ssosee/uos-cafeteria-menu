@@ -1,3 +1,5 @@
+botApikey: test-key
+
 spring:
   config:
     activate:
