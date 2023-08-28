@@ -12,6 +12,7 @@ import seaung.uoscafeteriamenu.domain.repository.SkillBlockRepository;
 import seaung.uoscafeteriamenu.domain.repository.UosRestaurantRepository;
 import seaung.uoscafeteriamenu.web.controller.request.kakao.*;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.SkillResponse;
+import seaung.uoscafeteriamenu.web.exception.ApikeyException;
 import seaung.uoscafeteriamenu.web.exception.UosRestaurantMenuException;
 
 import java.time.LocalDateTime;
@@ -19,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -28,6 +30,7 @@ import static seaung.uoscafeteriamenu.domain.entity.UosRestaurantName.*;
 import static seaung.uoscafeteriamenu.domain.entity.UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static seaung.uoscafeteriamenu.web.exception.ApiControllerAdvice.errorMessage;
 
 public class CommonControllerTest extends ControllerTestSupport {
 
@@ -42,7 +45,16 @@ public class CommonControllerTest extends ControllerTestSupport {
 
     @BeforeEach
     void setUp() {
+        // 스킬블록 초기화
         skillBlockRepository.saveAll(createSkillBlocks());
+
+        // apikey 사용 회원 초기화
+        ApiUseMember apiUseMember = ApiUseMember.create("master", "howisitgoin@kakao.com");
+        apiUserMemberRepository.save(apiUseMember);
+
+        // apikey 저장
+        Apikey apikey = Apikey.create(botApikey, apiUseMember);
+        apikeyRepository.save(apikey);
     }
 
     @Test
@@ -68,6 +80,7 @@ public class CommonControllerTest extends ControllerTestSupport {
         // when // then
         mockMvc.perform(post("/api/v1/text-card/uos/restaurant/menu/top1-like")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("botApikey", botApikey)
                         .content(om.writeValueAsBytes(skillPayload))
                         .param("page", String.valueOf(pageable.getPageNumber()))
                         .param("size", String.valueOf(pageable.getPageSize())))
@@ -104,6 +117,7 @@ public class CommonControllerTest extends ControllerTestSupport {
         // when // then
         mockMvc.perform(post("/api/v1/text-card/uos/restaurant/menu/top1-like")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("botApikey", botApikey)
                         .content(om.writeValueAsBytes(skillPayload))
                         .param("page", String.valueOf(pageable.getPageNumber()))
                         .param("size", String.valueOf(pageable.getPageSize())))
@@ -115,6 +129,43 @@ public class CommonControllerTest extends ControllerTestSupport {
                 .andExpect(jsonPath("$.template.outputs[0].simpleText").isNotEmpty())
                 .andExpect(jsonPath("$.template.outputs[0].simpleText.text")
                         .value(UosRestaurantMenuException.NOT_PROVIDE_MENU_AT_WEEKEND));
+    }
+
+    @Test
+    @DisplayName("botApikey 헤더가 알맞지 않은 경우 예외가 발생한다.")
+    void botApikeyException() throws Exception {
+        // given
+        // 현재 시간을 고정할 시간 생성(토요일)
+        LocalDateTime fixedDateTime = LocalDateTime.of(2023, 8, 20, 10, 59, 59);
+        when(timeProvider.getCurrentLocalDateTime()).thenReturn(fixedDateTime);
+
+        // 금요일
+        LocalDateTime friday = LocalDateTime.of(2023, 8, 18, 10, 59, 59);
+        String date = CrawlingUtils.toDateString(friday);
+        UosRestaurant uosRestaurant1 = createUosRestaurant(date, STUDENT_HALL, MealType.BREAKFAST, "라면", 0, 0);
+        UosRestaurant uosRestaurant2 = createUosRestaurant(date, MAIN_BUILDING, MealType.BREAKFAST, "김밥", 1, 1);
+        UosRestaurant uosRestaurant3 = createUosRestaurant(date, WESTERN_RESTAURANT, MealType.BREAKFAST, "돈까스", 2, 2);
+        UosRestaurant uosRestaurant4 = createUosRestaurant(date, MUSEUM_OF_NATURAL_SCIENCE, MealType.BREAKFAST, "제육", 3, 2);
+        uosRestaurantRepository.saveAll(List.of(uosRestaurant1, uosRestaurant2, uosRestaurant3, uosRestaurant4));
+
+        SkillPayload skillPayload = createSkillPayload();
+        Pageable pageable = PageRequest.of(0, 1);
+
+        // when // then
+        mockMvc.perform(post("/api/v1/text-card/uos/restaurant/menu/top1-like")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("botApikey", "error")
+                        .content(om.writeValueAsBytes(skillPayload))
+                        .param("page", String.valueOf(pageable.getPageNumber()))
+                        .param("size", String.valueOf(pageable.getPageSize())))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.version").value(SkillResponse.apiVersion))
+                .andExpect(jsonPath("$.template").isNotEmpty())
+                .andExpect(jsonPath("$.template.outputs").isArray())
+                .andExpect(jsonPath("$.template.outputs[0].simpleText").isNotEmpty())
+                .andExpect(jsonPath("$.template.outputs[0].simpleText.text")
+                        .value(ApikeyException.VALID_API_KEY_CODE+" "+errorMessage));
     }
 
     private SkillPayload createSkillPayload() {

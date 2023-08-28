@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import seaung.uoscafeteriamenu.crawling.crawler.Crawler;
 import seaung.uoscafeteriamenu.crawling.service.CrawlingUosRestaurantService;
+import seaung.uoscafeteriamenu.domain.repository.ApiUserMemberRepository;
+import seaung.uoscafeteriamenu.domain.repository.ApikeyRepository;
 import seaung.uoscafeteriamenu.domain.repository.CrawlingTargetRepository;
 import seaung.uoscafeteriamenu.domain.repository.SkillBlockRepository;
 
@@ -28,7 +30,14 @@ public class UosCafeteriaMenuApplication {
 
     @Bean
     @Profile("local")
-    public LocalInitData LocalInitData(CrawlingTargetRepository crawlingTargetRepository, Crawler crawler, CrawlingUosRestaurantService crawlingStudentHallService, SkillBlockRepository skillBlockRepository) {
-        return new LocalInitData(crawlingTargetRepository, crawler, crawlingStudentHallService, skillBlockRepository);
+    public LocalInitData LocalInitData(CrawlingTargetRepository crawlingTargetRepository,
+                                       Crawler crawler,
+                                       CrawlingUosRestaurantService crawlingStudentHallService,
+                                       SkillBlockRepository skillBlockRepository,
+                                       ApikeyRepository apikeyRepository,
+                                       ApiUserMemberRepository apiUserMemberRepository) {
+        return new LocalInitData(crawlingTargetRepository, crawler,
+                crawlingStudentHallService, skillBlockRepository,
+                apikeyRepository, apiUserMemberRepository);
     }
 }

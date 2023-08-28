@@ -1,3 +1,5 @@
+botApikey: test-botApikey
+
 spring:
   jpa:
     hibernate:

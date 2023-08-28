@@ -1,10 +1,8 @@
 package seaung.uoscafeteriamenu.web.controller;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,15 +11,11 @@ import seaung.uoscafeteriamenu.crawling.utils.CrawlingUtils;
 import seaung.uoscafeteriamenu.domain.entity.*;
 import seaung.uoscafeteriamenu.domain.repository.SkillBlockRepository;
 import seaung.uoscafeteriamenu.domain.repository.UosRestaurantRepository;
-import seaung.uoscafeteriamenu.global.provider.TimeProvider;
 import seaung.uoscafeteriamenu.web.controller.request.kakao.*;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.SkillResponse;
 import seaung.uoscafeteriamenu.web.exception.UosRestaurantMenuException;
 
-import java.time.Clock;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +41,14 @@ class TextCardUosRestaurantControllerTest extends ControllerTestSupport {
     void setup() {
         // 스킬블록 초기화
         skillBlockRepository.saveAll(createSkillBlocks());
+
+        // apikey 사용 회원 초기화
+        ApiUseMember apiUseMember = ApiUseMember.create("master", "howisitgoin@kakao.com");
+        apiUserMemberRepository.save(apiUseMember);
+
+        // apikey 저장
+        Apikey apikey = Apikey.create(botApikey, apiUseMember);
+        apikeyRepository.save(apikey);
     }
 
     @Test
@@ -65,6 +67,7 @@ class TextCardUosRestaurantControllerTest extends ControllerTestSupport {
         // when // then
         mockMvc.perform(post("/api/v1/text-card/uos/restaurant/menu")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("botApikey", botApikey)
                         .content(om.writeValueAsBytes(skillPayload)))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -94,6 +97,7 @@ class TextCardUosRestaurantControllerTest extends ControllerTestSupport {
         // when // then
         mockMvc.perform(post("/api/v1/text-card/uos/restaurant/menu")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("botApikey", botApikey)
                         .content(om.writeValueAsBytes(skillPayload)))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -121,6 +125,7 @@ class TextCardUosRestaurantControllerTest extends ControllerTestSupport {
         // when // then
         mockMvc.perform(post("/api/v1/text-card/uos/restaurant/menu/recommend")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("botApikey", botApikey)
                         .content(om.writeValueAsBytes(skillPayload)))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -153,6 +158,7 @@ class TextCardUosRestaurantControllerTest extends ControllerTestSupport {
         // when // then
         mockMvc.perform(post("/api/v1/text-card/uos/restaurant/menu/top1-view")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("botApikey", botApikey)
                         .content(om.writeValueAsBytes(skillPayload))
                         .param("page", String.valueOf(pageable.getPageNumber()))
                         .param("size", String.valueOf(pageable.getPageSize())))
@@ -191,6 +197,7 @@ class TextCardUosRestaurantControllerTest extends ControllerTestSupport {
         // when // then
         mockMvc.perform(post("/api/v1/text-card/uos/restaurant/menu/top1-like")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("botApikey", botApikey)
                         .content(om.writeValueAsBytes(skillPayload))
                         .param("page", String.valueOf(pageable.getPageNumber()))
                         .param("size", String.valueOf(pageable.getPageSize())))
@@ -220,6 +227,7 @@ class TextCardUosRestaurantControllerTest extends ControllerTestSupport {
         // when // then
         mockMvc.perform(post("/api/v1/text-card/uos/restaurant/menu/top1-like")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("botApikey", botApikey)
                         .content(om.writeValueAsBytes(skillPayload)))
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
@@ -242,6 +250,7 @@ class TextCardUosRestaurantControllerTest extends ControllerTestSupport {
         // when // then
         mockMvc.perform(post("/api/v1/text-card/uos/restaurant/menu/top1-view")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("botApikey", botApikey)
                         .content(om.writeValueAsBytes(skillPayload)))
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
