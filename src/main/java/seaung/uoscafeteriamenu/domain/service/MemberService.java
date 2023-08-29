@@ -19,29 +19,36 @@ public class MemberService {
     private final CacheMemberRepository cacheMemberRepository;
 
     public void registerMemberOrIncreaseMemberViewCount(String botUserId) {
+        // 캐시에 회원이 존재하면 방문횟수 증가
+        if(isCacheMemberInCacheAndIncreaseVisitCount(botUserId)) return;
+        // 회원을 생성하고 DB와 cache에 저장
+        createMemberInDatabaseAndCache(botUserId);
+    }
+
+    private boolean isCacheMemberInCacheAndIncreaseVisitCount(String botUserId) {
         // 캐시에서 회원 조회
         Optional<CacheMember> findCacheMember = cacheMemberRepository.findById(botUserId);
         // 캐시에 회원이 존재하면 방문횟수 증가
         if(findCacheMember.isPresent()) {
-            findCacheMember.get().increaseViewCount();
-            return;
+            CacheMember cacheMember = findCacheMember.get();
+            cacheMember.increaseVisitCount();
+            cacheMemberRepository.save(cacheMember);
+            return true;
         }
-
-        // 회원이 없으면 회원을 생성하고 DB와 cache에 저장
-        createOrUpdateMemberInDatabaseAndCache(botUserId);
+        return false;
     }
 
     @Transactional
-    private void createOrUpdateMemberInDatabaseAndCache(String botUserId) {
-        // 캐시에 회원이 없으면 DB에서 회원 조회
+    public void createMemberInDatabaseAndCache(String botUserId) {
+        // DB에서 회원 조회
         Optional<Member> findMember = memberRepository.findByBotUserId(botUserId);
 
         // 회원이 없으면 회원을 생성하고 DB와 cache에 저장
         if(findMember.isEmpty()) {
-            Member member = Member.create(botUserId, 1L);
-            memberRepository.save(member);
+            Member newMember = Member.create(botUserId, 1L);
+            memberRepository.save(newMember);
 
-            CacheMember cacheMember = CacheMember.of(member);
+            CacheMember cacheMember = CacheMember.of(newMember);
             cacheMemberRepository.save(cacheMember);
         }
     }

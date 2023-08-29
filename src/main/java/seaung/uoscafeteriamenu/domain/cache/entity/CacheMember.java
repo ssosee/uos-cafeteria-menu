@@ -6,9 +6,14 @@ import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
 import seaung.uoscafeteriamenu.domain.entity.Member;
 
+import java.io.Serializable;
+
+/**
+ * Serializable 인터페이스를 구현하면 JVM에서 해당 객체는 저장하거나 다른 서버로 전송할 수 있도록 해준다.
+ */
 @Getter
-@RedisHash("cacheMember")
-public class CacheMember {
+@RedisHash(value = "cacheMember", timeToLive = 3600)
+public class CacheMember implements Serializable {
 
     public static final Long DEFAULT_TTL = 3600L;
 
@@ -36,7 +41,7 @@ public class CacheMember {
         return cacheMember;
     }
 
-    public void increaseViewCount() {
+    public void increaseVisitCount() {
         this.visitCount++;
     }
 }

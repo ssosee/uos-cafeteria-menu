@@ -32,11 +32,14 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-aop'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-    implementation group: 'it.ozimov', name: 'embedded-redis', version: '0.7.1'
+    // https://mvnrepository.com/artifact/it.ozimov/embedded-redis
+    implementation ('it.ozimov:embedded-redis:0.7.3') { exclude group: "org.slf4j", module: "slf4j-simple" }
+
 
     testImplementation "org.testcontainers:testcontainers:1.17.2"
     testImplementation "org.testcontainers:junit-jupiter:1.17.2"
     compileOnly 'org.projectlombok:lombok'
+    testImplementation 'org.projectlombok:lombok'
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
