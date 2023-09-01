@@ -40,4 +40,8 @@ public class Member extends BaseTimeEntity {
     public void increaseVisitCount() {
         this.visitCount++;
     }
+
+    public void changeVisitCount(Long visitCount) {
+        this.visitCount = visitCount;
+    }
 }

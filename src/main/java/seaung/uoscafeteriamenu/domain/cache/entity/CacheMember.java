@@ -1,6 +1,7 @@
 package seaung.uoscafeteriamenu.domain.cache.entity;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
@@ -8,22 +9,23 @@ import seaung.uoscafeteriamenu.domain.entity.Member;
 
 import java.io.Serializable;
 
+import static seaung.uoscafeteriamenu.domain.cache.entity.RedisEntityManager.DEFAULT_TTL;
+
 /**
  * Serializable 인터페이스를 구현하면 JVM에서 해당 객체는 저장하거나 다른 서버로 전송할 수 있도록 해준다.
  */
+@RedisHash(timeToLive = DEFAULT_TTL)
 @Getter
-@RedisHash(value = "cacheMember", timeToLive = 3600)
+@NoArgsConstructor
 public class CacheMember implements Serializable {
-
-    public static final Long DEFAULT_TTL = 3600L;
 
     @Id
     private String botUserId;
     private Long visitCount;
     @TimeToLive
-    private Long expiration;
+    private int expiration;
 
-    public static CacheMember create(String botUserId, Long visitCount, Long expiration) {
+    public static CacheMember create(String botUserId, Long visitCount, int expiration) {
         CacheMember cacheMember = new CacheMember();
         cacheMember.botUserId = botUserId;
         cacheMember.visitCount = visitCount;

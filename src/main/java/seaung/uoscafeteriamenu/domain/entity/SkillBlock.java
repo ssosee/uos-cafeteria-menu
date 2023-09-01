@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import seaung.uoscafeteriamenu.domain.cache.entity.CacheSkillBlock;
 
 import javax.persistence.*;
 
@@ -42,5 +43,16 @@ public class SkillBlock extends BaseTimeEntity {
         skillBlock.parentBlockName = parentBlockName;
 
         return skillBlock;
+    }
+
+    public static SkillBlock of(CacheSkillBlock cacheSkillBlock) {
+        return SkillBlock.builder()
+                .blockId(cacheSkillBlock.getBlockId())
+                .blockName(cacheSkillBlock.getBlockName())
+                .action(cacheSkillBlock.getAction())
+                .label(cacheSkillBlock.getLabel())
+                .messageText(cacheSkillBlock.getMessageText())
+                .parentBlockName(cacheSkillBlock.getParentBlockName())
+                .build();
     }
 }

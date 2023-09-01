@@ -7,17 +7,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import seaung.uoscafeteriamenu.domain.service.UosRestaurantService;
 import seaung.uoscafeteriamenu.domain.service.response.UosRestaurantMenuResponse;
-import seaung.uoscafeteriamenu.domain.service.response.UosRestaurantsMenuResponse;
 import seaung.uoscafeteriamenu.global.provider.TimeProvider;
 import seaung.uoscafeteriamenu.web.controller.request.kakao.SkillPayload;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.SkillResponse;
-import seaung.uoscafeteriamenu.web.controller.response.kakao.SkillTemplate;
-import seaung.uoscafeteriamenu.web.controller.response.kakao.outputs.Outputs;
 import seaung.uoscafeteriamenu.web.converter.UosRestaurantServiceResponseConverter;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static seaung.uoscafeteriamenu.web.controller.response.kakao.SkillResponse.*;
 

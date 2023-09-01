@@ -14,6 +14,8 @@ import seaung.uoscafeteriamenu.domain.cache.repository.CacheMemberRepository;
 import seaung.uoscafeteriamenu.domain.entity.Member;
 import seaung.uoscafeteriamenu.domain.repository.MemberRepository;
 
+import javax.persistence.EntityManager;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -38,9 +40,11 @@ class MemberServiceTest {
     CacheMemberRepository cacheMemberRepository;
     @Autowired
     MemberService memberService;
+    @Autowired
+    EntityManager em;
 
     @Test
-    @DisplayName("회원이 없으면 DB와 cache에 회원을 저장한다.")
+    @DisplayName("캐시, 데이터베이스에 회원이 없으면 데이터베이스와 캐시에 회원을 저장한다.")
     void registerMember() {
         // given
         String botUserId = "1";
@@ -62,12 +66,12 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("cache에 회원이 존재하면 cache에 있는 회원의 방문횟수를 1증가한다.")
+    @DisplayName("캐시에 회원이 존재하면 캐시에 있는 회원의 방문횟수를 1증가한다.")
     void increaseMemberViewCount() {
         // given
         String botUserId = "1";
 
-        CacheMember cacheMember = CacheMember.create(botUserId, 1L, 3600L);
+        CacheMember cacheMember = CacheMember.create(botUserId, 1L, 3600);
         cacheMemberRepository.save(cacheMember);
 
         // when
@@ -76,5 +80,25 @@ class MemberServiceTest {
         // then
         CacheMember findCacheMember = cacheMemberRepository.findById(botUserId).get();
         assertThat(findCacheMember.getVisitCount()).isEqualTo(2L);
+    }
+
+    @Test
+    @DisplayName("캐시에 있는 회원 방문횟수를 데이터베이스에 동기화 한다.")
+    void syncCacheMemberVisitCountToDatabaseMember() {
+        // given
+        String botUserId = "1";
+
+        CacheMember cacheMember = CacheMember.create(botUserId, 100L, 3600);
+        cacheMemberRepository.save(cacheMember);
+
+        Member member = Member.create(botUserId, 1L);
+        memberRepository.save(member);
+
+        // when
+        memberService.syncCacheMemberVisitCountToDatabaseMember();
+
+        // then
+        Member findMember = memberRepository.findByBotUserId(botUserId).get();
+        assertThat(findMember.getVisitCount()).isEqualTo(100L);
     }
 }

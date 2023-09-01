@@ -1,14 +1,23 @@
 package seaung.uoscafeteriamenu.domain.service;
 
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.Cache;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 import seaung.uoscafeteriamenu.domain.cache.entity.CacheMember;
 import seaung.uoscafeteriamenu.domain.cache.repository.CacheMemberRepository;
 import seaung.uoscafeteriamenu.domain.entity.Member;
 import seaung.uoscafeteriamenu.domain.repository.MemberRepository;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +42,7 @@ public class MemberService {
             CacheMember cacheMember = findCacheMember.get();
             cacheMember.increaseVisitCount();
             cacheMemberRepository.save(cacheMember);
+
             return true;
         }
         return false;
@@ -51,5 +61,24 @@ public class MemberService {
             CacheMember cacheMember = CacheMember.of(newMember);
             cacheMemberRepository.save(cacheMember);
         }
+    }
+
+    @Transactional
+    public void syncCacheMemberVisitCountToDatabaseMember() {
+        // 모든 Member 캐시에 있는 데이터를 데이터베이스로 동기화한다.
+        Iterable<CacheMember> cacheMembers = cacheMemberRepository.findAll();
+        List<Member> members = memberRepository.findAll();
+
+        Map<String, Member> memberMap = StreamSupport.stream(cacheMembers.spliterator(), false)
+                .collect(Collectors.toMap(CacheMember::getBotUserId, cacheMember ->
+                        Member.create(cacheMember.getBotUserId(), cacheMember.getVisitCount())
+                ));
+
+        members.forEach(member -> {
+            Member findMember = memberMap.get(member.getBotUserId());
+            if(!ObjectUtils.isEmpty(findMember)) {
+                member.changeVisitCount(findMember.getVisitCount());
+            }
+        });
     }
 }
