@@ -14,20 +14,22 @@ import static seaung.uoscafeteriamenu.domain.cache.entity.RedisEntityManager.DEF
 /**
  * Serializable 인터페이스를 구현하면 JVM에서 해당 객체는 저장하거나 다른 서버로 전송할 수 있도록 해준다.
  */
-@RedisHash(timeToLive = DEFAULT_TTL)
+@RedisHash(value = "cacheMember", timeToLive = DEFAULT_TTL)
 @Getter
 @NoArgsConstructor
 public class CacheMember implements Serializable {
 
     @Id
     private String botUserId;
+    private Long memberId;
     private Long visitCount;
     @TimeToLive
     private int expiration;
 
-    public static CacheMember create(String botUserId, Long visitCount, int expiration) {
+    public static CacheMember create(String botUserId, Long memberId, Long visitCount, int expiration) {
         CacheMember cacheMember = new CacheMember();
         cacheMember.botUserId = botUserId;
+        cacheMember.memberId = memberId;
         cacheMember.visitCount = visitCount;
         cacheMember.expiration = expiration;
 
@@ -37,6 +39,7 @@ public class CacheMember implements Serializable {
     public static CacheMember of(Member member) {
         CacheMember cacheMember = new CacheMember();
         cacheMember.botUserId = member.getBotUserId();
+        cacheMember.memberId = member.getId();
         cacheMember.visitCount = member.getVisitCount();
         cacheMember.expiration = DEFAULT_TTL;
 

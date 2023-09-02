@@ -1,11 +1,10 @@
 package seaung.uoscafeteriamenu.web.controller;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.http.MediaType;
+import seaung.uoscafeteriamenu.domain.cache.repository.CacheMemberRepository;
 import seaung.uoscafeteriamenu.domain.entity.*;
 import seaung.uoscafeteriamenu.domain.repository.SkillBlockRepository;
 import seaung.uoscafeteriamenu.domain.repository.UosRestaurantRepository;
@@ -32,6 +31,19 @@ class SimpleTextUosRestaurantControllerTest extends ControllerTestSupport {
 
     @Autowired
     SkillBlockRepository skillBlockRepository;
+
+    @Autowired
+    CacheManager cacheManager;
+
+    @Autowired
+    CacheMemberRepository cacheMemberRepository;
+
+    @AfterEach
+    void tearDown() {
+        cacheManager.getCacheNames()
+                .forEach(name -> cacheManager.getCache(name).clear());
+        cacheMemberRepository.deleteAll();
+    }
 
     @BeforeEach
     void setup() {

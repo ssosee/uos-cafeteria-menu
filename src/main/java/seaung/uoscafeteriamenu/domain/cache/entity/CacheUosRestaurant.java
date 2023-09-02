@@ -13,7 +13,7 @@ import java.io.Serializable;
 import static seaung.uoscafeteriamenu.domain.cache.entity.RedisEntityManager.DEFAULT_TTL;
 
 @Getter
-@RedisHash(timeToLive = 86400)
+@RedisHash(value = "cacheUosRestaurant", timeToLive = 86400)
 public class CacheUosRestaurant implements Serializable {
     @Id
     private UosRestaurantName restaurantName;

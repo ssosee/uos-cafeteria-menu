@@ -1,10 +1,12 @@
 package seaung.uoscafeteriamenu.domain.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.Cache;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -19,6 +21,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -37,6 +40,7 @@ public class MemberService {
     private boolean isCacheMemberInCacheAndIncreaseVisitCount(String botUserId) {
         // 캐시에서 회원 조회
         Optional<CacheMember> findCacheMember = cacheMemberRepository.findById(botUserId);
+
         // 캐시에 회원이 존재하면 방문횟수 증가
         if(findCacheMember.isPresent()) {
             CacheMember cacheMember = findCacheMember.get();
@@ -55,6 +59,7 @@ public class MemberService {
 
         // 회원이 없으면 회원을 생성하고 DB와 cache에 저장
         if(findMember.isEmpty()) {
+            log.info("회원이 없으면 회원을 생성하고 DB와 cache에 저장");
             Member newMember = Member.create(botUserId, 1L);
             memberRepository.save(newMember);
 

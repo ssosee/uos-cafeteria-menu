@@ -2,10 +2,12 @@ package seaung.uoscafeteriamenu.web.controller;
 
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import seaung.uoscafeteriamenu.crawling.utils.CrawlingUtils;
+import seaung.uoscafeteriamenu.domain.cache.repository.CacheMemberRepository;
 import seaung.uoscafeteriamenu.domain.entity.*;
 import seaung.uoscafeteriamenu.domain.repository.MemberRepository;
 import seaung.uoscafeteriamenu.domain.repository.SkillBlockRepository;
@@ -42,6 +44,19 @@ public class CommonControllerTest extends ControllerTestSupport {
 
     @Autowired
     MemberRepository memberRepository;
+
+    @Autowired
+    CacheManager cacheManager;
+
+    @Autowired
+    CacheMemberRepository cacheMemberRepository;
+
+    @AfterEach
+    void tearDown() {
+        cacheManager.getCacheNames()
+                .forEach(name -> cacheManager.getCache(name).clear());
+        cacheMemberRepository.deleteAll();
+    }
 
     @BeforeEach
     void setUp() {

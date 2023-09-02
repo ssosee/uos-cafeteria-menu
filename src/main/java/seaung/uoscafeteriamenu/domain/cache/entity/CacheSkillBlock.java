@@ -15,7 +15,7 @@ import java.io.Serializable;
 
 import static seaung.uoscafeteriamenu.domain.cache.entity.RedisEntityManager.DEFAULT_TTL;
 
-@RedisHash(timeToLive = DEFAULT_TTL)
+@RedisHash(value = "cacheSkillBlock", timeToLive = DEFAULT_TTL)
 @Getter
 @NoArgsConstructor
 @EqualsAndHashCode

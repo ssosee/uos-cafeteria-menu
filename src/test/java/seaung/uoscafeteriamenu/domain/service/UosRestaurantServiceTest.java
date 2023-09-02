@@ -1,14 +1,18 @@
 package seaung.uoscafeteriamenu.domain.service;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
+import seaung.uoscafeteriamenu.domain.cache.entity.CacheMember;
+import seaung.uoscafeteriamenu.domain.cache.repository.CacheMemberRepository;
 import seaung.uoscafeteriamenu.domain.entity.*;
 import seaung.uoscafeteriamenu.domain.repository.MemberRepository;
 import seaung.uoscafeteriamenu.domain.repository.MenuLikeRepository;
@@ -41,6 +45,18 @@ class UosRestaurantServiceTest {
     MemberRepository memberRepository;
     @Autowired
     MenuLikeRepository menuLikeRepository;
+    @Autowired
+    CacheManager cacheManager;
+
+    @Autowired
+    CacheMemberRepository cacheMemberRepository;
+
+    @AfterEach
+    void tearDown() {
+        cacheManager.getCacheNames()
+                .forEach(name -> cacheManager.getCache(name).clear());
+        cacheMemberRepository.deleteAll();
+    }
 
     @Test
     @DisplayName("학교식당의 금일 조식 메뉴를 조회하고 조회수를 1증가한다.")
@@ -119,6 +135,10 @@ class UosRestaurantServiceTest {
         uosRestaurantRepository.save(uosRestaurant);
 
         String botUserId = "1";
+        Member member = Member.create(botUserId, 0L);
+        memberRepository.save(member);
+        cacheMemberRepository.save(CacheMember.of(member));
+
         RecommendUosRestaurantMenuInput input = createRecommendUosRestaurantMenuInput(botUserId, date, UosRestaurantName.STUDENT_HALL, MealType.BREAKFAST);
 
         // when
@@ -149,8 +169,9 @@ class UosRestaurantServiceTest {
         uosRestaurantRepository.save(uosRestaurant);
 
         String botUserId = "1";
-        Member member = Member.create(botUserId);
+        Member member = Member.create(botUserId, 0L);
         memberRepository.save(member);
+        cacheMemberRepository.save(CacheMember.of(member));
 
         MenuLike menuLike = MenuLike.create(member, uosRestaurant);
         menuLikeRepository.save(menuLike);

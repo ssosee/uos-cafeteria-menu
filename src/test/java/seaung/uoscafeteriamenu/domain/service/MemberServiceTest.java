@@ -1,9 +1,11 @@
 package seaung.uoscafeteriamenu.domain.service;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.GenericContainer;
@@ -20,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
-@Testcontainers
 @Transactional
 class MemberServiceTest {
 //    private static final String REDIS_DOCKER_IMAGE = "redis:latest";
@@ -42,6 +43,15 @@ class MemberServiceTest {
     MemberService memberService;
     @Autowired
     EntityManager em;
+    @Autowired
+    CacheManager cacheManager;
+
+    @AfterEach
+    void tearDown() {
+        cacheManager.getCacheNames()
+                .forEach(name -> cacheManager.getCache(name).clear());
+        cacheMemberRepository.deleteAll();
+    }
 
     @Test
     @DisplayName("캐시, 데이터베이스에 회원이 없으면 데이터베이스와 캐시에 회원을 저장한다.")
@@ -71,7 +81,7 @@ class MemberServiceTest {
         // given
         String botUserId = "1";
 
-        CacheMember cacheMember = CacheMember.create(botUserId, 1L, 3600);
+        CacheMember cacheMember = CacheMember.create(botUserId, 1L, 1L, 3600);
         cacheMemberRepository.save(cacheMember);
 
         // when
@@ -88,7 +98,7 @@ class MemberServiceTest {
         // given
         String botUserId = "1";
 
-        CacheMember cacheMember = CacheMember.create(botUserId, 100L, 3600);
+        CacheMember cacheMember = CacheMember.create(botUserId, 1L, 100L, 3600);
         cacheMemberRepository.save(cacheMember);
 
         Member member = Member.create(botUserId, 1L);
