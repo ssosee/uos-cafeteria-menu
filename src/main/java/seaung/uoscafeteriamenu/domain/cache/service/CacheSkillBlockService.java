@@ -1,4 +1,4 @@
-package seaung.uoscafeteriamenu.domain.service.cache;
+package seaung.uoscafeteriamenu.domain.cache.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
@@ -19,7 +19,6 @@ public class CacheSkillBlockService {
 
     @Cacheable(value = "cacheSkillBlock", key = "#blockName")
     public CacheSkillBlock getSkillBlockByBlockName(BlockName blockName) {
-
         SkillBlock skillBlock = skillBlockRepository.findByBlockName(blockName)
                 .orElseThrow(() -> new RuntimeException("스킬 블록을 확인하세요."));
 

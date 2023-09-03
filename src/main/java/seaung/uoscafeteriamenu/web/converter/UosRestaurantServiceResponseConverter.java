@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import seaung.uoscafeteriamenu.domain.entity.BlockName;
 import seaung.uoscafeteriamenu.domain.entity.SkillBlock;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurantName;
-import seaung.uoscafeteriamenu.domain.service.cache.CacheSkillBlockService;
+import seaung.uoscafeteriamenu.domain.cache.service.CacheSkillBlockService;
 import seaung.uoscafeteriamenu.domain.service.response.UosRestaurantMenuResponse;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.QuickReply;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.SkillResponse;

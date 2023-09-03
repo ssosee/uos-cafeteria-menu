@@ -1,6 +1,8 @@
 package seaung.uoscafeteriamenu.domain.cache.entity;
 
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
@@ -10,10 +12,11 @@ import seaung.uoscafeteriamenu.domain.entity.UosRestaurantName;
 
 import java.io.Serializable;
 
-import static seaung.uoscafeteriamenu.domain.cache.entity.RedisEntityManager.DEFAULT_TTL;
+import static seaung.uoscafeteriamenu.domain.cache.entity.RedisEntityConfig.DEFAULT_TTL;
 
 @Getter
-@RedisHash(value = "cacheUosRestaurant", timeToLive = 86400)
+@RedisHash(value = "cacheUosRestaurant", timeToLive = DEFAULT_TTL)
+@NoArgsConstructor
 public class CacheUosRestaurant implements Serializable {
     @Id
     private UosRestaurantName restaurantName;
@@ -24,27 +27,35 @@ public class CacheUosRestaurant implements Serializable {
     @TimeToLive
     private int expiration;
 
-    public static CacheUosRestaurant create(UosRestaurantName restaurantName, MealType mealType, String menu, Integer view, Integer likeCount, int expiration) {
-        CacheUosRestaurant cacheUosRestaurant = new CacheUosRestaurant();
-        cacheUosRestaurant.restaurantName = restaurantName;
-        cacheUosRestaurant.mealType = mealType;
-        cacheUosRestaurant.menu = menu;
-        cacheUosRestaurant.view = view;
-        cacheUosRestaurant.likeCount = likeCount;
-        cacheUosRestaurant.expiration = expiration;
+    @Builder
+    private CacheUosRestaurant(UosRestaurantName restaurantName, MealType mealType, String menu, Integer view, Integer likeCount, int expiration) {
+        this.restaurantName = restaurantName;
+        this.mealType = mealType;
+        this.menu = menu;
+        this.view = view;
+        this.likeCount = likeCount;
+        this.expiration = expiration;
+    }
 
-        return cacheUosRestaurant;
+    public static CacheUosRestaurant create(UosRestaurantName restaurantName, MealType mealType, String menu, Integer view, Integer likeCount, int expiration) {
+        return CacheUosRestaurant.builder()
+                .restaurantName(restaurantName)
+                .mealType(mealType)
+                .menu(menu)
+                .view(view)
+                .likeCount(likeCount)
+                .expiration(expiration)
+                .build();
     }
 
     public static CacheUosRestaurant of(UosRestaurant uosRestaurant) {
-        CacheUosRestaurant cacheUosRestaurant = new CacheUosRestaurant();
-        cacheUosRestaurant.restaurantName = uosRestaurant.getRestaurantName();
-        cacheUosRestaurant.mealType = uosRestaurant.getMealType();
-        cacheUosRestaurant.menu = uosRestaurant.getMenuDesc();
-        cacheUosRestaurant.view = uosRestaurant.getView();
-        cacheUosRestaurant.likeCount = uosRestaurant.getLikeCount();
-        cacheUosRestaurant.expiration = DEFAULT_TTL;
-
-        return cacheUosRestaurant;
+        return CacheUosRestaurant.builder()
+                .restaurantName(uosRestaurant.getRestaurantName())
+                .mealType(uosRestaurant.getMealType())
+                .menu(uosRestaurant.getMenuDesc())
+                .view(uosRestaurant.getView())
+                .likeCount(uosRestaurant.getLikeCount())
+                .expiration(DEFAULT_TTL)
+                .build();
     }
 }

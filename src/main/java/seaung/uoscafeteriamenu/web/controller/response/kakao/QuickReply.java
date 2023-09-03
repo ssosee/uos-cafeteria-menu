@@ -3,12 +3,8 @@ package seaung.uoscafeteriamenu.web.controller.response.kakao;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Data;
-import seaung.uoscafeteriamenu.domain.entity.BlockName;
 import seaung.uoscafeteriamenu.domain.entity.SkillBlock;
-import seaung.uoscafeteriamenu.domain.entity.UosRestaurantName;
-import seaung.uoscafeteriamenu.domain.repository.memory.SkillBlockMemoryRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
