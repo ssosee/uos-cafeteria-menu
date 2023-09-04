@@ -1,10 +1,16 @@
-package seaung.uoscafeteriamenu.domain.cache.repository;
+package seaung.uoscafeteriamenu.global.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
+import net.bytebuddy.utility.JavaModule;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.geo.GeoModule;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -17,9 +23,11 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
 
+import static com.fasterxml.jackson.databind.ObjectMapper.DefaultTyping.EVERYTHING;
+
 @Slf4j
 @Configuration
-@EnableRedisRepositories
+//@EnableRedisRepositories
 public class RedisConfig {
 
     @Value("${spring.redis.host}")

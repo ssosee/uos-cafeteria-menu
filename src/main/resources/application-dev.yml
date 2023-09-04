@@ -3,7 +3,7 @@ botApikey: test-botApikey
 spring:
   config:
     activate:
-      on-profile: local
+      on-profile: dev
 
   jpa:
     open-in-view: true
@@ -11,6 +11,7 @@ spring:
       ddl-auto: create-drop
     properties:
       hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: true
         default_batch_fetch_size: 1000
         jdbc:
@@ -19,10 +20,13 @@ spring:
         order_updates: true
 
   datasource:
-    url: jdbc:h2:mem:test
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/uos-reataurant-bot-db?serverTimezone=UTC&useSSL=false&rewriteBatchedStatements=true&profileSQL=true&logger=Slf4JLogger&maxQuerySizeToLog=1000
+    username: root
+    password: rhfelfkrtm!23
+    hikari:
+      data-source-properties:
+        rewriteBatchedStatements: true
 
   h2:
     console:

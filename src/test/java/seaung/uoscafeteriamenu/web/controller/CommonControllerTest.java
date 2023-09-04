@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -30,8 +29,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static seaung.uoscafeteriamenu.domain.entity.UosRestaurantName.*;
 import static seaung.uoscafeteriamenu.domain.entity.UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE;
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static seaung.uoscafeteriamenu.web.exception.ApiControllerAdvice.errorMessage;
 
 public class CommonControllerTest extends ControllerTestSupport {
@@ -68,7 +65,7 @@ public class CommonControllerTest extends ControllerTestSupport {
         apiUserMemberRepository.save(apiUseMember);
 
         // apikey 저장
-        Apikey apikey = Apikey.create(botApikey, apiUseMember);
+        BotApikey apikey = BotApikey.create(botApikey, apiUseMember);
         apikeyRepository.save(apikey);
     }
 

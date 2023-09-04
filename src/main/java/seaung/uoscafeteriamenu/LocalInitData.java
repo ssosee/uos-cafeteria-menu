@@ -51,7 +51,7 @@ public class LocalInitData {
         apiUserMemberRepository.save(apiUseMember);
 
         // apikey 초기화
-        Apikey apikey = Apikey.create(key, apiUseMember);
+        BotApikey apikey = BotApikey.create(key, apiUseMember);
         apikeyRepository.save(apikey);
 
         // 스킬블록 초기화

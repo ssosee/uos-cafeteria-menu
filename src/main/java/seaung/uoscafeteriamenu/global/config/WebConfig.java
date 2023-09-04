@@ -4,18 +4,18 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import seaung.uoscafeteriamenu.domain.repository.ApikeyRepository;
 import seaung.uoscafeteriamenu.web.interceptor.ApiInterceptor;
+import seaung.uoscafeteriamenu.domain.cache.service.BotApikeyService;
 
 @Configuration
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
 
-    private final ApikeyRepository apikeyRepository;
+    private final BotApikeyService botApikeyService;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new ApiInterceptor(apikeyRepository))
+        registry.addInterceptor(new ApiInterceptor(botApikeyService))
                 .order(1)
                 .addPathPatterns("/**/api/v1/**");
     }

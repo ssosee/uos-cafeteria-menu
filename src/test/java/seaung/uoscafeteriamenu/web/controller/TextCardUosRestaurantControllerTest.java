@@ -62,7 +62,7 @@ class TextCardUosRestaurantControllerTest extends ControllerTestSupport {
         apiUserMemberRepository.save(apiUseMember);
 
         // apikey 저장
-        Apikey apikey = Apikey.create(botApikey, apiUseMember);
+        BotApikey apikey = BotApikey.create(botApikey, apiUseMember);
         apikeyRepository.save(apikey);
     }
 

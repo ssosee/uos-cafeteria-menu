@@ -19,7 +19,8 @@ import java.io.InputStreamReader;
  */
 @Slf4j
 @Configuration
-@Profile({"test", "local"})
+//@Profile({"test", "local"})
+@Profile("test")
 public class EmbeddedRedisConfig {
     @Value("${spring.redis.port}")
     private int redisPort;
