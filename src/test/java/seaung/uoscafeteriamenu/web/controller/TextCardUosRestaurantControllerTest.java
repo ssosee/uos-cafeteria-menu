@@ -1,13 +1,16 @@
 package seaung.uoscafeteriamenu.web.controller;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import seaung.uoscafeteriamenu.crawling.utils.CrawlingUtils;
+import seaung.uoscafeteriamenu.domain.cache.repository.CacheMemberRepository;
 import seaung.uoscafeteriamenu.domain.entity.*;
 import seaung.uoscafeteriamenu.domain.repository.SkillBlockRepository;
 import seaung.uoscafeteriamenu.domain.repository.UosRestaurantRepository;
@@ -37,6 +40,18 @@ class TextCardUosRestaurantControllerTest extends ControllerTestSupport {
     @Autowired
     SkillBlockRepository skillBlockRepository;
 
+    @Autowired
+    CacheManager cacheManager;
+    @Autowired
+    CacheMemberRepository cacheMemberRepository;
+
+    @AfterEach
+    void tearDown() {
+        cacheManager.getCacheNames()
+                .forEach(name -> cacheManager.getCache(name).clear());
+        cacheMemberRepository.deleteAll();
+    }
+
     @BeforeEach
     void setup() {
         // 스킬블록 초기화
@@ -47,7 +62,7 @@ class TextCardUosRestaurantControllerTest extends ControllerTestSupport {
         apiUserMemberRepository.save(apiUseMember);
 
         // apikey 저장
-        Apikey apikey = Apikey.create(botApikey, apiUseMember);
+        BotApikey apikey = BotApikey.create(botApikey, apiUseMember);
         apikeyRepository.save(apikey);
     }
 

@@ -2,10 +2,12 @@ package seaung.uoscafeteriamenu.web.controller;
 
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import seaung.uoscafeteriamenu.crawling.utils.CrawlingUtils;
+import seaung.uoscafeteriamenu.domain.cache.repository.CacheMemberRepository;
 import seaung.uoscafeteriamenu.domain.entity.*;
 import seaung.uoscafeteriamenu.domain.repository.MemberRepository;
 import seaung.uoscafeteriamenu.domain.repository.SkillBlockRepository;
@@ -20,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -28,8 +29,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static seaung.uoscafeteriamenu.domain.entity.UosRestaurantName.*;
 import static seaung.uoscafeteriamenu.domain.entity.UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE;
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static seaung.uoscafeteriamenu.web.exception.ApiControllerAdvice.errorMessage;
 
 public class CommonControllerTest extends ControllerTestSupport {
@@ -43,6 +42,19 @@ public class CommonControllerTest extends ControllerTestSupport {
     @Autowired
     MemberRepository memberRepository;
 
+    @Autowired
+    CacheManager cacheManager;
+
+    @Autowired
+    CacheMemberRepository cacheMemberRepository;
+
+    @AfterEach
+    void tearDown() {
+        cacheManager.getCacheNames()
+                .forEach(name -> cacheManager.getCache(name).clear());
+        cacheMemberRepository.deleteAll();
+    }
+
     @BeforeEach
     void setUp() {
         // 스킬블록 초기화
@@ -53,7 +65,7 @@ public class CommonControllerTest extends ControllerTestSupport {
         apiUserMemberRepository.save(apiUseMember);
 
         // apikey 저장
-        Apikey apikey = Apikey.create(botApikey, apiUseMember);
+        BotApikey apikey = BotApikey.create(botApikey, apiUseMember);
         apikeyRepository.save(apikey);
     }
 

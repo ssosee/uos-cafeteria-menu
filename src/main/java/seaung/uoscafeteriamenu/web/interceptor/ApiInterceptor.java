@@ -1,9 +1,9 @@
 package seaung.uoscafeteriamenu.web.interceptor;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.HandlerInterceptor;
-import seaung.uoscafeteriamenu.domain.repository.ApikeyRepository;
-import seaung.uoscafeteriamenu.web.exception.ApikeyException;
+import seaung.uoscafeteriamenu.domain.cache.service.BotApikeyService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,13 +14,10 @@ import javax.servlet.http.HttpServletResponse;
  * afterCompletion: 뷰 렌더링 이후 호출(항상 호출)
  */
 @Slf4j
+@RequiredArgsConstructor
 public class ApiInterceptor implements HandlerInterceptor {
 
-    private final ApikeyRepository apiKeyRepository;
-
-    public ApiInterceptor(ApikeyRepository apiKeyRepository) {
-        this.apiKeyRepository = apiKeyRepository;
-    }
+    private final BotApikeyService botApiKeyService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -32,7 +29,6 @@ public class ApiInterceptor implements HandlerInterceptor {
         String botApikeyHeader = request.getHeader("botApikey");
         log.info("botApikey 확인={}", botApikeyHeader);
 
-        apiKeyRepository.findByBotApikey(botApikeyHeader)
-                .orElseThrow(() -> new ApikeyException(ApikeyException.VALID_API_KEY_CODE));
+        botApiKeyService.findBotApiKeyHeader(botApikeyHeader);
     }
 }

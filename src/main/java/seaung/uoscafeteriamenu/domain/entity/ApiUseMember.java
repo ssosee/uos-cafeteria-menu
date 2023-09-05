@@ -15,7 +15,7 @@ public class ApiUseMember extends BaseTimeEntity {
     private String name;
     private String email;
     @OneToOne(mappedBy = "apiUseMember")
-    private Apikey apikey;
+    private BotApikey apikey;
 
     public static ApiUseMember create(String name, String email) {
         ApiUseMember apiUseMember = new ApiUseMember();
@@ -25,7 +25,7 @@ public class ApiUseMember extends BaseTimeEntity {
         return apiUseMember;
     }
 
-    public void mappingApiKey(Apikey apikey) {
+    public void mappingApiKey(BotApikey apikey) {
         this.apikey = apikey;
     }
 }

@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Apikey extends BaseTimeEntity {
+public class BotApikey extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String botApikey;
@@ -17,12 +17,12 @@ public class Apikey extends BaseTimeEntity {
     @JoinColumn(name = "api_use_member_id")
     private ApiUseMember apiUseMember;
 
-    public static Apikey create(String key, ApiUseMember apiUseMember) {
-        Apikey apikey = new Apikey();
-        apikey.botApikey = key;
-        apikey.apiUseMember = apiUseMember;
-        apiUseMember.mappingApiKey(apikey);
+    public static BotApikey create(String key, ApiUseMember apiUseMember) {
+        BotApikey botApikey = new BotApikey();
+        botApikey.botApikey = key;
+        botApikey.apiUseMember = apiUseMember;
+        apiUseMember.mappingApiKey(botApikey);
 
-        return apikey;
+        return botApikey;
     }
 }

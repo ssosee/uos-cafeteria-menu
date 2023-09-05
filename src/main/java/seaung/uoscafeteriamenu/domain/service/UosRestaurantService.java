@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import seaung.uoscafeteriamenu.crawling.utils.CrawlingUtils;
+import seaung.uoscafeteriamenu.domain.cache.entity.CacheMember;
+import seaung.uoscafeteriamenu.domain.cache.repository.CacheMemberRepository;
 import seaung.uoscafeteriamenu.domain.entity.*;
 import seaung.uoscafeteriamenu.domain.repository.MemberRepository;
 import seaung.uoscafeteriamenu.domain.repository.MenuLikeRepository;
@@ -20,8 +22,6 @@ import seaung.uoscafeteriamenu.web.exception.UosRestaurantMenuException;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,8 +29,8 @@ import java.util.stream.Collectors;
 public class UosRestaurantService {
 
     private final UosRestaurantRepository uosRestaurantRepository;
-    private final MemberRepository memberRepository;
     private final MenuLikeRepository menuLikeRepository;
+    private final MemberRepository memberRepository;
 
     // 학교식당의 식사종류의 학식 메뉴 조회
     // e.g) 학생회관 조식 라면

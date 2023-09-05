@@ -1,11 +1,11 @@
 package seaung.uoscafeteriamenu.web.converter;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.transaction.annotation.Transactional;
 import seaung.uoscafeteriamenu.crawling.utils.CrawlingUtils;
 import seaung.uoscafeteriamenu.domain.entity.*;
 import seaung.uoscafeteriamenu.domain.repository.SkillBlockRepository;
@@ -22,6 +22,7 @@ import static org.assertj.core.api.Assertions.*;
 import static seaung.uoscafeteriamenu.web.controller.response.kakao.SkillResponse.apiVersion;
 
 @SpringBootTest
+@Transactional
 class UosRestaurantServiceResponseConverterTest {
 
     @Autowired
@@ -75,8 +76,7 @@ class UosRestaurantServiceResponseConverterTest {
         UosRestaurantMenuResponse response = UosRestaurantMenuResponse.of(uosRestaurant);
 
         // when // then
-        assertThatThrownBy(() -> uosRestaurantServiceResponseConverter
-                .toSkillResponseUseTextCardWithButtonAndQuickReplies(apiVersion, response))
+        assertThatThrownBy(() -> uosRestaurantServiceResponseConverter.toSkillResponseUseTextCardWithButtonAndQuickReplies(apiVersion, response))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("스킬 블록을 확인하세요.");
     }

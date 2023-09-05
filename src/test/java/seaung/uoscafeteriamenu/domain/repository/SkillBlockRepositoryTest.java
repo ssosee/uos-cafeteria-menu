@@ -19,7 +19,7 @@ class SkillBlockRepositoryTest {
     SkillBlockRepository skillBlockRepository;
 
     @Test
-    @DisplayName("block_name을 포함하는 SkillBlock을 조회한다.")
+    @DisplayName("blockName을 포함하는 SkillBlock을 조회한다.")
     void findByBlockNameContains() {
         // given
         SkillBlock skillBlock1 = createSkillBlock("1", BlockName.STUDENT_HALL_BREAKFAST, "block", "조식", "냠냠", UosRestaurantName.STUDENT_HALL.name());
