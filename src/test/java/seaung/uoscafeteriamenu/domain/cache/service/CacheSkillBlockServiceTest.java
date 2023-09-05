@@ -1,4 +1,4 @@
-package seaung.uoscafeteriamenu.domain.service.cache;
+package seaung.uoscafeteriamenu.domain.cache.service;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;

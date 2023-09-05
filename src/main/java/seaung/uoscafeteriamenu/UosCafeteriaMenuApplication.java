@@ -31,7 +31,7 @@ public class UosCafeteriaMenuApplication {
     }
 
     @Bean
-    @Profile("local")
+    @Profile({"local", "dev"})
     public LocalInitData LocalInitData(CrawlingTargetRepository crawlingTargetRepository,
                                        Crawler crawler,
                                        CrawlingUosRestaurantService crawlingStudentHallService,

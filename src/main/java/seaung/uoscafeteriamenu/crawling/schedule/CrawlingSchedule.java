@@ -37,7 +37,7 @@ public class CrawlingSchedule {
     @Scheduled(cron = "0 0 7 * * MON", zone = "Asia/Seoul") // 매주 월요일 7시에 실행
     @Async("crawlingAsyncExecutor")
     public void crawlingStudentHall() throws IOException {
-        log.info("크롤링 실행...");
+        log.info("크롤링 시작...");
 
         List<List<UosRestaurantCrawlingResponse>> crawlingResponseList = new ArrayList<>();
         for(UosRestaurantName restaurantName : UosRestaurantName.values()) {

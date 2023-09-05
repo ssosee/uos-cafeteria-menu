@@ -30,7 +30,7 @@ public class UosRestaurantService {
 
     private final UosRestaurantRepository uosRestaurantRepository;
     private final MenuLikeRepository menuLikeRepository;
-    private final CacheMemberRepository cacheMemberRepository;
+    private final MemberRepository memberRepository;
 
     // 학교식당의 식사종류의 학식 메뉴 조회
     // e.g) 학생회관 조식 라면
@@ -70,20 +70,19 @@ public class UosRestaurantService {
                 .orElseThrow(() -> new UosRestaurantMenuException(UosRestaurantMenuException.NOT_FOUND_MENU));
 
         // 회원 조회
-        CacheMember findCacheMember = cacheMemberRepository.findById(input.getBotUserId())
+        Member findMember = memberRepository.findByBotUserId(input.getBotUserId())
                 .orElseThrow(() -> new MemberException(MemberException.NOT_FOUND_MEMBER));
-        Member member = Member.of(findCacheMember);
 
         // 추천 이력 조회
         boolean isMenuLike = menuLikeRepository
-                .findByMemberIdAndUosRestaurantId(member.getId(), findUosRestaurant.getId())
+                .findByMemberIdAndUosRestaurantId(findMember.getId(), findUosRestaurant.getId())
                 .isPresent();
 
         // 추천 이력이 있으면
         if(isMenuLike) throw new MenuLikeException(MenuLikeException.CONFLICT_MENU);
 
         // 추천 이력이 없으면
-        increaseLikeCountAndSaveMenuLike(findUosRestaurant, member);
+        increaseLikeCountAndSaveMenuLike(findUosRestaurant, findMember);
 
         return "추천 고맙다. 내친.구.휴.먼";
     }

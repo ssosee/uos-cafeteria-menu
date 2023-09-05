@@ -54,46 +54,7 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("캐시, 데이터베이스에 회원이 없으면 데이터베이스와 캐시에 회원을 저장한다.")
-    void registerMember() {
-        // given
-        String botUserId = "1";
-
-        // when
-        memberService.registerMemberOrIncreaseMemberViewCount(botUserId);
-
-        // then
-        Member findMember = memberRepository.findByBotUserId(botUserId).get();
-        CacheMember cacheMember = cacheMemberRepository.findById(botUserId).get();
-        assertAll(
-                () -> assertThat(findMember).isNotNull(),
-                () -> assertThat(findMember.getBotUserId()).isEqualTo(botUserId),
-                () -> assertThat(findMember.getVisitCount()).isEqualTo(1L),
-                () -> assertThat(cacheMember).isNotNull(),
-                () -> assertThat(cacheMember.getBotUserId()).isEqualTo(botUserId),
-                () -> assertThat(cacheMember.getVisitCount()).isEqualTo(1L)
-        );
-    }
-
-    @Test
-    @DisplayName("캐시에 회원이 존재하면 캐시에 있는 회원의 방문횟수를 1증가한다.")
-    void increaseMemberViewCount() {
-        // given
-        String botUserId = "1";
-
-        CacheMember cacheMember = CacheMember.create(botUserId, 1L, 1L, 3600);
-        cacheMemberRepository.save(cacheMember);
-
-        // when
-        memberService.registerMemberOrIncreaseMemberViewCount(botUserId);
-
-        // then
-        CacheMember findCacheMember = cacheMemberRepository.findById(botUserId).get();
-        assertThat(findCacheMember.getVisitCount()).isEqualTo(2L);
-    }
-
-    @Test
-    @DisplayName("캐시에 있는 회원 방문횟수를 데이터베이스에 동기화 한다.")
+    @DisplayName("캐시에 있는 회원의 방문 횟수를 데이터베이스와 동기화 한다.")
     void syncCacheMemberVisitCountToDatabaseMember() {
         // given
         String botUserId = "1";

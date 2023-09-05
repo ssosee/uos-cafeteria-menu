@@ -1,5 +1,6 @@
 package seaung.uoscafeteriamenu.crawling.service;
 
+import org.springframework.cache.annotation.Cacheable;
 import seaung.uoscafeteriamenu.domain.entity.CrawlingTarget;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurantName;
 import seaung.uoscafeteriamenu.domain.repository.CrawlingTargetRepository;
