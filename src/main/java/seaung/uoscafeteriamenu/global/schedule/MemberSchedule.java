@@ -19,6 +19,5 @@ public class MemberSchedule {
     public void syncCacheMemberVisitCountToDatabaseMemberSchedule() {
         log.info("회원 방문 횟수 동기화..");
         memberService.syncCacheMemberVisitCountToDatabaseMember();
-        //memberService.syncCacheMemberVisitCountToDatabaseMember2();
     }
 }
