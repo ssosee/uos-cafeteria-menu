@@ -36,7 +36,6 @@ public class ProdInitData {
     private final String welfareTeamTel = "02-6490-5855";
 
     private final Map<UosRestaurantName, String> urlMap = new HashMap<>();
-    private final Map<BlockName, String> bockIdMap = new HashMap<>();
 
     @EventListener(ApplicationReadyEvent.class)
     public void init() throws IOException {
