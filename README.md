@@ -1,6 +1,6 @@
 # [서울시립대학교 학식 봇](https://pf.kakao.com/_YVxdzG)
 
-![환영학식봇.png](src%2Fmain%2Fresources%2Fstatic%2F%ED%99%98%EC%98%81%ED%95%99%EC%8B%9D%EB%B4%87.png)
+![bot-profile.png](docs%2Fimages%2Fbot-profile.png)
 * [채널 링크](https://pf.kakao.com/_YVxdzG)
 
 ## 목차
@@ -23,9 +23,10 @@
   * 시간에 따라서 아침, 점심, 저녁 추천 메뉴
     *  e.g) 현재 8:00 ~ 10:00 이면 아침 메뉴중 추천 메뉴 제공
 * **식당별 식사종류에 맞는 메뉴 조회**
-  * 아침
-  * 점심
-  * 저녁
+  * xx식당 아침, 점심, 저녁
+    * e.g) 학생회관 점심 메뉴 조회
+* **식사종류별 전체 식당 메뉴 전체 조회**
+  * e.g) 학생회관, 아느칸, 자연과학관, 본관 점심 메뉴 조회
 * **메뉴 추천하기**
   * 동일한 메뉴 중복 추천 불가
 
@@ -90,7 +91,7 @@
   * 캐시에 SkillBlock 배열이 없으면, 캐시에 저장된다.
 * **CrawlingDateUtilsTest**
   * 메뉴의 글자수가 25보다 작으면 false를 반환한다.
-  * 14시 ~ 6시30분 사이에는 저녁타입을 반환한다.
+  * 14시 ~ 18시30분 사이에는 저녁타입을 반환한다.
   * 메뉴가 빈문자열이면 false를 반환한다.
   * LocalDateTime을 '월/일 (요일)'로 변환한다.
   * 오전 8시 30분 ~ 11시 사이에는 아침타입을 반환한다.
@@ -145,6 +146,6 @@
 <img src="https://img.shields.io/badge/amazon_ec2-FF9900?style=for-the-badge&logo=amazonec2&logoColor=white">
 <img src="https://img.shields.io/badge/amazon_rds-527FFF?style=for-the-badge&logo=amazonrds&logoColor=white">
 <img src="https://img.shields.io/badge/amazon_Elastic_Cache-4053D6?style=for-the-badge&logo=awselasticcache&logoColor=white">
-<img src="https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor ## [이슈 이력](UPDATE-REPORT.md)=white">
+<img src="https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white">
 </div>
 <br />
