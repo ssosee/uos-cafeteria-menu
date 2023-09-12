@@ -43,11 +43,24 @@ class CrawlingStudentHallServiceTest {
     @DisplayName("크롤링 데이터를 저장한다.")
     void saveAllCrawlingData() {
         // given
+        String menuDesc = "11:30~14:00\n" +
+                "(6,000원)\n" +
+                "닭갈비볶음밥\n" +
+                "Stir-fried Chicken Fried Rice\n" +
+                "콩나물국\n" +
+                "두반장가지볶음\n" +
+                "실곤약무침\n" +
+                "양배추찜\n" +
+                "\n" +
+                "닭정육 : 브라질산,\n" +
+                "돈육 : 국내산\n" +
+                "984kcal/38g";
+
         // 크롤링 대상은 변할 수 있기 때문에 크롤링 구현체를 사용하지 않는다.
         UosRestaurantCrawlingResponse crawlingResponse = new UosRestaurantCrawlingResponse(UosRestaurantName.STUDENT_HALL.getKrName(), "8/15 (화)");
-        crawlingResponse.setMenu(Map.of(CrawlingMealType.BREAKFAST, "A코스 떡라면, 김치, 단무지, 공기밥 -> 3000원",
-                CrawlingMealType.LUNCH, "B코스 돈까스, 총각김치, 단무지, 쇠고기스프 -> 5500원",
-                CrawlingMealType.DINNER, "C코스 김치제육, 갓김치, 단무지, 어묵조림 -> 5500원"));
+        crawlingResponse.setMenu(Map.of(CrawlingMealType.BREAKFAST, "A코스"+menuDesc,
+                CrawlingMealType.LUNCH, "B코스"+menuDesc,
+                CrawlingMealType.DINNER, "C코스"+menuDesc));
         List<UosRestaurantCrawlingResponse> responses = List.of(crawlingResponse);
 
         // when
@@ -61,9 +74,9 @@ class CrawlingStudentHallServiceTest {
                 () -> assertThat(all).hasSize(3)
                         .extracting("crawlingDate", "mealType", "menuDesc")
                         .contains(
-                                tuple(responses.get(0).getRestaurantDate(), MealType.BREAKFAST, "A코스 떡라면, 김치, 단무지, 공기밥 -> 3000원"),
-                                tuple(responses.get(0).getRestaurantDate(), MealType.LUNCH, "B코스 돈까스, 총각김치, 단무지, 쇠고기스프 -> 5500원"),
-                                tuple(responses.get(0).getRestaurantDate(), MealType.DINNER, "C코스 김치제육, 갓김치, 단무지, 어묵조림 -> 5500원")
+                                tuple(responses.get(0).getRestaurantDate(), MealType.BREAKFAST, "A코스"+menuDesc),
+                                tuple(responses.get(0).getRestaurantDate(), MealType.LUNCH, "B코스"+menuDesc),
+                                tuple(responses.get(0).getRestaurantDate(), MealType.DINNER, "C코스"+menuDesc)
                         )
         );
     }
@@ -72,11 +85,23 @@ class CrawlingStudentHallServiceTest {
     @DisplayName("이미 크롤링한 데이터가 있으면 데이터베이스에 저장하지 않는다.")
     void saveNotDuplicateCrawlingData() throws IOException {
         // given
+        String menuDesc = "11:30~14:00\n" +
+                "(6,000원)\n" +
+                "닭갈비볶음밥\n" +
+                "Stir-fried Chicken Fried Rice\n" +
+                "콩나물국\n" +
+                "두반장가지볶음\n" +
+                "실곤약무침\n" +
+                "양배추찜\n" +
+                "\n" +
+                "닭정육 : 브라질산,\n" +
+                "돈육 : 국내산\n" +
+                "984kcal/38g";
         // 크롤링 대상은 변할 수 있기 때문에 크롤링 구현체를 사용하지 않는다.
         UosRestaurantCrawlingResponse crawlingResponse = new UosRestaurantCrawlingResponse(UosRestaurantName.STUDENT_HALL.getKrName(), "8/15 (화)");
-        crawlingResponse.setMenu(Map.of(CrawlingMealType.BREAKFAST, "A코스 떡라면, 김치, 단무지, 공기밥 -> 3000원",
-                CrawlingMealType.LUNCH, "B코스 돈까스, 총각김치, 단무지, 쇠고기스프 -> 5500원",
-                CrawlingMealType.DINNER, "C코스 김치제육, 갓김치, 단무지, 어묵조림 -> 5500원"));
+        crawlingResponse.setMenu(Map.of(CrawlingMealType.BREAKFAST, "A코스"+menuDesc,
+                CrawlingMealType.LUNCH, "B코스"+menuDesc,
+                CrawlingMealType.DINNER, "C코스"+menuDesc));
         List<UosRestaurantCrawlingResponse> responses = List.of(crawlingResponse);
 
         // when
@@ -91,9 +116,9 @@ class CrawlingStudentHallServiceTest {
                 () -> assertThat(all).hasSize(3)
                         .extracting("crawlingDate", "mealType", "menuDesc")
                         .contains(
-                                tuple(responses.get(0).getRestaurantDate(), MealType.BREAKFAST, "A코스 떡라면, 김치, 단무지, 공기밥 -> 3000원"),
-                                tuple(responses.get(0).getRestaurantDate(), MealType.LUNCH, "B코스 돈까스, 총각김치, 단무지, 쇠고기스프 -> 5500원"),
-                                tuple(responses.get(0).getRestaurantDate(), MealType.DINNER, "C코스 김치제육, 갓김치, 단무지, 어묵조림 -> 5500원")
+                                tuple(responses.get(0).getRestaurantDate(), MealType.BREAKFAST, "A코스"+menuDesc),
+                                tuple(responses.get(0).getRestaurantDate(), MealType.LUNCH, "B코스"+menuDesc),
+                                tuple(responses.get(0).getRestaurantDate(), MealType.DINNER, "C코스"+menuDesc)
                         )
         );
     }

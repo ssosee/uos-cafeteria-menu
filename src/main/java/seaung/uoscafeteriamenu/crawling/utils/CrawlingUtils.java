@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 public class CrawlingUtils {
 
@@ -22,7 +23,7 @@ public class CrawlingUtils {
     }
 
     public static boolean hasMenu(String menu) {
-        if(StringUtils.hasText(menu) && menu.length() > 25) {
+        if(StringUtils.hasText(menu) && menu.length() > 100) {
             return true;
         }
         return false;
@@ -45,5 +46,34 @@ public class CrawlingUtils {
 
     public static UosRestaurantName toUosRestaurantName(String restaurantName) {
         return UosRestaurantName.fromKrName(restaurantName);
+    }
+
+    public static String applyPatternToMenuDesc(String menuDesc) {
+
+        String[] split = menuDesc.split("\n");
+
+        StringBuilder sb = new StringBuilder();
+        Pattern englishPatternWithRoundBrackets = Pattern.compile("^\\(.*[a-zA-Z].*\\)$");
+        Pattern patternWithSpace = Pattern.compile("[a-zA-Z\\s]+");
+        Pattern patternWithKcalAndSlashAndG = Pattern.compile("\\d+kcal/\\d+g");
+        Pattern patternWithKcalAndSlashAndKcal = Pattern.compile("\\d+kcal / \\d+kcal");
+        Pattern patternWithKcal = Pattern.compile("\\d+kcal");
+
+        for(String word : split) {
+            // "(Chicken Mayo Rice Bowl)" 가 아니고
+            // "Chicken Mayo Rice Bowl" 가 아니고
+            // "378kcal / 422kcal" 가 아니고
+            // "678kcal" 가 아니고
+            // "933kcal/43g" 가 아니면
+            if(!word.matches(englishPatternWithRoundBrackets.pattern())
+                    && !word.matches(patternWithSpace.pattern())
+                    && !word.matches(patternWithKcalAndSlashAndG.pattern())
+                    && !word.matches(patternWithKcalAndSlashAndKcal.pattern())
+                    && !word.matches(patternWithKcal.pattern())) {
+                sb.append(word).append("\n");
+            }
+        }
+
+        return sb.toString().replaceAll("\n\n\n\n\n\n", "\n\n");
     }
 }
