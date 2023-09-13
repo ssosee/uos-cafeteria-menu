@@ -1,6 +1,7 @@
 package seaung.uoscafeteriamenu.domain.repository;
 
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-@ActiveProfiles("dev")
+//@ActiveProfiles("dev")
 class MemberBulkInsertRepositoryTest {
 
     @Autowired
@@ -31,6 +32,11 @@ class MemberBulkInsertRepositoryTest {
     CacheMemberRepository cacheMemberRepository;
     @Autowired
     CacheManager cacheManager;
+
+    @AfterEach
+    void tearDown() {
+        cacheMemberRepository.deleteAll();
+    }
 
     @Test
     @DisplayName("1,000개의 데이터 벌크 insert")

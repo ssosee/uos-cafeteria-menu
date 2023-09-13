@@ -23,7 +23,7 @@ import seaung.uoscafeteriamenu.web.exception.UosRestaurantMenuException;
 public class ControllerAspect {
 
     private final TimeProvider timeProvider;
-    private final CacheMemberService cacheMemberService;
+    private final MemberService memberService;
 
     @Around("seaung.uoscafeteriamenu.global.log.AppPointCuts.allController() && args(skillPayload, ..)")
     public Object doControllerCommonLogic(ProceedingJoinPoint joinPoint, SkillPayload skillPayload) throws Throwable {
@@ -32,8 +32,7 @@ public class ControllerAspect {
 
             // 회원 조회 하고 방문횟수 증가 / 회원이 없으면 회원 생성
             String botUserId = skillPayload.getUserRequest().getUser().getId();
-            CacheMember cacheMember = cacheMemberService.findMemberOrCreateMemberByBotUserId(botUserId);
-            cacheMemberService.increaseCacheMemberVisitCount(cacheMember);
+            memberService.findCacheMemberOrSaveMemberInDatabaseAndRedis(botUserId);
 
             // 주말 확인
             checkWeekend();
