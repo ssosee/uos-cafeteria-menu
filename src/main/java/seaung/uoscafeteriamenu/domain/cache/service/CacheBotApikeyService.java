@@ -10,7 +10,7 @@ import seaung.uoscafeteriamenu.web.exception.ApikeyException;
 
 @Service
 @RequiredArgsConstructor
-public class BotApikeyService {
+public class CacheBotApikeyService {
 
     private final ApikeyRepository apiKeyRepository;
 

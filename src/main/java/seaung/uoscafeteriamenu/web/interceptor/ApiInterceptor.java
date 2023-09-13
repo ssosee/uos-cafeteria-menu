@@ -3,7 +3,7 @@ package seaung.uoscafeteriamenu.web.interceptor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.HandlerInterceptor;
-import seaung.uoscafeteriamenu.domain.cache.service.BotApikeyService;
+import seaung.uoscafeteriamenu.domain.cache.service.CacheBotApikeyService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 @RequiredArgsConstructor
 public class ApiInterceptor implements HandlerInterceptor {
 
-    private final BotApikeyService botApiKeyService;
+    private final CacheBotApikeyService botApiKeyService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

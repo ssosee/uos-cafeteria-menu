@@ -12,6 +12,7 @@ import seaung.uoscafeteriamenu.web.exception.MemberException;
 
 import java.util.Optional;
 
+@Deprecated
 @Service
 @RequiredArgsConstructor
 public class CacheMemberService {
@@ -38,7 +39,7 @@ public class CacheMemberService {
     @CachePut(value = "cacheMember", key = "#cacheMember.botUserId")
     public CacheMember increaseCacheMemberVisitCount(CacheMember cacheMember) {
         cacheMember.increaseVisitCount();
-        //cacheMemberRepository.save(cacheMember);
+        cacheMemberRepository.save(cacheMember);
         return cacheMember;
     }
 

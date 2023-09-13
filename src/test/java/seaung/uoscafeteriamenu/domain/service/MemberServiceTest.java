@@ -19,6 +19,7 @@ import seaung.uoscafeteriamenu.domain.repository.MemberRepository;
 import javax.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
 @Transactional
@@ -55,7 +56,27 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("캐시에 있는 회원의 방문 횟수를 데이터베이스와 동기화 한다.")
+    @DisplayName("캐시에서 회원을 조회하고 캐시에 회원이 없으면 데이터베이스와 캐시에 회원을 생성한다.")
+    void findCacheMemberOrSaveMemberInDatabaseAndRedis() {
+        // given
+        String botUserId = "1";
+
+        // when
+        CacheMember cacheMember = memberService.findCacheMemberOrSaveMemberInDatabaseAndRedis(botUserId);
+
+        // then
+        Member findMember = memberRepository.findByBotUserId(botUserId).get();
+        CacheMember findCacheMember = cacheMemberRepository.findById(botUserId).get();
+
+        assertAll(
+                () -> assertThat(cacheMember.getBotUserId()).isEqualTo("1"),
+                () -> assertThat(findCacheMember.getBotUserId()).isEqualTo("1"),
+                () -> assertThat(findMember.getBotUserId()).isEqualTo("1")
+        );
+    }
+
+    @Test
+    @DisplayName("캐시에 있는 회원의 방문 횟수를 데이터베이스와 동기화 하고, 캐시에 있는 회원을 삭제한다.")
     void syncCacheMemberVisitCountToDatabaseMember() {
         // given
         String botUserId = "1";
@@ -72,5 +93,8 @@ class MemberServiceTest {
         // then
         Member findMember = memberRepository.findByBotUserId(botUserId).get();
         assertThat(findMember.getVisitCount()).isEqualTo(100L);
+
+        Iterable<CacheMember> cacheMembers = cacheMemberRepository.findAll();
+        assertThat(cacheMembers).isEmpty();
     }
 }

@@ -21,7 +21,7 @@ botApikey: test-botApikey
     "utterance": "발화 내용",
     "lang": null,
     "user": {
-      "id": "13",
+      "id": "2",
       "type": "accountId",
       "properties": {}
     }

@@ -10,6 +10,7 @@ import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
@@ -18,7 +19,7 @@ import java.time.Duration;
 
 @Slf4j
 @Configuration
-//@EnableRedisRepositories
+@EnableRedisRepositories
 public class RedisConfig {
 
     @Value("${spring.redis.host}")
