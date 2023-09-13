@@ -5,12 +5,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.data.redis.cache.RedisCacheManager;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.transaction.annotation.Transactional;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
 import seaung.uoscafeteriamenu.domain.cache.entity.CacheMember;
 import seaung.uoscafeteriamenu.domain.cache.repository.CacheMemberRepository;
 import seaung.uoscafeteriamenu.domain.entity.Member;
@@ -18,7 +18,6 @@ import seaung.uoscafeteriamenu.domain.repository.MemberRepository;
 
 import javax.persistence.EntityManager;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
@@ -44,7 +43,9 @@ class MemberServiceTest {
     @Autowired
     EntityManager em;
     @Autowired
-    CacheManager cacheManager;
+    RedisCacheManager cacheManager;
+    @Autowired
+    RedisTemplate<?, ?> redisTemplate;
 
     @AfterEach
     void tearDown() {

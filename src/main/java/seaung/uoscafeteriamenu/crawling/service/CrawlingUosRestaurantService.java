@@ -87,7 +87,8 @@ public class CrawlingUosRestaurantService extends CrawlingService {
     }
 
     private boolean isSameDateInDataBase(String crawlingDate, UosRestaurantName restaurantName, MealType mealType) {
-        boolean queryResult = uosRestaurantRepository.findByCrawlingDateAndRestaurantNameAndMealType(crawlingDate, restaurantName, mealType)
+        boolean queryResult = uosRestaurantRepository
+                .findByCrawlingDateAndRestaurantNameAndMealType(crawlingDate, restaurantName, mealType)
                 .isPresent();
 
         if(queryResult) return true;
@@ -97,48 +98,11 @@ public class CrawlingUosRestaurantService extends CrawlingService {
 
     private void pretreatmentMenu(Map.Entry<CrawlingMealType, String> menu, UosRestaurant.UosRestaurantBuilder builder) {
         if(CrawlingUtils.hasMenu(menu.getValue())) {
-            builder.menuDesc(menu.getValue());
+            // 불필요한 정보를 제외한다.(TextCard 400자 제한 때문)
+            String appliedPatternToMenuDesc = CrawlingUtils.applyPatternToMenuDesc(menu.getValue());
+            builder.menuDesc(appliedPatternToMenuDesc);
         } else {
             builder.menuDesc(CrawlingUtils.NOT_PROVIDED_MENU);
         }
-    }
-
-    /**
-     * <p>코드 가독성이 좋지 못한것 같다.</p>
-     * <br>
-     * @Author 장세웅
-     * @Since 2023/08/06
-     */
-    @Deprecated
-    @Transactional
-    public void saveAllCrawlingDataUseLamDa(List<UosRestaurantCrawlingResponse> responses) {
-        List<UosRestaurant> studentHalls = responses.stream()
-                .map(response -> {
-                    UosRestaurant.UosRestaurantBuilder builder = UosRestaurant.builder()
-                            .crawlingDate(response.getRestaurantDate());
-
-                    response.getMenu().forEach((crawlingMealType, menuDesc) -> {
-                        MealType mealType = MealType.valueOf(crawlingMealType.name());
-                        builder.mealType(mealType)
-                                .menuDesc(menuDesc);
-                    });
-
-                    return builder.build();
-                })
-                .collect(Collectors.toList());
-
-        uosRestaurantRepository.saveAll(studentHalls);
-    }
-
-    private String mapValueToString(Map<CrawlingMealType, String> menu) {
-        return menu.entrySet().stream()
-                .map(Map.Entry::getValue)
-                .collect(Collectors.joining());
-    }
-
-    private String mapKeyToString(Map<CrawlingMealType, String> menu) {
-        return menu.entrySet().stream()
-                .map(e -> e.getKey().name())
-                .collect(Collectors.joining());
     }
 }

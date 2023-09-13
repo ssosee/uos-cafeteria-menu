@@ -32,8 +32,10 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final CacheMemberRepository cacheMemberRepository;
     private final MemberBulkInsertRepository memberBulkInsertRepository;
+    private final CacheMemberService cacheMemberService;
 
     // 모든 Member 캐시에 있는 데이터를 데이터베이스로 동기화한다.
+    @Deprecated
     @Transactional
     public void syncCacheMemberVisitCountToDatabaseMember() {
 
