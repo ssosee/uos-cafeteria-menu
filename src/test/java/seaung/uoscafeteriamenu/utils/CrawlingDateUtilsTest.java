@@ -2,14 +2,11 @@ package seaung.uoscafeteriamenu.utils;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.shaded.org.apache.commons.lang3.StringUtils;
 import seaung.uoscafeteriamenu.crawling.utils.CrawlingUtils;
 import seaung.uoscafeteriamenu.domain.entity.MealType;
 
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -95,7 +92,7 @@ class CrawlingDateUtilsTest {
             "(괄호를 포함한 영어, 공백을 포함한 영어, 칼로리 정보, 질량 정보를 제외한다.)")
     void applyPatternToMenuDesc() {
         // given
-        String str = "학생회관 1층(조식)\n" +
+        String menu = "학생회관 1층(조식)\n" +
                 "\uD83D\uDC40 조회수: 1\n" +
                 "\uD83D\uDC4D 추천수: 0\n\n" +
                 "코너 A\n" +
@@ -152,7 +149,7 @@ class CrawlingDateUtilsTest {
                 "454kcal";
 
         // when
-        String result = CrawlingUtils.applyPatternToMenuDesc(str);
+        String result = CrawlingUtils.applyPatternToMenuDesc(menu);
 
         // then
         assertThat(result).isEqualTo("학생회관 1층(조식)\n" +

@@ -46,15 +46,16 @@ class CrawlingStudentHallServiceTest {
         String menuDesc = "11:30~14:00\n" +
                 "(6,000원)\n" +
                 "닭갈비볶음밥\n" +
-                "Stir-fried Chicken Fried Rice\n" +
                 "콩나물국\n" +
                 "두반장가지볶음\n" +
                 "실곤약무침\n" +
                 "양배추찜\n" +
-                "\n" +
+                "제육볶음\n" +
+                "김치찜\n" +
+                "당근 파송송 계란찜\n" +
+                "닭갈비, 떡라면, 떡갈비, 볶음김치, 고등어 구이" +
                 "닭정육 : 브라질산,\n" +
-                "돈육 : 국내산\n" +
-                "984kcal/38g";
+                "돈육 : 국내산\n";
 
         // 크롤링 대상은 변할 수 있기 때문에 크롤링 구현체를 사용하지 않는다.
         UosRestaurantCrawlingResponse crawlingResponse = new UosRestaurantCrawlingResponse(UosRestaurantName.STUDENT_HALL.getKrName(), "8/15 (화)");
@@ -88,15 +89,17 @@ class CrawlingStudentHallServiceTest {
         String menuDesc = "11:30~14:00\n" +
                 "(6,000원)\n" +
                 "닭갈비볶음밥\n" +
-                "Stir-fried Chicken Fried Rice\n" +
                 "콩나물국\n" +
                 "두반장가지볶음\n" +
                 "실곤약무침\n" +
                 "양배추찜\n" +
-                "\n" +
+                "제육볶음\n" +
+                "김치찜\n" +
+                "당근 파송송 계란찜\n" +
+                "닭갈비, 떡라면, 떡갈비, 볶음김치, 고등어 구이" +
                 "닭정육 : 브라질산,\n" +
-                "돈육 : 국내산\n" +
-                "984kcal/38g";
+                "돈육 : 국내산\n";
+
         // 크롤링 대상은 변할 수 있기 때문에 크롤링 구현체를 사용하지 않는다.
         UosRestaurantCrawlingResponse crawlingResponse = new UosRestaurantCrawlingResponse(UosRestaurantName.STUDENT_HALL.getKrName(), "8/15 (화)");
         crawlingResponse.setMenu(Map.of(CrawlingMealType.BREAKFAST, "A코스"+menuDesc,

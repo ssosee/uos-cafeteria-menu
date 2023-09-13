@@ -98,7 +98,9 @@ public class CrawlingUosRestaurantService extends CrawlingService {
 
     private void pretreatmentMenu(Map.Entry<CrawlingMealType, String> menu, UosRestaurant.UosRestaurantBuilder builder) {
         if(CrawlingUtils.hasMenu(menu.getValue())) {
-            builder.menuDesc(menu.getValue());
+            // 불필요한 정보를 제외한다.(TextCard 400자 제한 때문)
+            String appliedPatternToMenuDesc = CrawlingUtils.applyPatternToMenuDesc(menu.getValue());
+            builder.menuDesc(appliedPatternToMenuDesc);
         } else {
             builder.menuDesc(CrawlingUtils.NOT_PROVIDED_MENU);
         }
