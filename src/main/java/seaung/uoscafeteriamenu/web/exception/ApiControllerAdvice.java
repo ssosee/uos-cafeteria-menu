@@ -24,7 +24,7 @@ public class ApiControllerAdvice {
     public ResponseEntity<SkillResponse> runtimeException(RuntimeException e) {
         SkillResponse skillResponse = createSimpleTextResponse(errorMessage);
 
-        //log.error("[기타 예외 발생] ", e);
+        log.error("[runtimeException 예외 발생] ", e);
 
         // 400으로 보내면 챗봇이 응답을 안준다.
         return new ResponseEntity<>(skillResponse, HttpStatus.OK);
@@ -33,6 +33,8 @@ public class ApiControllerAdvice {
     @ExceptionHandler(ApikeyException.class)
     public ResponseEntity<SkillResponse> apikeyException(ApikeyException e) {
         SkillResponse skillResponse = createSimpleTextResponse(e.getMessage()+" "+errorMessage);
+
+        log.error("[apikeyException 예외 발생] ", e);
 
         // 400으로 보내면 챗봇이 응답을 안준다.
         return new ResponseEntity<>(skillResponse, HttpStatus.OK);
@@ -43,7 +45,7 @@ public class ApiControllerAdvice {
 
         SkillResponse skillResponse = createSimpleTextResponse(e.getMessage());
 
-        //log.error("[학교식당 메뉴 조회 예외 발생] ", e);
+        log.error("[uosRestaurantMenuException 발생] ", e);
 
         // 400으로 보내면 챗봇이 응답을 안준다.
         return new ResponseEntity<>(skillResponse, HttpStatus.OK);
@@ -54,7 +56,7 @@ public class ApiControllerAdvice {
 
         SkillResponse skillResponse = createSimpleTextResponse(e.getMessage());
 
-        //log.error("[회원 예외 발생] ", e);
+        log.error("[memberException 발생] ", e);
 
         // 400으로 보내면 챗봇이 응답을 안준다.
         return new ResponseEntity<>(skillResponse, HttpStatus.OK);
@@ -65,7 +67,7 @@ public class ApiControllerAdvice {
 
         SkillResponse skillResponse = createSimpleTextResponse(e.getMessage());
 
-        //log.error("[메뉴 추천이력 예외 발생] ", e);
+        log.error("[menuLikeException 발생] ", e);
 
         // 400으로 보내면 챗봇이 응답을 안준다.
         return new ResponseEntity<>(skillResponse, HttpStatus.OK);

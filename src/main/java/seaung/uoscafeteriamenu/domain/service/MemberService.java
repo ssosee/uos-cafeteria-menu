@@ -36,10 +36,21 @@ public class MemberService {
             return cacheMemberRepository.save(findCacheMember);
         }
 
-        // 캐시에 회원이 없으면 회원을 생성하고 DB와 캐시에 저장
-        Member member = Member.create(botUserId, 1L);
-        memberRepository.save(member);
+        // 캐시에 회원이 없으면
+        // 회원 조회
+        Optional<Member> optionalMember = memberRepository.findByBotUserId(botUserId);
+        // 회원이 없으면
+        if(optionalMember.isEmpty()) {
+            //회원을 생성하고 DB와 캐시에 저장
+            Member member = Member.create(botUserId, 1L);
+            memberRepository.save(member);
 
+            return cacheMemberRepository.save(CacheMember.of(member));
+        }
+
+        // 회원이 존재하면 회원 방문횟수를 증가시키고 캐시에만 회원 저장
+        Member member = optionalMember.get();
+        member.increaseVisitCount();
         return cacheMemberRepository.save(CacheMember.of(member));
     }
 

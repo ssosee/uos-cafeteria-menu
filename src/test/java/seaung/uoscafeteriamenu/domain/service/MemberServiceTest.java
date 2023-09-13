@@ -5,11 +5,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.transaction.annotation.Transactional;
 import seaung.uoscafeteriamenu.domain.cache.entity.CacheMember;
 import seaung.uoscafeteriamenu.domain.cache.repository.CacheMemberRepository;
@@ -18,7 +15,7 @@ import seaung.uoscafeteriamenu.domain.repository.MemberRepository;
 
 import javax.persistence.EntityManager;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
@@ -56,7 +53,7 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("캐시에서 회원을 조회하고 캐시에 회원이 없으면 데이터베이스와 캐시에 회원을 생성한다.")
+    @DisplayName("캐시에서 회원을 조회할 때 캐시에 회원이 없으면 회원을 데이터베이스에서 조회하고 없으면 회원을 생성하고 캐시에 회원을 저장한다.")
     void findCacheMemberOrSaveMemberInDatabaseAndRedis() {
         // given
         String botUserId = "1";
@@ -72,6 +69,46 @@ class MemberServiceTest {
                 () -> assertThat(cacheMember.getBotUserId()).isEqualTo("1"),
                 () -> assertThat(findCacheMember.getBotUserId()).isEqualTo("1"),
                 () -> assertThat(findMember.getBotUserId()).isEqualTo("1")
+        );
+    }
+
+    @Test
+    @DisplayName("캐시에서 회원을 조회할 때 캐시에 회원이 존재하면 캐시에 있는 회원의 방문횟수를 1증가시키고 조회한다.")
+    void findCacheMemberWithCacheMemberIncreaseVisitCount() {
+        // given
+        String botUserId = "1";
+        Member member = Member.create(botUserId, 1L);
+        CacheMember saveCacheMember = cacheMemberRepository.save(CacheMember.of(member));
+
+        // when
+        CacheMember cacheMember = memberService.findCacheMemberOrSaveMemberInDatabaseAndRedis(botUserId);
+
+        // then
+        assertAll(
+                () -> assertThat(saveCacheMember.getBotUserId()).isEqualTo("1"),
+                () -> assertThat(cacheMember.getBotUserId()).isEqualTo("1"),
+                () -> assertThat(cacheMember.getVisitCount()).isEqualTo(2L)
+        );
+    }
+
+    @Test
+    @DisplayName("캐시에서 회원을 조회할 때 데이터베이스에만 회원이 존재하면 데이터베이스의 회원의 방문횟수를 1증가시키고 캐시에 회원을 저장하고 조회한다.")
+    void findCacheMemberWithMemberIncreaseVisitCount() {
+        // given
+        String botUserId = "1";
+        Member member = Member.create(botUserId, 1L);
+        memberRepository.save(member);
+
+        // when
+        CacheMember cacheMember = memberService.findCacheMemberOrSaveMemberInDatabaseAndRedis(botUserId);
+
+        // then
+        Member findMember = memberRepository.findByBotUserId(botUserId).get();
+        assertAll(
+                () -> assertThat(findMember.getBotUserId()).isEqualTo("1"),
+                () -> assertThat(cacheMember.getBotUserId()).isEqualTo("1"),
+                () -> assertThat(findMember.getVisitCount()).isEqualTo(2L),
+                () -> assertThat(cacheMember.getVisitCount()).isEqualTo(2L)
         );
     }
 
