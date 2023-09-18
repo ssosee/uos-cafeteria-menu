@@ -68,9 +68,9 @@ public class UosRestarantCrawler extends Crawler {
             int crawlingMealTypeToNumber = convertCrawlingMealTypeToNumber(crawlingMealType);
             StringBuilder sb = new StringBuilder();
 
-            for (Node t : mealDesc.get(crawlingMealTypeToNumber).childNodes()) {
-                if (t.toString().equals("<br>")) sb.append("\n");
-                else sb.append(t);
+            for (Node node : mealDesc.get(crawlingMealTypeToNumber).childNodes()) {
+                if (node.toString().equals("<br>")) sb.append("\n");
+                else sb.append(node);
             }
 
             String resultMenu = Parser.unescapeEntities(sb.toString(), false);

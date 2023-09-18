@@ -25,8 +25,7 @@ public class ProdInitData {
 
     private final CrawlingTargetRepository crawlingTargetRepository;
     private final Crawler crawler;
-    private final CrawlingUosRestaurantService crawlingStudentHallService;
-    private final SkillBlockRepository skillBlockRepository;
+    private final CrawlingUosRestaurantService crawlingUosRestaurantService;
 
     private final String cssQuery = "div.listType02#week table tbody tr";
     private final String studentHallUrl = "https://www.uos.ac.kr/food/placeList.do?epTicket=INV";
@@ -63,7 +62,7 @@ public class ProdInitData {
         }
 
         // 크롤링 결과 저장
-        crawlingStudentHallService.saveAllCrawlingData(responseList);
+        crawlingUosRestaurantService.saveAllCrawlingData(responseList);
     }
 
     private void initUrlMap() {

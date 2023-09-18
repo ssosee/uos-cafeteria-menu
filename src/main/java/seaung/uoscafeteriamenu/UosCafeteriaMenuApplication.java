@@ -26,8 +26,11 @@ public class UosCafeteriaMenuApplication {
 
     @Bean
     @Profile("prod")
-    public ProdInitData ProdInitData(CrawlingTargetRepository crawlingTargetRepository, Crawler crawler, CrawlingUosRestaurantService crawlingStudentHallService, SkillBlockRepository skillBlockRepository) {
-        return new ProdInitData(crawlingTargetRepository, crawler, crawlingStudentHallService, skillBlockRepository);
+    public ProdInitData ProdInitData(CrawlingTargetRepository crawlingTargetRepository,
+                                     Crawler crawler,
+                                     CrawlingUosRestaurantService crawlingStudentHallService) {
+
+        return new ProdInitData(crawlingTargetRepository, crawler, crawlingStudentHallService);
     }
 
     @Bean
@@ -38,6 +41,7 @@ public class UosCafeteriaMenuApplication {
                                        SkillBlockRepository skillBlockRepository,
                                        ApikeyRepository apikeyRepository,
                                        ApiUserMemberRepository apiUserMemberRepository) {
+
         return new LocalInitData(crawlingTargetRepository, crawler,
                 crawlingStudentHallService, skillBlockRepository,
                 apikeyRepository, apiUserMemberRepository);

@@ -26,7 +26,7 @@ public class LocalInitData {
 
     private final CrawlingTargetRepository crawlingTargetRepository;
     private final Crawler crawler;
-    private final CrawlingUosRestaurantService crawlingStudentHallService;
+    private final CrawlingUosRestaurantService crawlingUosRestaurantService;
     private final SkillBlockRepository skillBlockRepository;
     private final ApikeyRepository apikeyRepository;
     private final ApiUserMemberRepository apiUserMemberRepository;
@@ -80,7 +80,7 @@ public class LocalInitData {
         }
 
         // 크롤링 결과 저장
-        crawlingStudentHallService.saveAllCrawlingData(responseList);
+        crawlingUosRestaurantService.saveAllCrawlingData(responseList);
     }
 
     private void initUrlMap() {
