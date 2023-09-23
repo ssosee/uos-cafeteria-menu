@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import seaung.uoscafeteriamenu.crawling.utils.CrawlingUtils;
 import seaung.uoscafeteriamenu.domain.cache.entity.CacheMember;
 import seaung.uoscafeteriamenu.domain.cache.repository.CacheMemberRepository;
+import seaung.uoscafeteriamenu.domain.cache.repository.CacheUosRestaurantRepository;
 import seaung.uoscafeteriamenu.domain.entity.*;
 import seaung.uoscafeteriamenu.domain.repository.MemberRepository;
 import seaung.uoscafeteriamenu.domain.repository.MenuLikeRepository;
@@ -31,11 +32,13 @@ public class UosRestaurantService {
     private final UosRestaurantRepository uosRestaurantRepository;
     private final MenuLikeRepository menuLikeRepository;
     private final MemberRepository memberRepository;
+    private final CacheUosRestaurantRepository cacheUosRestaurantRepository;
 
     // 학교식당의 식사종류의 학식 메뉴 조회
     // e.g) 학생회관 조식 라면
     @Transactional
     public UosRestaurantMenuResponse getUosRestaurantMenu(UosRestaurantInput input) {
+
         // 학식 조회
         UosRestaurant findUosRestaurant = uosRestaurantRepository.findByCrawlingDateAndRestaurantNameAndMealType(input.getDate(),
                         input.getRestaurantName(), input.getMealType())

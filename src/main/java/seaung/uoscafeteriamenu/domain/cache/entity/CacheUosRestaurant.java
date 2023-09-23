@@ -19,29 +19,35 @@ import static seaung.uoscafeteriamenu.domain.cache.entity.RedisEntityConfig.DEFA
 @NoArgsConstructor
 public class CacheUosRestaurant implements Serializable {
     @Id
+    private String id;
     private UosRestaurantName restaurantName;
+    private String date;
     private MealType mealType;
-    private String menu;
+    private String menuDesc;
     private Integer view;
     private Integer likeCount;
     @TimeToLive
     private int expiration;
 
     @Builder
-    private CacheUosRestaurant(UosRestaurantName restaurantName, MealType mealType, String menu, Integer view, Integer likeCount, int expiration) {
+    private CacheUosRestaurant(String id, String date, UosRestaurantName restaurantName, MealType mealType, String menuDesc, Integer view, Integer likeCount, int expiration) {
+        this.id = id;
+        this.date = date;
         this.restaurantName = restaurantName;
         this.mealType = mealType;
-        this.menu = menu;
+        this.menuDesc = menuDesc;
         this.view = view;
         this.likeCount = likeCount;
         this.expiration = expiration;
     }
 
-    public static CacheUosRestaurant create(UosRestaurantName restaurantName, MealType mealType, String menu, Integer view, Integer likeCount, int expiration) {
+    public static CacheUosRestaurant create(String date, UosRestaurantName restaurantName, MealType mealType, String menuDesc, Integer view, Integer likeCount, int expiration) {
         return CacheUosRestaurant.builder()
+                .id(createId(date, restaurantName, mealType))
+                .date(date)
                 .restaurantName(restaurantName)
                 .mealType(mealType)
-                .menu(menu)
+                .menuDesc(menuDesc)
                 .view(view)
                 .likeCount(likeCount)
                 .expiration(expiration)
@@ -50,12 +56,24 @@ public class CacheUosRestaurant implements Serializable {
 
     public static CacheUosRestaurant of(UosRestaurant uosRestaurant) {
         return CacheUosRestaurant.builder()
+                .id(createId(uosRestaurant.getCrawlingDate(), uosRestaurant.getRestaurantName(), uosRestaurant.getMealType()))
+                .date(uosRestaurant.getCrawlingDate())
                 .restaurantName(uosRestaurant.getRestaurantName())
                 .mealType(uosRestaurant.getMealType())
-                .menu(uosRestaurant.getMenuDesc())
+                .menuDesc(uosRestaurant.getMenuDesc())
                 .view(uosRestaurant.getView())
                 .likeCount(uosRestaurant.getLikeCount())
                 .expiration(DEFAULT_TTL)
                 .build();
+    }
+
+    private static String createId(String date, UosRestaurantName uosRestaurantName, MealType mealType) {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(date).append("-");
+        sb.append(uosRestaurantName).append("-");
+        sb.append(mealType).append("-");
+
+        return sb.toString();
     }
 }
