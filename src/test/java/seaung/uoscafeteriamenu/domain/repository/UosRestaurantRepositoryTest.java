@@ -80,7 +80,7 @@ class UosRestaurantRepositoryTest {
         uosRestaurantRepository.saveAll(List.of(uosRestaurant1, uosRestaurant2, uosRestaurant3, uosRestaurant4));
 
         // when
-        List<UosRestaurant> result = uosRestaurantRepository.findByCrawlingDateAndAndMealType(date, MealType.BREAKFAST);
+        List<UosRestaurant> result = uosRestaurantRepository.findByCrawlingDateAndMealType(date, MealType.BREAKFAST);
 
         // then
         assertThat(result).hasSize(4)

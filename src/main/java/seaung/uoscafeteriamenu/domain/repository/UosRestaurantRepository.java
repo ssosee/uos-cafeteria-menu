@@ -15,7 +15,7 @@ public interface UosRestaurantRepository extends JpaRepository<UosRestaurant, Lo
 
     Optional<UosRestaurant> findByCrawlingDateAndRestaurantNameAndMealType(String crawlingDate, UosRestaurantName restaurantName, MealType mealType);
 
-    List<UosRestaurant> findByCrawlingDateAndAndMealType(String crawlingDate, MealType mealType);
+    List<UosRestaurant> findByCrawlingDateAndMealType(String crawlingDate, MealType mealType);
 
     // 조회수가 가장 많은 식사메뉴를 조회(조회수가 같을 경우 추천수 많은 순으로)
     Page<UosRestaurant> findByCrawlingDateAndMealTypeOrderByViewDescLikeCountDesc(Pageable pageable, String crawlingDate, MealType mealType);

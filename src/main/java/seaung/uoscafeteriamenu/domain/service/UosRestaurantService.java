@@ -6,8 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import seaung.uoscafeteriamenu.crawling.utils.CrawlingUtils;
-import seaung.uoscafeteriamenu.domain.cache.entity.CacheMember;
-import seaung.uoscafeteriamenu.domain.cache.repository.CacheMemberRepository;
+import seaung.uoscafeteriamenu.domain.cache.entity.CacheUosRestaurant;
 import seaung.uoscafeteriamenu.domain.cache.repository.CacheUosRestaurantRepository;
 import seaung.uoscafeteriamenu.domain.entity.*;
 import seaung.uoscafeteriamenu.domain.repository.MemberRepository;
@@ -22,7 +21,12 @@ import seaung.uoscafeteriamenu.web.exception.MenuLikeException;
 import seaung.uoscafeteriamenu.web.exception.UosRestaurantMenuException;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 @Service
 @RequiredArgsConstructor
@@ -39,13 +43,29 @@ public class UosRestaurantService {
     @Transactional
     public UosRestaurantMenuResponse getUosRestaurantMenu(UosRestaurantInput input) {
 
+        // 캐시에서 학식 조회
+        Optional<CacheUosRestaurant> findCacheUosRestaurant = cacheUosRestaurantRepository
+                .findById(CacheUosRestaurant.createId(input));
+
+        // 캐시에 학식이 존재하면
+        if(findCacheUosRestaurant.isPresent()) {
+            // 조회수 증가
+            findCacheUosRestaurant.get().increaseView();
+            CacheUosRestaurant newCacheRestaurant = cacheUosRestaurantRepository.save(findCacheUosRestaurant.get());
+
+            return UosRestaurantMenuResponse.of(newCacheRestaurant);
+        }
+
         // 학식 조회
         UosRestaurant findUosRestaurant = uosRestaurantRepository.findByCrawlingDateAndRestaurantNameAndMealType(input.getDate(),
                         input.getRestaurantName(), input.getMealType())
-                . orElseThrow(() -> new UosRestaurantMenuException(UosRestaurantMenuException.NOT_FOUND_MENU));
+                .orElseThrow(() -> new UosRestaurantMenuException(UosRestaurantMenuException.NOT_FOUND_MENU));
 
         // 조회수 증가
         findUosRestaurant.increaseView();
+
+        // 캐시에 저장
+        cacheUosRestaurantRepository.save(CacheUosRestaurant.of(findUosRestaurant));
 
         return UosRestaurantMenuResponse.of(findUosRestaurant);
     }
@@ -54,11 +74,29 @@ public class UosRestaurantService {
     // [학생회관 조식 라면, 양식당 조식 돈까스, 자연과학관 조식 제육]
     @Transactional
     public List<UosRestaurantMenuResponse> getUosRestaurantsMenu(UosRestaurantsInput input) {
+
+        // 캐시에서 학식들 조회
+        List<CacheUosRestaurant> findCacheUosRestaurants = cacheUosRestaurantRepository.findByDateAndMealType(input.getDate(), input.getMealType());
+        if(!findCacheUosRestaurants.isEmpty()) {
+            // 조회수 증가
+            findCacheUosRestaurants.forEach(CacheUosRestaurant::increaseView);
+
+            // 캐시에 저장
+            Iterable<CacheUosRestaurant> cacheUosRestaurants = cacheUosRestaurantRepository.saveAll(findCacheUosRestaurants);
+
+            return StreamSupport.stream(cacheUosRestaurants.spliterator(), false)
+                    .map(UosRestaurantMenuResponse::of)
+                    .collect(Collectors.toList());
+        }
+
         // 학식들 조회
-        List<UosRestaurant> findUosRestaurants = uosRestaurantRepository.findByCrawlingDateAndAndMealType(input.getDate(), input.getMealType());
+        List<UosRestaurant> findUosRestaurants = uosRestaurantRepository.findByCrawlingDateAndMealType(input.getDate(), input.getMealType());
 
         // 조회수 증가
         findUosRestaurants.forEach(UosRestaurant::increaseView);
+
+        // 캐시에 저장
+        cacheUosRestaurantRepository.saveAll(CacheUosRestaurant.ofList(findUosRestaurants));
 
         return UosRestaurantMenuResponse.ofList(findUosRestaurants);
     }

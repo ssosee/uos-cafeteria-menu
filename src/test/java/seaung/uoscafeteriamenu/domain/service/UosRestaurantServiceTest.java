@@ -12,7 +12,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import seaung.uoscafeteriamenu.domain.cache.entity.CacheMember;
+import seaung.uoscafeteriamenu.domain.cache.entity.CacheUosRestaurant;
 import seaung.uoscafeteriamenu.domain.cache.repository.CacheMemberRepository;
+import seaung.uoscafeteriamenu.domain.cache.repository.CacheUosRestaurantRepository;
 import seaung.uoscafeteriamenu.domain.entity.*;
 import seaung.uoscafeteriamenu.domain.repository.MemberRepository;
 import seaung.uoscafeteriamenu.domain.repository.MenuLikeRepository;
@@ -47,24 +49,58 @@ class UosRestaurantServiceTest {
     MenuLikeRepository menuLikeRepository;
     @Autowired
     CacheManager cacheManager;
-
     @Autowired
     CacheMemberRepository cacheMemberRepository;
+    @Autowired
+    CacheUosRestaurantRepository cacheUosRestaurantRepository;
 
     @AfterEach
     void tearDown() {
         cacheManager.getCacheNames()
                 .forEach(name -> cacheManager.getCache(name).clear());
         cacheMemberRepository.deleteAll();
+        cacheUosRestaurantRepository.deleteAll();
     }
 
     @Test
-    @DisplayName("학교식당의 금일 조식 메뉴를 조회하고 조회수를 1증가한다.")
+    @DisplayName("캐시에 학교식당의 금일 조식 메뉴가 없는 경우 데이터베이스에서 학교식당의 금일 조식 메뉴를 조회하고 조회수를 1증가하고, 캐시에 데이터를 저장한다.")
     void getUosRestaurantMenu() {
         // given
         String date = CrawlingUtils.toDateString(LocalDateTime.now());
         UosRestaurant uosRestaurant = createUosRestaurant(date, UosRestaurantName.STUDENT_HALL, MealType.BREAKFAST, "라면", 0, 0);
         uosRestaurantRepository.save(uosRestaurant);
+
+        UosRestaurantInput input = createUosRestaurantInput(date, UosRestaurantName.STUDENT_HALL, MealType.BREAKFAST);
+
+        // when
+        UosRestaurantMenuResponse uosRestaurantMenu = uosRestaurantService.getUosRestaurantMenu(input);
+
+        // then
+        assertAll(
+                () -> assertThat(uosRestaurantMenu.getMenu()).isEqualTo("라면"),
+                () -> assertThat(uosRestaurantMenu.getRestaurantName()).isEqualTo("학생회관 1층"),
+                () -> assertThat(uosRestaurantMenu.getMealType()).isEqualTo("조식"),
+                () -> assertThat(uosRestaurantMenu.getView()).isEqualTo(1),
+                () -> assertThat(uosRestaurantMenu.getLikeCount()).isEqualTo(0)
+        );
+
+        CacheUosRestaurant cacheUosRestaurant = cacheUosRestaurantRepository.findById(CacheUosRestaurant.createId(input)).get();
+        assertAll(
+                () -> assertThat(cacheUosRestaurant.getMenuDesc()).isEqualTo("라면"),
+                () -> assertThat(cacheUosRestaurant.getRestaurantName()).isEqualTo(STUDENT_HALL),
+                () -> assertThat(cacheUosRestaurant.getMealType()).isEqualTo(MealType.BREAKFAST),
+                () -> assertThat(cacheUosRestaurant.getView()).isEqualTo(1),
+                () -> assertThat(cacheUosRestaurant.getLikeCount()).isEqualTo(0)
+        );
+    }
+
+    @Test
+    @DisplayName("캐시에 학교 메뉴가 있으면 캐시에 있는 메뉴의 조회수를 1증가한다.")
+    void getUosRestaurantMenuInCache() {
+        // given
+        String date = CrawlingUtils.toDateString(LocalDateTime.now());
+        UosRestaurant uosRestaurant = createUosRestaurant(date, UosRestaurantName.STUDENT_HALL, MealType.BREAKFAST, "라면", 0, 0);
+        cacheUosRestaurantRepository.save(CacheUosRestaurant.of(uosRestaurant));
 
         UosRestaurantInput input = createUosRestaurantInput(date, UosRestaurantName.STUDENT_HALL, MealType.BREAKFAST);
 
@@ -96,7 +132,7 @@ class UosRestaurantServiceTest {
     }
 
     @Test
-    @DisplayName("금일 조식 메뉴들을 조회하고 조회수를 1증가한다.")
+    @DisplayName("캐시에 금일 조식 메뉴가 없는 경우 데이터베이스에서 금일 조식 메뉴들을 조회하고 조회수를 1증가하고, 캐시에 데이터를 저장한다.")
     void getUosRestaurantMenus() {
         // given
         String date = CrawlingUtils.toDateString(LocalDateTime.now());
@@ -106,6 +142,48 @@ class UosRestaurantServiceTest {
         UosRestaurant uosRestaurant3 = createUosRestaurant(date, UosRestaurantName.WESTERN_RESTAURANT, MealType.BREAKFAST, "돈까스", 0, 0);
         UosRestaurant uosRestaurant4 = createUosRestaurant(date, UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE, MealType.BREAKFAST, "제육", 0, 0);
         uosRestaurantRepository.saveAll(List.of(uosRestaurant1, uosRestaurant2, uosRestaurant3, uosRestaurant4));
+
+        UosRestaurantsInput input = createUosRestaurantsInput(date, MealType.BREAKFAST);
+
+        // when
+        List<UosRestaurantMenuResponse> uosRestaurantMenus = uosRestaurantService.getUosRestaurantsMenu(input);
+
+        // then
+        assertThat(uosRestaurantMenus).hasSize(4)
+                .extracting("restaurantName", "mealType", "menu", "view", "likeCount")
+                .contains(
+                        tuple(UosRestaurantName.STUDENT_HALL.getKrName(), MealType.BREAKFAST.getKrName(), "라면", 1, 0),
+                        tuple(UosRestaurantName.MAIN_BUILDING.getKrName(), MealType.BREAKFAST.getKrName(), "김밥", 1, 0),
+                        tuple(UosRestaurantName.WESTERN_RESTAURANT.getKrName(), MealType.BREAKFAST.getKrName(), "돈까스", 1, 0),
+                        tuple(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE.getKrName(), MealType.BREAKFAST.getKrName(), "제육", 1, 0)
+                );
+
+        List<CacheUosRestaurant> cacheUosRestaurants = cacheUosRestaurantRepository.findByDateAndMealType(date, MealType.BREAKFAST);
+        assertThat(cacheUosRestaurants).hasSize(4)
+                .extracting("restaurantName", "mealType", "menuDesc", "view", "likeCount")
+                .contains(
+                        tuple(UosRestaurantName.STUDENT_HALL, MealType.BREAKFAST, "라면", 1, 0),
+                        tuple(UosRestaurantName.MAIN_BUILDING, MealType.BREAKFAST, "김밥", 1, 0),
+                        tuple(UosRestaurantName.WESTERN_RESTAURANT, MealType.BREAKFAST, "돈까스", 1, 0),
+                        tuple(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE, MealType.BREAKFAST, "제육", 1, 0)
+                );
+    }
+
+    @Test
+    @DisplayName("캐시에서 금일 조식 메뉴들을 조회하고 조회수를 1증가한다.")
+    void getUosRestaurantMenusInCache() {
+        // given
+        String date = CrawlingUtils.toDateString(LocalDateTime.now());
+
+        UosRestaurant uosRestaurant1 = createUosRestaurant(date, UosRestaurantName.STUDENT_HALL, MealType.BREAKFAST, "라면", 0, 0);
+        UosRestaurant uosRestaurant2 = createUosRestaurant(date, UosRestaurantName.MAIN_BUILDING, MealType.BREAKFAST, "김밥", 0, 0);
+        UosRestaurant uosRestaurant3 = createUosRestaurant(date, UosRestaurantName.WESTERN_RESTAURANT, MealType.BREAKFAST, "돈까스", 0, 0);
+        UosRestaurant uosRestaurant4 = createUosRestaurant(date, UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE, MealType.BREAKFAST, "제육", 0, 0);
+
+        cacheUosRestaurantRepository.saveAll(List.of(CacheUosRestaurant.of(uosRestaurant1),
+                CacheUosRestaurant.of(uosRestaurant2),
+                CacheUosRestaurant.of(uosRestaurant3),
+                CacheUosRestaurant.of(uosRestaurant4)));
 
         UosRestaurantsInput input = createUosRestaurantsInput(date, MealType.BREAKFAST);
 

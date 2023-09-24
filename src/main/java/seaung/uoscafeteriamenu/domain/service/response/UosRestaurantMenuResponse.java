@@ -3,6 +3,7 @@ package seaung.uoscafeteriamenu.domain.service.response;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.domain.Page;
+import seaung.uoscafeteriamenu.domain.cache.entity.CacheUosRestaurant;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurant;
 import seaung.uoscafeteriamenu.domain.service.request.UosRestaurantInput;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.SkillResponse;
@@ -37,6 +38,16 @@ public class UosRestaurantMenuResponse {
                 .mealType(uosRestaurant.getMealType().getKrName())
                 .view(uosRestaurant.getView())
                 .likeCount(uosRestaurant.getLikeCount())
+                .build();
+    }
+
+    public static UosRestaurantMenuResponse of(CacheUosRestaurant cacheUosRestaurant) {
+        return UosRestaurantMenuResponse.builder()
+                .restaurantName(cacheUosRestaurant.getRestaurantName().getKrName())
+                .menu(cacheUosRestaurant.getMenuDesc())
+                .mealType(cacheUosRestaurant.getMealType().getKrName())
+                .view(cacheUosRestaurant.getView())
+                .likeCount(cacheUosRestaurant.getLikeCount())
                 .build();
     }
 

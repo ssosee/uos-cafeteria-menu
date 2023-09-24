@@ -6,22 +6,33 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
+import org.springframework.data.redis.core.index.Indexed;
 import seaung.uoscafeteriamenu.domain.entity.MealType;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurant;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurantName;
+import seaung.uoscafeteriamenu.domain.service.request.UosRestaurantInput;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static seaung.uoscafeteriamenu.domain.cache.entity.RedisEntityConfig.DEFAULT_TTL;
 
+/**
+ * https://dkswnkk.tistory.com/709
+ * @Indexed로 생성된 보조 인덱스는 해당 데이터의 TTL이 만료되더라도 자동으로 삭제가 되지 않는다.
+ */
 @Getter
 @RedisHash(value = "cacheUosRestaurant", timeToLive = DEFAULT_TTL)
 @NoArgsConstructor
 public class CacheUosRestaurant implements Serializable {
     @Id
     private String id;
+    @Indexed
     private UosRestaurantName restaurantName;
+    @Indexed
     private String date;
+    @Indexed
     private MealType mealType;
     private String menuDesc;
     private Integer view;
@@ -67,13 +78,33 @@ public class CacheUosRestaurant implements Serializable {
                 .build();
     }
 
-    private static String createId(String date, UosRestaurantName uosRestaurantName, MealType mealType) {
+    public static List<CacheUosRestaurant> ofList(List<UosRestaurant> uosRestaurants) {
+        return uosRestaurants.stream()
+                .map(CacheUosRestaurant::of)
+                .collect(Collectors.toList());
+    }
+
+    public static String createId(String date, UosRestaurantName uosRestaurantName, MealType mealType) {
 
         StringBuilder sb = new StringBuilder();
         sb.append(date).append("-");
         sb.append(uosRestaurantName).append("-");
-        sb.append(mealType).append("-");
+        sb.append(mealType);
 
         return sb.toString();
+    }
+
+    public static String createId(UosRestaurantInput input) {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(input.getDate()).append("-");
+        sb.append(input.getRestaurantName()).append("-");
+        sb.append(input.getMealType());
+
+        return sb.toString();
+    }
+
+    public void increaseView() {
+        this.view++;
     }
 }
