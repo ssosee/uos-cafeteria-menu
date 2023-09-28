@@ -42,8 +42,6 @@ class MemberServiceTest {
     EntityManager em;
     @Autowired
     RedisCacheManager cacheManager;
-    @Autowired
-    RedisTemplate<?, ?> redisTemplate;
 
     @AfterEach
     void tearDown() {

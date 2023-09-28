@@ -1,6 +1,7 @@
 package seaung.uoscafeteriamenu.domain.cache.repository;
 
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 import seaung.uoscafeteriamenu.domain.cache.entity.CacheUosRestaurant;
 import seaung.uoscafeteriamenu.domain.entity.MealType;
 

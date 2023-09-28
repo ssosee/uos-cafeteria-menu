@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@Component
+//@Component
 @RequiredArgsConstructor
 public class CrawlingSchedule {
 
@@ -37,7 +37,7 @@ public class CrawlingSchedule {
      */
     //@Scheduled(cron = "*/10 * * * * *", zone = "Asia/Seoul")
     @Scheduled(cron = "0 0 7 * * MON", zone = "Asia/Seoul") // 매주 월요일 7시에 실행
-    @Async("crawlingAsyncExecutor")
+    @Async("uosRestaurantAsyncExecutor")
     public void crawlingStudentHall() throws IOException {
         log.info("크롤링 시작...");
 
