@@ -34,8 +34,8 @@ botApikey: test-botApikey
     "name": "ymbjlorhkc",
     "clientExtra": null,
     "params": {
-      "restaurantName": "MUSEUM_OF_NATURAL_SCIENCE",
-      "mealType": "LUNCH"
+      "restaurantName": "STUDENT_HALL",
+      "mealType": "BREAKFAST"
     },
     "id": "2eej1w0k1qfo4hs3z7xddvyo",
     "detailParams": {

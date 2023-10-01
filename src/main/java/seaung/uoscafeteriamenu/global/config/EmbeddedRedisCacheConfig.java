@@ -23,7 +23,7 @@ import java.time.Duration;
 @Slf4j
 @Configuration
 @EnableRedisRepositories(enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP)
-@DependsOn({"embeddedRedisConfig"})
+@DependsOn({"embeddedRedisConfig"}) // 빈 초기화 순서 지정
 @Profile({"test", "local"})
 public class EmbeddedRedisCacheConfig {
 

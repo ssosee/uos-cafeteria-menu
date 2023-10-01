@@ -52,9 +52,10 @@ public class CacheUosRestaurant implements Serializable {
         this.expiration = expiration;
     }
 
-    public static CacheUosRestaurant create(String date, UosRestaurantName restaurantName, MealType mealType, String menuDesc, Integer view, Integer likeCount, int expiration) {
+    public static CacheUosRestaurant create(Long id, String date, UosRestaurantName restaurantName, MealType mealType, String menuDesc, Integer view, Integer likeCount, int expiration) {
         return CacheUosRestaurant.builder()
-                .id(createId(date, restaurantName, mealType))
+                .id(id.toString())
+                //.id(createId(date, restaurantName, mealType))
                 .date(date)
                 .restaurantName(restaurantName)
                 .mealType(mealType)
@@ -67,7 +68,8 @@ public class CacheUosRestaurant implements Serializable {
 
     public static CacheUosRestaurant of(UosRestaurant uosRestaurant) {
         return CacheUosRestaurant.builder()
-                .id(createId(uosRestaurant.getCrawlingDate(), uosRestaurant.getRestaurantName(), uosRestaurant.getMealType()))
+                .id(uosRestaurant.getId().toString())
+                //.id(createId(uosRestaurant.getCrawlingDate(), uosRestaurant.getRestaurantName(), uosRestaurant.getMealType()))
                 .date(uosRestaurant.getCrawlingDate())
                 .restaurantName(uosRestaurant.getRestaurantName())
                 .mealType(uosRestaurant.getMealType())
@@ -106,5 +108,9 @@ public class CacheUosRestaurant implements Serializable {
 
     public void increaseView() {
         this.view++;
+    }
+
+    public void increaseLikeCount() {
+        this.likeCount++;
     }
 }

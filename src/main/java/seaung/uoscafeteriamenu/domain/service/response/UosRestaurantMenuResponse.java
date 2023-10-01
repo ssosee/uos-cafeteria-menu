@@ -2,10 +2,10 @@ package seaung.uoscafeteriamenu.domain.service.response;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.data.domain.Page;
 import seaung.uoscafeteriamenu.domain.cache.entity.CacheUosRestaurant;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurant;
-import seaung.uoscafeteriamenu.domain.service.request.UosRestaurantInput;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.SkillResponse;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.SkillTemplate;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.outputs.Outputs;
@@ -15,7 +15,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
+@EqualsAndHashCode
 public class UosRestaurantMenuResponse {
+    private Long id;
     private String restaurantName;
     private String mealType;
     private String menu;
@@ -23,7 +25,8 @@ public class UosRestaurantMenuResponse {
     private Integer likeCount;
 
     @Builder
-    private UosRestaurantMenuResponse(String restaurantName, String mealType, String menu, Integer view, Integer likeCount) {
+    private UosRestaurantMenuResponse(Long id, String restaurantName, String mealType, String menu, Integer view, Integer likeCount) {
+        this.id = id;
         this.restaurantName = restaurantName;
         this.mealType = mealType;
         this.menu = menu;
@@ -33,6 +36,7 @@ public class UosRestaurantMenuResponse {
 
     public static UosRestaurantMenuResponse of(UosRestaurant uosRestaurant) {
         return UosRestaurantMenuResponse.builder()
+                .id(uosRestaurant.getId())
                 .restaurantName(uosRestaurant.getRestaurantName().getKrName())
                 .menu(uosRestaurant.getMenuDesc())
                 .mealType(uosRestaurant.getMealType().getKrName())
@@ -43,6 +47,7 @@ public class UosRestaurantMenuResponse {
 
     public static UosRestaurantMenuResponse of(CacheUosRestaurant cacheUosRestaurant) {
         return UosRestaurantMenuResponse.builder()
+                .id(Long.valueOf(cacheUosRestaurant.getId()))
                 .restaurantName(cacheUosRestaurant.getRestaurantName().getKrName())
                 .menu(cacheUosRestaurant.getMenuDesc())
                 .mealType(cacheUosRestaurant.getMealType().getKrName())
@@ -51,14 +56,24 @@ public class UosRestaurantMenuResponse {
                 .build();
     }
 
-    public static List<UosRestaurantMenuResponse> ofList(List<UosRestaurant> uosRestaurant) {
+    public static List<UosRestaurantMenuResponse> ofListByUosRestaurant(List<UosRestaurant> uosRestaurant) {
         return uosRestaurant.stream()
                 .map(UosRestaurantMenuResponse::of)
                 .collect(Collectors.toList());
     }
 
-    public static Page<UosRestaurantMenuResponse> ofPage(Page<UosRestaurant> uosRestaurant) {
-        return uosRestaurant.map(UosRestaurantMenuResponse::of);
+    public static List<UosRestaurantMenuResponse> ofListByCacheUosRestaurant(List<CacheUosRestaurant> cacheUosRestaurants) {
+        return cacheUosRestaurants.stream()
+                .map(UosRestaurantMenuResponse::of)
+                .collect(Collectors.toList());
+    }
+
+    public static Page<UosRestaurantMenuResponse> ofPageByUosRestaurant(Page<UosRestaurant> uosRestaurants) {
+        return uosRestaurants.map(UosRestaurantMenuResponse::of);
+    }
+
+    public static Page<UosRestaurantMenuResponse> ofPageByCacheUosRestaurant(Page<CacheUosRestaurant> cacheUosRestaurants) {
+        return cacheUosRestaurants.map(UosRestaurantMenuResponse::of);
     }
 
     public SkillResponse toSkillResponseUseSimpleText(String version) {
