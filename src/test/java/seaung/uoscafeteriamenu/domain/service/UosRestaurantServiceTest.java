@@ -27,6 +27,7 @@ import seaung.uoscafeteriamenu.crawling.utils.CrawlingUtils;
 import seaung.uoscafeteriamenu.web.exception.MenuLikeException;
 import seaung.uoscafeteriamenu.web.exception.UosRestaurantMenuException;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -53,6 +54,8 @@ class UosRestaurantServiceTest {
     CacheMemberRepository cacheMemberRepository;
     @Autowired
     CacheUosRestaurantRepository cacheUosRestaurantRepository;
+    @Autowired
+    EntityManager em;
 
     @AfterEach
     void tearDown() {
@@ -616,7 +619,7 @@ class UosRestaurantServiceTest {
     }
 
     @Test
-    @DisplayName("")
+    @DisplayName("캐시에 있는 학교 식당 정보를 데이터베이스와 동기화 한다.")
     void syncCacheUosRestaurantToDatabaseUosRestaurant() {
         // given
         LocalDateTime now = LocalDateTime.of(2023, 8, 16, 18, 30, 0);
@@ -628,7 +631,9 @@ class UosRestaurantServiceTest {
         UosRestaurant uosRestaurant4 = createUosRestaurant(date, MUSEUM_OF_NATURAL_SCIENCE, MealType.DINNER, "제육", 0, 0);
         uosRestaurantRepository.saveAll(List.of(uosRestaurant1, uosRestaurant2, uosRestaurant3, uosRestaurant4));
 
-        uosRestaurant1.changeViewAndLikeCount(1, 1);
+        em.flush();
+        em.clear();
+
         uosRestaurant2.changeViewAndLikeCount(2, 2);
         uosRestaurant3.changeViewAndLikeCount(3, 3);
         uosRestaurant4.changeViewAndLikeCount(4, 4);
@@ -636,7 +641,6 @@ class UosRestaurantServiceTest {
                 CacheUosRestaurant.of(uosRestaurant2),
                 CacheUosRestaurant.of(uosRestaurant3),
                 CacheUosRestaurant.of(uosRestaurant4)));
-
 
         // when
         uosRestaurantService.syncCacheUosRestaurantToDatabaseUosRestaurant(now);
@@ -646,7 +650,7 @@ class UosRestaurantServiceTest {
         assertThat(findUosRestaurants).hasSize(4)
                 .extracting("restaurantName", "mealType", "menuDesc", "view", "likeCount")
                 .containsAnyOf(
-                        tuple(UosRestaurantName.STUDENT_HALL, MealType.DINNER, "라면", 1, 1),
+                        tuple(UosRestaurantName.STUDENT_HALL, MealType.DINNER, "라면", 0, 0),
                         tuple(UosRestaurantName.MAIN_BUILDING, MealType.DINNER, "김밥", 2, 2),
                         tuple(UosRestaurantName.WESTERN_RESTAURANT, MealType.DINNER, "돈까스", 3, 3),
                         tuple(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE, MealType.DINNER, "제육", 4, 4)

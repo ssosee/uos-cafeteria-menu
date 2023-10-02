@@ -17,7 +17,7 @@ public class MemberSchedule {
     // 30분에 한 번씩 동기화
     //@Scheduled(cron = "0/10 * * * * ?")
     @Scheduled(cron = "0 0/30 * * * ?")
-    //@Async("uosRestaurantAsyncExecutor")
+    @Async("uosRestaurantAsyncExecutor")
     public void syncCacheMemberVisitCountToDatabaseMemberSchedule() {
         log.info("회원 방문 횟수 동기화 시작");
         memberService.syncCacheMemberVisitCountToDatabaseMember();
