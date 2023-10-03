@@ -288,6 +288,7 @@ public class UosRestaurantService {
         cacheUosRestaurantRepository.deleteAll();
     }
 
+    // 캐시에 있는 학교 메뉴 데이터베이스로 동기화
     @Transactional
     public void syncCacheUosRestaurantToDatabaseUosRestaurant(LocalDateTime now) {
         String date = CrawlingUtils.toDateString(now);
@@ -298,18 +299,18 @@ public class UosRestaurantService {
         // 캐시에 학교 메뉴가 없으면 탈출
         if(cacheUosRestaurants.isEmpty()) return;
 
+        // 캐시를 맵으로 변환
+        Map<String, CacheUosRestaurant> cacheUosMenuMap = cacheUosRestaurants.stream()
+                .collect(Collectors.toMap(CacheUosRestaurant::getId, c -> c));
+
         // 데이터베이스에서 학교 메뉴 조회
         List<UosRestaurant> databaseUosRestaurants = uosRestaurantRepository.findByCrawlingDate(date);
 
-        // 데이터베이스 메뉴를 Map으로 변환 (id를 키로 사용)
-        Map<Long, UosRestaurant> databaseUosMenuMap = databaseUosRestaurants.stream()
-                .collect(Collectors.toMap(UosRestaurant::getId, f -> f));
-
         // 데이터베이스와 캐시를 비교하고 캐시에만 있는 메뉴를 찾아서 데이터베이스의 메뉴에 추가하고, 캐시의 조회수와 추천수를 데이터베이스에 업데이트
-        for (CacheUosRestaurant cacheUosRestaurant : cacheUosRestaurants) {
-            UosRestaurant uosRestaurant = databaseUosMenuMap.get(Long.valueOf(cacheUosRestaurant.getId()));
-            if (!ObjectUtils.isEmpty(uosRestaurant) && isSameUosMenuViewOrLikeCount(uosRestaurant, cacheUosRestaurant)) {
-                // 데이터베이스와 캐시의 메뉴가 다르면 업데이트 수행
+        for(UosRestaurant uosRestaurant : databaseUosRestaurants) {
+            CacheUosRestaurant cacheUosRestaurant = cacheUosMenuMap.get(String.valueOf(uosRestaurant.getId()));
+            if(!ObjectUtils.isEmpty(cacheUosRestaurant) && !isSameUosMenuViewOrLikeCount(uosRestaurant, cacheUosRestaurant)) {
+                // 동기화
                 uosRestaurant.changeViewAndLikeCount(cacheUosRestaurant.getView(), cacheUosRestaurant.getLikeCount());
             }
         }
