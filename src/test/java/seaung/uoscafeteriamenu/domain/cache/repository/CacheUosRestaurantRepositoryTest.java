@@ -5,11 +5,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import seaung.uoscafeteriamenu.crawling.utils.CrawlingUtils;
 import seaung.uoscafeteriamenu.domain.cache.entity.CacheUosRestaurant;
 import seaung.uoscafeteriamenu.domain.entity.MealType;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurant;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurantName;
+import seaung.uoscafeteriamenu.domain.repository.UosRestaurantRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,6 +28,8 @@ class CacheUosRestaurantRepositoryTest {
 
     @Autowired
     CacheUosRestaurantRepository cacheUosRestaurantRepository;
+    @Autowired
+    UosRestaurantRepository uosRestaurantRepository;
 
     @Test
     @DisplayName("캐시에서 리스트형태의 학식메뉴들을 조회한다.")
@@ -32,6 +38,8 @@ class CacheUosRestaurantRepositoryTest {
         String date = CrawlingUtils.toDateString(LocalDateTime.now());
         UosRestaurant uosRestaurant1 = createUosRestaurant(date, UosRestaurantName.STUDENT_HALL, MealType.BREAKFAST, "라면", 0, 0);
         UosRestaurant uosRestaurant2 = createUosRestaurant(date, UosRestaurantName.WESTERN_RESTAURANT, MealType.BREAKFAST, "김밥", 0, 0);
+        uosRestaurantRepository.saveAll(List.of(uosRestaurant1, uosRestaurant2));
+
         CacheUosRestaurant cacheUosRestaurant1 = CacheUosRestaurant.of(uosRestaurant1);
         CacheUosRestaurant cacheUosRestaurant2 = CacheUosRestaurant.of(uosRestaurant2);
         cacheUosRestaurantRepository.saveAll(List.of(cacheUosRestaurant1, cacheUosRestaurant2));
@@ -46,6 +54,33 @@ class CacheUosRestaurantRepositoryTest {
                         tuple(date, UosRestaurantName.STUDENT_HALL, MealType.BREAKFAST, "라면"),
                         tuple(date, UosRestaurantName.WESTERN_RESTAURANT, MealType.BREAKFAST, "김밥")
                 );
+    }
+
+    @Disabled
+    @Test
+    @DisplayName("")
+    void findByDateAndMealTypeOrderByViewDescLikeCountDesc() {
+        // given
+        String date = CrawlingUtils.toDateString(LocalDateTime.now());
+        UosRestaurant uosRestaurant1 = createUosRestaurant(date, UosRestaurantName.STUDENT_HALL, MealType.BREAKFAST, "라면", 0, 0);
+        UosRestaurant uosRestaurant2 = createUosRestaurant(date, UosRestaurantName.WESTERN_RESTAURANT, MealType.BREAKFAST, "김밥", 1, 0);
+        uosRestaurantRepository.saveAll(List.of(uosRestaurant1, uosRestaurant2));
+
+        CacheUosRestaurant cacheUosRestaurant1 = CacheUosRestaurant.of(uosRestaurant1);
+        CacheUosRestaurant cacheUosRestaurant2 = CacheUosRestaurant.of(uosRestaurant2);
+        cacheUosRestaurantRepository.saveAll(List.of(cacheUosRestaurant1, cacheUosRestaurant2));
+        Pageable pageable = PageRequest.of(0, 1);
+
+        // when
+//        Page<CacheUosRestaurant> cacheUosRestaurants = cacheUosRestaurantRepository
+//                .findByDateAndMealTypeOrderByViewDescLikeCountDesc(pageable, date, MealType.BREAKFAST);
+//
+//        // then
+//        assertThat(cacheUosRestaurants).hasSize(1)
+//                .extracting("date", "restaurantName", "mealType", "menuDesc", "view")
+//                .contains(
+//                        tuple(date, UosRestaurantName.WESTERN_RESTAURANT, MealType.BREAKFAST, "김밥", 1)
+//                );
     }
 
     private UosRestaurant createUosRestaurant(String date, UosRestaurantName uosRestaurantName, MealType mealType,

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.http.MediaType;
 import seaung.uoscafeteriamenu.domain.cache.repository.CacheMemberRepository;
+import seaung.uoscafeteriamenu.domain.cache.repository.CacheUosRestaurantRepository;
 import seaung.uoscafeteriamenu.domain.entity.*;
 import seaung.uoscafeteriamenu.domain.repository.SkillBlockRepository;
 import seaung.uoscafeteriamenu.domain.repository.UosRestaurantRepository;
@@ -37,12 +38,15 @@ class SimpleTextUosRestaurantControllerTest extends ControllerTestSupport {
 
     @Autowired
     CacheMemberRepository cacheMemberRepository;
+    @Autowired
+    CacheUosRestaurantRepository cacheUosRestaurantRepository;
 
     @AfterEach
     void tearDown() {
         cacheManager.getCacheNames()
                 .forEach(name -> cacheManager.getCache(name).clear());
         cacheMemberRepository.deleteAll();
+        cacheUosRestaurantRepository.deleteAll();
     }
 
     @BeforeEach

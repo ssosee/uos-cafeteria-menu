@@ -14,7 +14,7 @@ public interface CacheUosRestaurantRepository extends CrudRepository<CacheUosRes
 
     List<CacheUosRestaurant> findByDateAndMealType(String date, MealType mealType);
     Optional<CacheUosRestaurant> findByDateAndRestaurantNameAndMealType(String date, UosRestaurantName restaurantName, MealType mealType);
-    Page<CacheUosRestaurant> findByDateAndMealTypeOrderByViewDescLikeCountDesc(Pageable pageable, String date, MealType mealType);
-    Page<CacheUosRestaurant> findByDateAndMealTypeOrderByLikeCountDescViewDesc(Pageable pageable, String date, MealType mealType);
+    //Page<CacheUosRestaurant> findByDateAndMealTypeOrderByViewDescLikeCountDesc(Pageable pageable, String date, MealType mealType);
+    //Page<CacheUosRestaurant> findByDateAndMealTypeOrderByLikeCountDescViewDesc(Pageable pageable, String date, MealType mealType);
     List<CacheUosRestaurant> findByDate(String date);
 }
