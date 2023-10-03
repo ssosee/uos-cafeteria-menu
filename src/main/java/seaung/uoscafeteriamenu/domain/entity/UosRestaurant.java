@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import seaung.uoscafeteriamenu.domain.cache.entity.CacheUosRestaurant;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -39,6 +40,17 @@ public class UosRestaurant extends BaseTimeEntity {
         this.likeCount = likeCount;
     }
 
+    public static UosRestaurant of(CacheUosRestaurant cacheUosRestaurant) {
+        return UosRestaurant.builder()
+                .restaurantName(cacheUosRestaurant.getRestaurantName())
+                .crawlingDate(cacheUosRestaurant.getDate())
+                .mealType(cacheUosRestaurant.getMealType())
+                .menuDesc(cacheUosRestaurant.getMenuDesc())
+                .view(cacheUosRestaurant.getView())
+                .likeCount(cacheUosRestaurant.getLikeCount())
+                .build();
+    }
+
     // 조회수 증가
     public void increaseView() {
         this.view++;
@@ -47,5 +59,10 @@ public class UosRestaurant extends BaseTimeEntity {
     // 추천수 증가
     public void increaseLikeCount() {
         this.likeCount++;
+    }
+
+    public void changeViewAndLikeCount(Integer view, Integer likeCount) {
+        this.view = view;
+        this.likeCount = likeCount;
     }
 }

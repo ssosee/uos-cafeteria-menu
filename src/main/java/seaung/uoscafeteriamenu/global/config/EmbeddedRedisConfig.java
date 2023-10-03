@@ -1,9 +1,12 @@
 package seaung.uoscafeteriamenu.global.config;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import redis.embedded.RedisServer;
@@ -21,6 +24,7 @@ import java.io.InputStreamReader;
 @Configuration
 @Profile({"test", "local"})
 public class EmbeddedRedisConfig {
+
     @Value("${spring.redis.port}")
     private int redisPort;
     private RedisServer redisServer;
@@ -90,5 +94,4 @@ public class EmbeddedRedisConfig {
 
         return !StringUtils.isEmpty(pidInfo.toString());
     }
-
 }

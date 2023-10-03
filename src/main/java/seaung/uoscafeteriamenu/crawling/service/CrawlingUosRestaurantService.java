@@ -4,10 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import seaung.uoscafeteriamenu.crawling.crawler.CrawlingMealType;
 import seaung.uoscafeteriamenu.crawling.crawler.UosRestaurantCrawlingResponse;
 import seaung.uoscafeteriamenu.crawling.utils.CrawlingUtils;
+import seaung.uoscafeteriamenu.domain.cache.entity.CacheUosRestaurant;
+import seaung.uoscafeteriamenu.domain.cache.repository.CacheUosRestaurantRepository;
 import seaung.uoscafeteriamenu.domain.entity.MealType;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurant;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurantName;
@@ -42,7 +43,7 @@ public class CrawlingUosRestaurantService extends CrawlingService {
      * @Since 2023/08/06
      */
     @Transactional
-    public void saveAllCrawlingData(List<List<UosRestaurantCrawlingResponse>> responsesList) {
+    public List<UosRestaurant> saveAllCrawlingData(List<List<UosRestaurantCrawlingResponse>> responsesList) {
 
         List<UosRestaurant> uosRestaurants = new ArrayList<>();
 
@@ -78,7 +79,7 @@ public class CrawlingUosRestaurantService extends CrawlingService {
             }
         }
 
-        uosRestaurantRepository.saveAll(uosRestaurants);
+        return uosRestaurantRepository.saveAll(uosRestaurants);
     }
 
     // 학교에서 메뉴를 제공한 경우

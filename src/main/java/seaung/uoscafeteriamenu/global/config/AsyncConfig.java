@@ -11,13 +11,13 @@ import java.util.concurrent.Executor;
 @EnableAsync
 public class AsyncConfig {
 
-    @Bean("crawlingAsyncExecutor")
+    @Bean("uosRestaurantAsyncExecutor")
     public Executor customAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(2); // 기본적으로 실행 대기중인 스레드 갯수
+        executor.setCorePoolSize(3); // 기본적으로 실행 대기중인 스레드 갯수
         executor.setMaxPoolSize(5); // 동시에 동작하는 최대 스레드 갯수
         // executor.setQueueCapacity(500); // core pool을 넘어서면 큐에 저장하는 큐의 최대 용량
-        executor.setThreadNamePrefix("crawlingThread");
+        executor.setThreadNamePrefix("uosRestaurantThread");
         executor.initialize();
 
         return executor;

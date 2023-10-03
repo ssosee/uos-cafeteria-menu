@@ -34,7 +34,7 @@ botApikey: test-botApikey
     "name": "ymbjlorhkc",
     "clientExtra": null,
     "params": {
-      "mealType": "BREAKFAST"
+      "mealType": "DINNER"
     },
     "id": "2eej1w0k1qfo4hs3z7xddvyo",
     "detailParams": {

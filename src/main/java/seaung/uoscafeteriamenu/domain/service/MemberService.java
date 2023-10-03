@@ -80,6 +80,7 @@ public class MemberService {
 
         // 새로운 회원 벌크 삽입
         memberBulkInsertRepository.saveAll(newMembers);
+
         // 캐시 삭제
         cacheMemberRepository.deleteAll();
     }

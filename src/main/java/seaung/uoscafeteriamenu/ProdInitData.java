@@ -3,7 +3,9 @@ package seaung.uoscafeteriamenu;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
 import seaung.uoscafeteriamenu.crawling.crawler.Crawler;
 import seaung.uoscafeteriamenu.crawling.crawler.UosRestaurantCrawlingResponse;
 import seaung.uoscafeteriamenu.crawling.service.CrawlingUosRestaurantService;
@@ -20,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
+@Component
+@Profile("prod")
 @RequiredArgsConstructor
 public class ProdInitData {
 
@@ -81,3 +85,5 @@ public class ProdInitData {
                 .build();
     }
 }
+
+

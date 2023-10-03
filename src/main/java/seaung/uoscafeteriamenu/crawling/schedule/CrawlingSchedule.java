@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import seaung.uoscafeteriamenu.crawling.service.CrawlingCacheUosRestaurantService;
+import seaung.uoscafeteriamenu.domain.entity.UosRestaurant;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurantName;
 import seaung.uoscafeteriamenu.crawling.crawler.Crawler;
 import seaung.uoscafeteriamenu.crawling.crawler.UosRestaurantCrawlingResponse;
@@ -16,13 +18,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@Component
+//@Component
 @RequiredArgsConstructor
 public class CrawlingSchedule {
 
     private final Crawler crawler;
-
     private final CrawlingUosRestaurantService crawlingStudentHallService;
+    private final CrawlingCacheUosRestaurantService crawlingCacheUosRestaurantService;
 
     /**
      * cron = "1 2 3 4 5 6"
@@ -35,7 +37,7 @@ public class CrawlingSchedule {
      */
     //@Scheduled(cron = "*/10 * * * * *", zone = "Asia/Seoul")
     @Scheduled(cron = "0 0 7 * * MON", zone = "Asia/Seoul") // 매주 월요일 7시에 실행
-    @Async("crawlingAsyncExecutor")
+    @Async("uosRestaurantAsyncExecutor")
     public void crawlingStudentHall() throws IOException {
         log.info("크롤링 시작...");
 
@@ -52,7 +54,10 @@ public class CrawlingSchedule {
         }
 
         // 크롤링 데이터 저장
-        crawlingStudentHallService.saveAllCrawlingData(crawlingResponseList);
+        List<UosRestaurant> uosRestaurants = crawlingStudentHallService.saveAllCrawlingData(crawlingResponseList);
+
+        // redis에 크롤링 데이터 저장
+        crawlingCacheUosRestaurantService.saveAllCrawlingDataInRedis(uosRestaurants);
 
         log.info("크롤링 종료...");
     }
