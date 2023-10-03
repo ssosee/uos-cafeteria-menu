@@ -21,6 +21,13 @@ import java.time.Duration;
 
 /**
  * AWS ElastiCache는 COPNFIG 명령어를 허용하지 않음
+ *
+ * 참고: https://docs.spring.io/spring-data/data-redis/docs/current/reference/html/#redis.repositories.expirations
+ * The keyspace notification message listener alters notify-keyspace-events settings in Redis, if those are not already set.
+ * Existing settings are not overridden, so you must set up those settings correctly (or leave them empty).
+ * Note that CONFIG is disabled on AWS ElastiCache, and enabling the listener leads to an error.
+ * To work around this behavior, set the keyspaceNotificationsConfigParameter parameter to an empty string.
+ * This prevents CONFIG command usage.
  */
 @Slf4j
 @Configuration
