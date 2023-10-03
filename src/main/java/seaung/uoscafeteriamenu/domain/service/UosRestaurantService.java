@@ -44,7 +44,7 @@ public class UosRestaurantService {
 
         // 캐시에서 학식 조회
         Optional<CacheUosRestaurant> findCacheUosRestaurant = cacheUosRestaurantRepository
-                .findById(CacheUosRestaurant.createId(input));
+                .findByDateAndRestaurantNameAndMealType(input.getDate(), input.getRestaurantName(), input.getMealType());
 
         // 캐시에 학식이 존재하면
         if(findCacheUosRestaurant.isPresent()) {
