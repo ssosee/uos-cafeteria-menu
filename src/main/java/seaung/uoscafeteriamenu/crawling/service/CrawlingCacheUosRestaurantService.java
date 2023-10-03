@@ -10,7 +10,7 @@ import seaung.uoscafeteriamenu.domain.entity.UosRestaurant;
 import java.util.List;
 import java.util.stream.Collectors;
 
-//@Service
+@Service
 @RequiredArgsConstructor
 public class CrawlingCacheUosRestaurantService {
 

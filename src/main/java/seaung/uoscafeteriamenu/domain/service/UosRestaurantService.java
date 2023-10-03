@@ -2,6 +2,7 @@ package seaung.uoscafeteriamenu.domain.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,10 +23,7 @@ import seaung.uoscafeteriamenu.web.exception.MenuLikeException;
 import seaung.uoscafeteriamenu.web.exception.UosRestaurantMenuException;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -46,7 +44,7 @@ public class UosRestaurantService {
 
         // 캐시에서 학식 조회
         Optional<CacheUosRestaurant> findCacheUosRestaurant = cacheUosRestaurantRepository
-                .findById(CacheUosRestaurant.createId(input));
+                .findByDateAndRestaurantNameAndMealType(input.getDate(), input.getRestaurantName(), input.getMealType());
 
         // 캐시에 학식이 존재하면
         if(findCacheUosRestaurant.isPresent()) {
@@ -151,19 +149,24 @@ public class UosRestaurantService {
         MealType mealType = CrawlingUtils.localDateTimeToMealType(now);
         String date = CrawlingUtils.toDateString(now);
 
-        // 캐시에서 인기 메뉴 조회
-        Page<CacheUosRestaurant> findTop1MenuInCache = cacheUosRestaurantRepository
-                .findByDateAndMealTypeOrderByViewDescLikeCountDesc(pageable, date, mealType);
+        // 캐시에서 메뉴 조회
+        List<CacheUosRestaurant> findTop1MenusInCache = cacheUosRestaurantRepository.findByDateAndMealType(date, mealType);
+        // 인기 메뉴 조회
+        Optional<CacheUosRestaurant> top1MenuByViewInCache = findTop1MenuByViewInCache(findTop1MenusInCache);
 
         // 캐시에 인기 메뉴가 있으면
-        if(!findTop1MenuInCache.getContent().isEmpty()) {
+        if(top1MenuByViewInCache.isPresent()) {
+
+            CacheUosRestaurant cacheUosRestaurant = top1MenuByViewInCache.get();
+
             // 조회수 증가
-            findTop1MenuInCache.getContent().forEach(CacheUosRestaurant::increaseView);
+            cacheUosRestaurant.increaseView();
 
             // 캐시 저장
-            cacheUosRestaurantRepository.saveAll(findTop1MenuInCache);
+            CacheUosRestaurant newTop1MenuInCache = cacheUosRestaurantRepository.save(cacheUosRestaurant);
+            Page<CacheUosRestaurant> cacheUosRestaurants = new PageImpl<>(List.of(newTop1MenuInCache), pageable, 1);
 
-            return UosRestaurantMenuResponse.ofPageByCacheUosRestaurant(findTop1MenuInCache);
+            return UosRestaurantMenuResponse.ofPageByCacheUosRestaurant(cacheUosRestaurants);
         }
 
         // 인기 메뉴 조회
@@ -184,6 +187,12 @@ public class UosRestaurantService {
         return UosRestaurantMenuResponse.ofPageByUosRestaurant(findMenu);
     }
 
+    public Optional<CacheUosRestaurant> findTop1MenuByViewInCache(List<CacheUosRestaurant> findTop1MenusInCache) {
+        return findTop1MenusInCache.stream()
+                .max(Comparator.comparingInt(CacheUosRestaurant::getView)
+                        .thenComparingInt(CacheUosRestaurant::getLikeCount));
+    }
+
     // 추천수가 가장 많은 메뉴 조회(추천수가 같으면 조회수 많은 순으로 조회)
     @Transactional
     public Page<UosRestaurantMenuResponse> findTop1UosRestaurantMenuByLikeCount(Pageable pageable, LocalDateTime now) {
@@ -195,17 +204,22 @@ public class UosRestaurantService {
         String date = CrawlingUtils.toDateString(now);
 
         // 캐시에서 추천메뉴 조회
-        Page<CacheUosRestaurant> findTop1MenuInCache = cacheUosRestaurantRepository
-                .findByDateAndMealTypeOrderByViewDescLikeCountDesc(pageable, date, mealType);
+        List<CacheUosRestaurant> findTop1MenusInCache = cacheUosRestaurantRepository.findByDateAndMealType(date, mealType);
+        // 추천 메뉴 조회
+        Optional<CacheUosRestaurant> top1MenuByLikeCountInCache = findTop1MenuByLikeCountInCache(findTop1MenusInCache);
 
-        if(!findTop1MenuInCache.getContent().isEmpty()) {
+        if(top1MenuByLikeCountInCache.isPresent()) {
+
+            CacheUosRestaurant cacheUosRestaurant = top1MenuByLikeCountInCache.get();
+
             // 조회수 증가
-            findTop1MenuInCache.getContent().forEach(CacheUosRestaurant::increaseView);
+            cacheUosRestaurant.increaseView();
 
             // 캐시 저장
-            cacheUosRestaurantRepository.saveAll(findTop1MenuInCache);
+            CacheUosRestaurant newTop1MenuInCache = cacheUosRestaurantRepository.save(cacheUosRestaurant);
+            PageImpl<CacheUosRestaurant> cacheUosRestaurants = new PageImpl<>(List.of(newTop1MenuInCache), pageable, 1);
 
-            return UosRestaurantMenuResponse.ofPageByCacheUosRestaurant(findTop1MenuInCache);
+            return UosRestaurantMenuResponse.ofPageByCacheUosRestaurant(cacheUosRestaurants);
         }
 
         // 추천 메뉴 조회
@@ -223,6 +237,12 @@ public class UosRestaurantService {
         cacheUosRestaurantRepository.saveAll(CacheUosRestaurant.ofList(findMenu.getContent()));
 
         return UosRestaurantMenuResponse.ofPageByUosRestaurant(findMenu);
+    }
+
+    public Optional<CacheUosRestaurant> findTop1MenuByLikeCountInCache(List<CacheUosRestaurant> findTop1MenusInCache) {
+        return findTop1MenusInCache.stream()
+                .max(Comparator.comparingInt(CacheUosRestaurant::getView)
+                        .thenComparingInt(CacheUosRestaurant::getLikeCount));
     }
 
     // 학교 식당 운영시간 확인

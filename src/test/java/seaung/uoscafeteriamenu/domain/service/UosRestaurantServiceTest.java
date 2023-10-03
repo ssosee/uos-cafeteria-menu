@@ -87,7 +87,7 @@ class UosRestaurantServiceTest {
                 () -> assertThat(uosRestaurantMenu.getLikeCount()).isEqualTo(0)
         );
 
-        CacheUosRestaurant cacheUosRestaurant = cacheUosRestaurantRepository.findById(CacheUosRestaurant.createId(input)).get();
+        CacheUosRestaurant cacheUosRestaurant = cacheUosRestaurantRepository.findById(uosRestaurant.getId().toString()).get();
         assertAll(
                 () -> assertThat(cacheUosRestaurant.getMenuDesc()).isEqualTo("라면"),
                 () -> assertThat(cacheUosRestaurant.getRestaurantName()).isEqualTo(STUDENT_HALL),
@@ -103,6 +103,7 @@ class UosRestaurantServiceTest {
         // given
         String date = CrawlingUtils.toDateString(LocalDateTime.now());
         UosRestaurant uosRestaurant = createUosRestaurant(date, UosRestaurantName.STUDENT_HALL, MealType.BREAKFAST, "라면", 0, 0);
+        uosRestaurantRepository.save(uosRestaurant);
         cacheUosRestaurantRepository.save(CacheUosRestaurant.of(uosRestaurant));
 
         UosRestaurantInput input = createUosRestaurantInput(date, UosRestaurantName.STUDENT_HALL, MealType.BREAKFAST);
@@ -182,7 +183,7 @@ class UosRestaurantServiceTest {
         UosRestaurant uosRestaurant2 = createUosRestaurant(date, UosRestaurantName.MAIN_BUILDING, MealType.BREAKFAST, "김밥", 0, 0);
         UosRestaurant uosRestaurant3 = createUosRestaurant(date, UosRestaurantName.WESTERN_RESTAURANT, MealType.BREAKFAST, "돈까스", 0, 0);
         UosRestaurant uosRestaurant4 = createUosRestaurant(date, UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE, MealType.BREAKFAST, "제육", 0, 0);
-
+        uosRestaurantRepository.saveAll(List.of(uosRestaurant1, uosRestaurant2, uosRestaurant3, uosRestaurant4));
         cacheUosRestaurantRepository.saveAll(List.of(CacheUosRestaurant.of(uosRestaurant1),
                 CacheUosRestaurant.of(uosRestaurant2),
                 CacheUosRestaurant.of(uosRestaurant3),
@@ -283,6 +284,7 @@ class UosRestaurantServiceTest {
         UosRestaurant uosRestaurant2 = createUosRestaurant(date, MAIN_BUILDING, MealType.BREAKFAST, "김밥", 1, 0);
         UosRestaurant uosRestaurant3 = createUosRestaurant(date, WESTERN_RESTAURANT, MealType.BREAKFAST, "돈까스", 2, 0);
         UosRestaurant uosRestaurant4 = createUosRestaurant(date, MUSEUM_OF_NATURAL_SCIENCE, MealType.BREAKFAST, "제육", 2, 1);
+        uosRestaurantRepository.saveAll(List.of(uosRestaurant1, uosRestaurant2, uosRestaurant3, uosRestaurant4));
         cacheUosRestaurantRepository.saveAll(List.of(CacheUosRestaurant.of(uosRestaurant1),
                 CacheUosRestaurant.of(uosRestaurant2),
                 CacheUosRestaurant.of(uosRestaurant3),
@@ -301,14 +303,16 @@ class UosRestaurantServiceTest {
                 );
 
 
-        Page<CacheUosRestaurant> findCacheRestaurant = cacheUosRestaurantRepository
-                .findByDateAndMealTypeOrderByViewDescLikeCountDesc(pageable, date, MealType.BREAKFAST);
+        List<CacheUosRestaurant> cacheUosRestaurants = cacheUosRestaurantRepository.findByDateAndMealType(date, MealType.BREAKFAST);
+        CacheUosRestaurant cacheUosRestaurant = uosRestaurantService.findTop1MenuByViewInCache(cacheUosRestaurants).get();
 
-        assertThat(findCacheRestaurant).hasSize(1)
-                .extracting("restaurantName", "mealType", "menuDesc", "view", "likeCount")
-                .contains(
-                        tuple(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE, MealType.BREAKFAST, "제육", 3, 1)
-                );
+        assertAll(
+                () -> assertThat(cacheUosRestaurant.getRestaurantName()).isEqualTo(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE),
+                () -> assertThat(cacheUosRestaurant.getMealType()).isEqualTo(MealType.BREAKFAST),
+                () -> assertThat(cacheUosRestaurant.getMenuDesc()).isEqualTo("제육"),
+                () -> assertThat(cacheUosRestaurant.getView()).isEqualTo(3),
+                () -> assertThat(cacheUosRestaurant.getLikeCount()).isEqualTo(1)
+        );
     }
 
     @Test
@@ -337,14 +341,16 @@ class UosRestaurantServiceTest {
                 );
 
 
-        Page<CacheUosRestaurant> findCacheRestaurant = cacheUosRestaurantRepository
-                .findByDateAndMealTypeOrderByViewDescLikeCountDesc(pageable, date, MealType.BREAKFAST);
+        List<CacheUosRestaurant> cacheUosRestaurants = cacheUosRestaurantRepository.findByDateAndMealType(date, MealType.BREAKFAST);
+        CacheUosRestaurant cacheUosRestaurant = uosRestaurantService.findTop1MenuByViewInCache(cacheUosRestaurants).get();
 
-        assertThat(findCacheRestaurant).hasSize(1)
-                .extracting("restaurantName", "mealType", "menuDesc", "view", "likeCount")
-                .contains(
-                        tuple(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE, MealType.BREAKFAST, "제육", 3, 1)
-                );
+        assertAll(
+                () -> assertThat(cacheUosRestaurant.getRestaurantName()).isEqualTo(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE),
+                () -> assertThat(cacheUosRestaurant.getMealType()).isEqualTo(MealType.BREAKFAST),
+                () -> assertThat(cacheUosRestaurant.getMenuDesc()).isEqualTo("제육"),
+                () -> assertThat(cacheUosRestaurant.getView()).isEqualTo(3),
+                () -> assertThat(cacheUosRestaurant.getLikeCount()).isEqualTo(1)
+        );
     }
 
     @Test
@@ -373,14 +379,16 @@ class UosRestaurantServiceTest {
                 );
 
 
-        Page<CacheUosRestaurant> findCacheRestaurant = cacheUosRestaurantRepository
-                .findByDateAndMealTypeOrderByViewDescLikeCountDesc(pageable, date, MealType.LUNCH);
+        List<CacheUosRestaurant> cacheUosRestaurants = cacheUosRestaurantRepository.findByDateAndMealType(date, MealType.LUNCH);
+        CacheUosRestaurant cacheUosRestaurant = uosRestaurantService.findTop1MenuByViewInCache(cacheUosRestaurants).get();
 
-        assertThat(findCacheRestaurant).hasSize(1)
-                .extracting("restaurantName", "mealType", "menuDesc", "view", "likeCount")
-                .contains(
-                        tuple(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE, MealType.LUNCH, "제육", 3, 1)
-                );
+        assertAll(
+                () -> assertThat(cacheUosRestaurant.getRestaurantName()).isEqualTo(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE),
+                () -> assertThat(cacheUosRestaurant.getMealType()).isEqualTo(MealType.LUNCH),
+                () -> assertThat(cacheUosRestaurant.getMenuDesc()).isEqualTo("제육"),
+                () -> assertThat(cacheUosRestaurant.getView()).isEqualTo(3),
+                () -> assertThat(cacheUosRestaurant.getLikeCount()).isEqualTo(1)
+        );
     }
 
     @Test
@@ -409,14 +417,16 @@ class UosRestaurantServiceTest {
                 );
 
 
-        Page<CacheUosRestaurant> findCacheRestaurant = cacheUosRestaurantRepository
-                .findByDateAndMealTypeOrderByViewDescLikeCountDesc(pageable, date, MealType.DINNER);
+        List<CacheUosRestaurant> cacheUosRestaurants = cacheUosRestaurantRepository.findByDateAndMealType(date, MealType.DINNER);
+        CacheUosRestaurant cacheUosRestaurant = uosRestaurantService.findTop1MenuByViewInCache(cacheUosRestaurants).get();
 
-        assertThat(findCacheRestaurant).hasSize(1)
-                .extracting("restaurantName", "mealType", "menuDesc", "view", "likeCount")
-                .contains(
-                        tuple(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE, MealType.DINNER, "제육", 3, 1)
-                );
+        assertAll(
+                () -> assertThat(cacheUosRestaurant.getRestaurantName()).isEqualTo(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE),
+                () -> assertThat(cacheUosRestaurant.getMealType()).isEqualTo(MealType.DINNER),
+                () -> assertThat(cacheUosRestaurant.getMenuDesc()).isEqualTo("제육"),
+                () -> assertThat(cacheUosRestaurant.getView()).isEqualTo(3),
+                () -> assertThat(cacheUosRestaurant.getLikeCount()).isEqualTo(1)
+        );
     }
 
     @Test
@@ -444,6 +454,7 @@ class UosRestaurantServiceTest {
         UosRestaurant uosRestaurant2 = createUosRestaurant(date, MAIN_BUILDING, MealType.BREAKFAST, "김밥", 1, 1);
         UosRestaurant uosRestaurant3 = createUosRestaurant(date, WESTERN_RESTAURANT, MealType.BREAKFAST, "돈까스", 2, 2);
         UosRestaurant uosRestaurant4 = createUosRestaurant(date, MUSEUM_OF_NATURAL_SCIENCE, MealType.BREAKFAST, "제육", 3, 2);
+        uosRestaurantRepository.saveAll(List.of(uosRestaurant1, uosRestaurant2, uosRestaurant3, uosRestaurant4));
         cacheUosRestaurantRepository.saveAll(List.of(CacheUosRestaurant.of(uosRestaurant1),
                 CacheUosRestaurant.of(uosRestaurant2),
                 CacheUosRestaurant.of(uosRestaurant3),
@@ -462,14 +473,16 @@ class UosRestaurantServiceTest {
                         tuple(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE.getKrName(), MealType.BREAKFAST.getKrName(), "제육", 4, 2)
                 );
 
-        Page<CacheUosRestaurant> findCacheRestaurant = cacheUosRestaurantRepository
-                .findByDateAndMealTypeOrderByLikeCountDescViewDesc(pageable, date, MealType.BREAKFAST);
+        List<CacheUosRestaurant> cacheUosRestaurants = cacheUosRestaurantRepository.findByDateAndMealType(date, MealType.BREAKFAST);
+        CacheUosRestaurant cacheUosRestaurant = uosRestaurantService.findTop1MenuByLikeCountInCache(cacheUosRestaurants).get();
 
-        assertThat(findCacheRestaurant).hasSize(1)
-                .extracting("restaurantName", "mealType", "menuDesc", "view", "likeCount")
-                .contains(
-                        tuple(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE, MealType.BREAKFAST, "제육", 4, 2)
-                );
+        assertAll(
+                () -> assertThat(cacheUosRestaurant.getRestaurantName()).isEqualTo(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE),
+                () -> assertThat(cacheUosRestaurant.getMealType()).isEqualTo(MealType.BREAKFAST),
+                () -> assertThat(cacheUosRestaurant.getMenuDesc()).isEqualTo("제육"),
+                () -> assertThat(cacheUosRestaurant.getView()).isEqualTo(4),
+                () -> assertThat(cacheUosRestaurant.getLikeCount()).isEqualTo(2)
+        );
     }
 
     @Test
@@ -497,14 +510,16 @@ class UosRestaurantServiceTest {
                         tuple(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE.getKrName(), MealType.BREAKFAST.getKrName(), "제육", 4, 2)
                 );
 
-        Page<CacheUosRestaurant> findCacheRestaurant = cacheUosRestaurantRepository
-                .findByDateAndMealTypeOrderByLikeCountDescViewDesc(pageable, date, MealType.BREAKFAST);
+        List<CacheUosRestaurant> cacheUosRestaurants = cacheUosRestaurantRepository.findByDateAndMealType(date, MealType.BREAKFAST);
+        CacheUosRestaurant cacheUosRestaurant = uosRestaurantService.findTop1MenuByLikeCountInCache(cacheUosRestaurants).get();
 
-        assertThat(findCacheRestaurant).hasSize(1)
-                .extracting("restaurantName", "mealType", "menuDesc", "view", "likeCount")
-                .contains(
-                        tuple(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE, MealType.BREAKFAST, "제육", 4, 2)
-                );
+        assertAll(
+                () -> assertThat(cacheUosRestaurant.getRestaurantName()).isEqualTo(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE),
+                () -> assertThat(cacheUosRestaurant.getMealType()).isEqualTo(MealType.BREAKFAST),
+                () -> assertThat(cacheUosRestaurant.getMenuDesc()).isEqualTo("제육"),
+                () -> assertThat(cacheUosRestaurant.getView()).isEqualTo(4),
+                () -> assertThat(cacheUosRestaurant.getLikeCount()).isEqualTo(2)
+        );
     }
 
     @Test
@@ -533,14 +548,16 @@ class UosRestaurantServiceTest {
                 );
 
 
-        Page<CacheUosRestaurant> findCacheRestaurant = cacheUosRestaurantRepository
-                .findByDateAndMealTypeOrderByLikeCountDescViewDesc(pageable, date, MealType.LUNCH);
+        List<CacheUosRestaurant> cacheUosRestaurants = cacheUosRestaurantRepository.findByDateAndMealType(date, MealType.LUNCH);
+        CacheUosRestaurant cacheUosRestaurant = uosRestaurantService.findTop1MenuByLikeCountInCache(cacheUosRestaurants).get();
 
-        assertThat(findCacheRestaurant).hasSize(1)
-                .extracting("restaurantName", "mealType", "menuDesc", "view", "likeCount")
-                .contains(
-                        tuple(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE, MealType.LUNCH, "제육", 4, 2)
-                );
+        assertAll(
+                () -> assertThat(cacheUosRestaurant.getRestaurantName()).isEqualTo(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE),
+                () -> assertThat(cacheUosRestaurant.getMealType()).isEqualTo(MealType.LUNCH),
+                () -> assertThat(cacheUosRestaurant.getMenuDesc()).isEqualTo("제육"),
+                () -> assertThat(cacheUosRestaurant.getView()).isEqualTo(4),
+                () -> assertThat(cacheUosRestaurant.getLikeCount()).isEqualTo(2)
+        );
     }
 
     @Test
@@ -569,14 +586,16 @@ class UosRestaurantServiceTest {
                 );
 
 
-        Page<CacheUosRestaurant> findCacheRestaurant = cacheUosRestaurantRepository
-                .findByDateAndMealTypeOrderByLikeCountDescViewDesc(pageable, date, MealType.DINNER);
+        List<CacheUosRestaurant> cacheUosRestaurants = cacheUosRestaurantRepository.findByDateAndMealType(date, MealType.DINNER);
+        CacheUosRestaurant cacheUosRestaurant = uosRestaurantService.findTop1MenuByLikeCountInCache(cacheUosRestaurants).get();
 
-        assertThat(findCacheRestaurant).hasSize(1)
-                .extracting("restaurantName", "mealType", "menuDesc", "view", "likeCount")
-                .contains(
-                        tuple(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE, MealType.DINNER, "제육", 4, 2)
-                );
+        assertAll(
+                () -> assertThat(cacheUosRestaurant.getRestaurantName()).isEqualTo(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE),
+                () -> assertThat(cacheUosRestaurant.getMealType()).isEqualTo(MealType.DINNER),
+                () -> assertThat(cacheUosRestaurant.getMenuDesc()).isEqualTo("제육"),
+                () -> assertThat(cacheUosRestaurant.getView()).isEqualTo(4),
+                () -> assertThat(cacheUosRestaurant.getLikeCount()).isEqualTo(2)
+        );
     }
 
     @Test

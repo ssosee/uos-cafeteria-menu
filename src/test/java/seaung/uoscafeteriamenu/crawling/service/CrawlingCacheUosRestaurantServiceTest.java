@@ -47,6 +47,7 @@ class CrawlingCacheUosRestaurantServiceTest {
         UosRestaurant uosRestaurant3 = createUosRestaurant(date, WESTERN_RESTAURANT, MealType.BREAKFAST, "돈까스", 2, 0);
         UosRestaurant uosRestaurant4 = createUosRestaurant(date, MUSEUM_OF_NATURAL_SCIENCE, MealType.BREAKFAST, "제육", 2, 1);
         List<UosRestaurant> uosRestaurants = List.of(uosRestaurant1, uosRestaurant2, uosRestaurant3, uosRestaurant4);
+        uosRestaurantRepository.saveAll(uosRestaurants);
 
         // when
         crawlingCacheUosRestaurantService.saveAllCrawlingDataInRedis(uosRestaurants);

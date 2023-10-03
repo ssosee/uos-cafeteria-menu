@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import seaung.uoscafeteriamenu.crawling.utils.CrawlingUtils;
 import seaung.uoscafeteriamenu.domain.cache.repository.CacheMemberRepository;
+import seaung.uoscafeteriamenu.domain.cache.repository.CacheUosRestaurantRepository;
 import seaung.uoscafeteriamenu.domain.entity.*;
 import seaung.uoscafeteriamenu.domain.repository.SkillBlockRepository;
 import seaung.uoscafeteriamenu.domain.repository.UosRestaurantRepository;
@@ -44,12 +45,15 @@ class TextCardUosRestaurantControllerTest extends ControllerTestSupport {
     CacheManager cacheManager;
     @Autowired
     CacheMemberRepository cacheMemberRepository;
+    @Autowired
+    CacheUosRestaurantRepository cacheUosRestaurantRepository;
 
     @AfterEach
     void tearDown() {
         cacheManager.getCacheNames()
                 .forEach(name -> cacheManager.getCache(name).clear());
         cacheMemberRepository.deleteAll();
+        cacheUosRestaurantRepository.deleteAll();
     }
 
     @BeforeEach
@@ -149,7 +153,7 @@ class TextCardUosRestaurantControllerTest extends ControllerTestSupport {
                 .andExpect(jsonPath("$.template.outputs").isArray())
                 .andExpect(jsonPath("$.template.outputs[0].simpleText").isNotEmpty())
                 .andExpect(jsonPath("$.template.outputs[0].simpleText.text")
-                        .value("추천 고맙다. 내친.구.휴.먼"));
+                        .value("추천 고맙다! 내 친구 휴.먼"));
     }
 
     @Test
@@ -410,7 +414,7 @@ class TextCardUosRestaurantControllerTest extends ControllerTestSupport {
     }
 
     private SkillBlock createSkillBlock(String blockId, BlockName blockName, String action, String label, String messageText, String parentBlockName) {
-        SkillBlock skillBlock = SkillBlock.builder()
+        return SkillBlock.builder()
                 .blockId(blockId)
                 .blockName(blockName)
                 .action(action)
@@ -418,7 +422,5 @@ class TextCardUosRestaurantControllerTest extends ControllerTestSupport {
                 .messageText(messageText)
                 .parentBlockName(parentBlockName)
                 .build();
-
-        return skillBlock;
     }
 }

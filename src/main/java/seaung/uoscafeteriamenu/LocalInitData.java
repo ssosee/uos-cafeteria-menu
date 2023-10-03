@@ -24,7 +24,7 @@ import java.util.Map;
 
 @Slf4j
 @Component
-@Profile(value = {"test", "local"})
+@Profile("local")
 @RequiredArgsConstructor
 public class LocalInitData {
 
