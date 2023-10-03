@@ -19,9 +19,15 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
 
+/**
+ * AWS ElastiCache는 COPNFIG 명령어를 허용하지 않음
+ */
 @Slf4j
 @Configuration
-@EnableRedisRepositories(enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP)
+@EnableRedisRepositories(
+        enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP,
+        keyspaceNotificationsConfigParameter = ""
+)
 @Profile({"prod", "dev"})
 public class RedisCacheConfig {
 

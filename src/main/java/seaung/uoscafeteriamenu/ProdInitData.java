@@ -23,7 +23,7 @@ import java.util.Map;
 
 @Slf4j
 @Component
-@Profile("prod")
+@Profile(value = {"prod", "dev"})
 @RequiredArgsConstructor
 public class ProdInitData {
 
