@@ -241,8 +241,8 @@ public class UosRestaurantService {
 
     public Optional<CacheUosRestaurant> findTop1MenuByLikeCountInCache(List<CacheUosRestaurant> findTop1MenusInCache) {
         return findTop1MenusInCache.stream()
-                .max(Comparator.comparingInt(CacheUosRestaurant::getView)
-                        .thenComparingInt(CacheUosRestaurant::getLikeCount));
+                .max(Comparator.comparingInt(CacheUosRestaurant::getLikeCount)
+                        .thenComparingInt(CacheUosRestaurant::getView));
     }
 
     // 학교 식당 운영시간 확인
