@@ -1,6 +1,5 @@
 package seaung.uoscafeteriamenu.global.config;
 
-import io.github.bucket4j.Bucket;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -12,11 +11,11 @@ import seaung.uoscafeteriamenu.web.interceptor.RateLimitInterceptor;
 
 @Configuration
 @RequiredArgsConstructor
-public class WebConfig implements WebMvcConfigurer {
+public class InterceptorConfig implements WebMvcConfigurer {
 
     private final CacheBotApikeyService botApikeyService;
     private final BucketResolver bucketResolver;
-    private String patterns = "/**/api/v1/**";
+    private String patterns = "/api/v1/**";
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {

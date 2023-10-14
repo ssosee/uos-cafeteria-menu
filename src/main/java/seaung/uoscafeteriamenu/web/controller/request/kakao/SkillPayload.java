@@ -2,6 +2,7 @@ package seaung.uoscafeteriamenu.web.controller.request.kakao;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import seaung.uoscafeteriamenu.domain.entity.MealType;
 import seaung.uoscafeteriamenu.domain.entity.UosRestaurantName;
 import seaung.uoscafeteriamenu.domain.service.request.RecommendUosRestaurantMenuInput;
@@ -13,11 +14,13 @@ import seaung.uoscafeteriamenu.global.provider.TimeProvider;
 import java.time.LocalDateTime;
 
 @Data
+//@NoArgsConstructor
 public class SkillPayload {
     private Intent intent; // 발화와 일치하는 블록의 정보
     private UserRequest userRequest;
     private Bot bot;
     private Action action;
+
 
     @Builder
     private SkillPayload(Intent intent, UserRequest userRequest, Bot bot, Action action) {

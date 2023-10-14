@@ -11,9 +11,6 @@ botApikey: botApikey-test
   },
   "userRequest": {
     "timezone": "Asia/Seoul",
-    "params": {
-      "ignoreMe": "true"
-    },
     "block": {
       "id": "pd3lca5py4y4dj43a00nwafk",
       "name": "블록 이름"
