@@ -2,7 +2,7 @@
 
 POST http://localhost:8080/api/v1/simple-text/uos/restaurants/menu
 Content-Type: application/json
-botApikey: test-botApikey
+botApikey: botApikey-test
 
 {
   "intent": {

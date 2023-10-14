@@ -1,5 +1,7 @@
 package seaung.uoscafeteriamenu.global.config;
 
+import io.github.bucket4j.Bucket;
+import io.github.bucket4j.distributed.proxy.ProxyManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;

@@ -1,4 +1,4 @@
-botApikey: test-botApikey
+botApikey: botApikey-test
 
 spring:
   config:

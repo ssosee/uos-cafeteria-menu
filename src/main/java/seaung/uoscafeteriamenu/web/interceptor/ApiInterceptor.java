@@ -1,5 +1,6 @@
 package seaung.uoscafeteriamenu.web.interceptor;
 
+import io.github.bucket4j.Bucket;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -21,14 +22,9 @@ public class ApiInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        checkApikey(request);
-        return true;
-    }
-
-    private void checkApikey(HttpServletRequest request) {
         String botApikeyHeader = request.getHeader("botApikey");
-        log.info("botApikey 확인={}", botApikeyHeader);
-
         botApiKeyService.findBotApiKeyHeader(botApikeyHeader);
+
+        return true;
     }
 }
