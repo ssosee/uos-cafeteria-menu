@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
  * Skill Request에서 사용자에 대한 정보를 userRequest.user에 담아서 제공하고 있습니다.
  */
 @Data
-@NoArgsConstructor
 public class User {
     /**
      * 사용자를 식별할 수 있는 key로 최대 70자의 값을 가지고 있습니다.

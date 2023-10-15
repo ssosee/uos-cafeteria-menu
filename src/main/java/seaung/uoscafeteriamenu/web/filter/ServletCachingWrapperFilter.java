@@ -1,5 +1,7 @@
 package seaung.uoscafeteriamenu.web.filter;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
@@ -8,6 +10,7 @@ import org.springframework.web.util.ContentCachingResponseWrapper;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
 
 /**
@@ -18,27 +21,27 @@ import java.io.IOException;
  * 내부적으로 원래 response 를 super(response) 로 셋팅할 뿐이다.
  * 이 메서드를 통해 이 ContentCachingResponseWrapper 의 content 라는 필드에 복사를 해놓는 과정이 따로 필요하다.
  */
+@Deprecated
 @Slf4j
 public class ServletCachingWrapperFilter extends OncePerRequestFilter {
-//    @Override
-//    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-//        ContentCachingRequestWrapper contentCachingRequestWrapper = new ContentCachingRequestWrapper((HttpServletRequest) request);
-//        ContentCachingResponseWrapper contentCachingResponseWrapper = new ContentCachingResponseWrapper((HttpServletResponse) response);
-//
-//        log.info("필터 전");
-//        chain.doFilter(contentCachingRequestWrapper, contentCachingResponseWrapper);
-//        log.info("필터 후");
-//        contentCachingResponseWrapper.copyBodyToResponse();
-//    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         ContentCachingRequestWrapper contentCachingRequestWrapper = new ContentCachingRequestWrapper(request);
         ContentCachingResponseWrapper contentCachingResponseWrapper = new ContentCachingResponseWrapper(response);
 
-        log.info("필터 전");
+        byte[] body1 = contentCachingRequestWrapper.getContentAsByteArray();
+
+        //log.info("필터 전={}", body1);
         chain.doFilter(contentCachingRequestWrapper, contentCachingResponseWrapper);
-        log.info("필터 후");
+
+        byte[] body = contentCachingRequestWrapper.getContentAsByteArray();
+        //log.info("필터 후={}", body);
+
+        ObjectMapper om = new ObjectMapper();
+        JsonNode jsonNode = om.readTree(body);
+        String userId = jsonNode.get("userRequest").get("user").get("id").asText();
+
         contentCachingResponseWrapper.copyBodyToResponse();
     }
 }

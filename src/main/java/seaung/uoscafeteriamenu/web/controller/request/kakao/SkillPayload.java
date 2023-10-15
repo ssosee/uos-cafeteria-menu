@@ -14,7 +14,6 @@ import seaung.uoscafeteriamenu.global.provider.TimeProvider;
 import java.time.LocalDateTime;
 
 @Data
-//@NoArgsConstructor
 public class SkillPayload {
     private Intent intent; // 발화와 일치하는 블록의 정보
     private UserRequest userRequest;

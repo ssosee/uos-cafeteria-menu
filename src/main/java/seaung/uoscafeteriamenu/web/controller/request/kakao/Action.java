@@ -12,7 +12,6 @@ import java.util.Map;
  * 사용자의 발화로부터 추출한 엔티티의 값을 추가적으로 포함합니다.
  */
 @Data
-@NoArgsConstructor
 public class Action {
     private String id; // 스킬의 고유한 식별자입니다.
     private String name; // 설정된 스킬의 이름입니다.
