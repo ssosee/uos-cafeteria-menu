@@ -41,9 +41,8 @@ public class RedisBucketConfig {
     public LettuceBasedProxyManager lettuceBasedProxyManager() {
         return LettuceBasedProxyManager
                 .builderFor(redisClient())
-                .withExpirationStrategy(ExpirationAfterWriteStrategy.basedOnTimeForRefillingBucketUpToMax(Duration.ofSeconds(2)))
+                .withExpirationStrategy(ExpirationAfterWriteStrategy.basedOnTimeForRefillingBucketUpToMax(Duration.ofSeconds(10)))
                 .build();
-
     }
 
     @Bean

@@ -27,13 +27,13 @@ public enum RatePlan {
     DEV("dev") {
         @Override
         public Bandwidth getLimit() {
-            return Bandwidth.classic(5, Refill.intervally(3, Duration.ofSeconds(1)));
+            return Bandwidth.classic(3, Refill.intervally(3, Duration.ofSeconds(1)));
         }
     },
     PROD("prod") {
         @Override
         public Bandwidth getLimit() {
-            return Bandwidth.classic(5, Refill.intervally(3, Duration.ofSeconds(1)));
+            return Bandwidth.classic(3, Refill.intervally(3, Duration.ofSeconds(1)));
         }
     };
 

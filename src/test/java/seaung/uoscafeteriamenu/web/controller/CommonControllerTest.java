@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import seaung.uoscafeteriamenu.crawling.utils.CrawlingUtils;
 import seaung.uoscafeteriamenu.domain.cache.repository.CacheMemberRepository;
@@ -53,11 +54,12 @@ public class CommonControllerTest extends ControllerTestSupport {
     @Autowired
     BucketResolver bucketResolver;
 
+    @Autowired
+    RedisTemplate<?, ?> redisTemplate;
+
     @AfterEach
     void tearDown() {
-        cacheManager.getCacheNames()
-                .forEach(name -> cacheManager.getCache(name).clear());
-        cacheMemberRepository.deleteAll();
+        redisTemplate.getConnectionFactory().getConnection().flushAll();
     }
 
     @BeforeEach

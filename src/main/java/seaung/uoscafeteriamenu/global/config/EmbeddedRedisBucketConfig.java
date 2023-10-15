@@ -40,7 +40,7 @@ public class EmbeddedRedisBucketConfig {
     public LettuceBasedProxyManager lettuceBasedProxyManager() {
         return LettuceBasedProxyManager
                 .builderFor(redisClient())
-                .withExpirationStrategy(ExpirationAfterWriteStrategy.basedOnTimeForRefillingBucketUpToMax(Duration.ofSeconds(1)))
+                .withExpirationStrategy(ExpirationAfterWriteStrategy.basedOnTimeForRefillingBucketUpToMax(Duration.ofSeconds(10)))
                 .build();
     }
 

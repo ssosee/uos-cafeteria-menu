@@ -1,16 +1,16 @@
 package seaung.uoscafeteriamenu.global.ratelimter;
 
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cache.CacheManager;
+import org.springframework.data.redis.core.RedisTemplate;
 import seaung.uoscafeteriamenu.web.exception.RateLimiterException;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
 class BucketResolverTest {
@@ -19,12 +19,11 @@ class BucketResolverTest {
     BucketResolver bucketResolver;
 
     @Autowired
-    CacheManager cacheManager;
+    RedisTemplate<?, ?> redisTemplate;
 
     @AfterEach
     void tearDown() {
-        cacheManager.getCacheNames()
-                .forEach(name -> cacheManager.getCache(name).clear());
+        redisTemplate.getConnectionFactory().getConnection().flushAll();
     }
 
     @Test

@@ -43,11 +43,12 @@ class MemberServiceTest {
     @Autowired
     RedisCacheManager cacheManager;
 
+    @Autowired
+    RedisTemplate<?, ?> redisTemplate;
+
     @AfterEach
     void tearDown() {
-        cacheManager.getCacheNames()
-                .forEach(name -> cacheManager.getCache(name).clear());
-        cacheMemberRepository.deleteAll();
+        redisTemplate.getConnectionFactory().getConnection().flushAll();
     }
 
     @Test

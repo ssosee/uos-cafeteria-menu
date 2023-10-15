@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 import seaung.uoscafeteriamenu.domain.cache.entity.CacheMember;
@@ -29,11 +30,12 @@ class CacheMemberServiceTest {
     @Autowired
     CacheManager cacheManager;
 
+    @Autowired
+    RedisTemplate<?, ?> redisTemplate;
+
     @AfterEach
     void tearDown() {
-        cacheManager.getCacheNames()
-                .forEach(name -> cacheManager.getCache(name).clear());
-        cacheMemberRepository.deleteAll();
+        redisTemplate.getConnectionFactory().getConnection().flushAll();
     }
 
     @Test

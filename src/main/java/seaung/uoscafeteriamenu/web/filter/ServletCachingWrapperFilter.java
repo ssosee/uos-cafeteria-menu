@@ -30,17 +30,7 @@ public class ServletCachingWrapperFilter extends OncePerRequestFilter {
         ContentCachingRequestWrapper contentCachingRequestWrapper = new ContentCachingRequestWrapper(request);
         ContentCachingResponseWrapper contentCachingResponseWrapper = new ContentCachingResponseWrapper(response);
 
-        byte[] body1 = contentCachingRequestWrapper.getContentAsByteArray();
-
-        //log.info("필터 전={}", body1);
         chain.doFilter(contentCachingRequestWrapper, contentCachingResponseWrapper);
-
-        byte[] body = contentCachingRequestWrapper.getContentAsByteArray();
-        //log.info("필터 후={}", body);
-
-        ObjectMapper om = new ObjectMapper();
-        JsonNode jsonNode = om.readTree(body);
-        String userId = jsonNode.get("userRequest").get("user").get("id").asText();
 
         contentCachingResponseWrapper.copyBodyToResponse();
     }
