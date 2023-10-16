@@ -73,6 +73,17 @@ public class ApiControllerAdvice {
         return new ResponseEntity<>(skillResponse, HttpStatus.OK);
     }
 
+    @ExceptionHandler(RateLimiterException.class)
+    public ResponseEntity<SkillResponse> rateLimiterException(RateLimiterException e) {
+
+        SkillResponse skillResponse = createSimpleTextResponse(e.getMessage());
+
+        log.error("[rateLimiterException 발생] ", e);
+
+        // 400으로 보내면 챗봇이 응답을 안준다.
+        return new ResponseEntity<>(skillResponse, HttpStatus.OK);
+    }
+
     private SkillResponse createSimpleTextResponse(String errorMessage) {
         Outputs outputs = Outputs.builder()
                 .simpleText(new SimpleText(errorMessage))

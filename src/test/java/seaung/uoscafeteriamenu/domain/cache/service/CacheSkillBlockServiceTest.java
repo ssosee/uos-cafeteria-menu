@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import seaung.uoscafeteriamenu.domain.cache.entity.CacheSkillBlock;
 import seaung.uoscafeteriamenu.domain.cache.repository.CacheMemberRepository;
@@ -34,13 +35,13 @@ class CacheSkillBlockServiceTest {
     @Autowired
     CacheMemberRepository cacheMemberRepository;
 
+    @Autowired
+    RedisTemplate<?, ?> redisTemplate;
+
     @AfterEach
     void tearDown() {
-        cacheManager.getCacheNames()
-                .forEach(name -> cacheManager.getCache(name).clear());
-        cacheMemberRepository.deleteAll();
+        redisTemplate.getConnectionFactory().getConnection().flushAll();
     }
-
     @Test
     @DisplayName("캐시에 SkillBlock이 없으면, 캐시에 저장된다.")
     void getSkillBlockByBlockName() {

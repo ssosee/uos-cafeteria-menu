@@ -1,6 +1,7 @@
 package seaung.uoscafeteriamenu.web.controller.request.kakao;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 

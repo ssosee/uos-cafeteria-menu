@@ -2,6 +2,7 @@ package seaung.uoscafeteriamenu.web.controller.request.kakao;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 public class Block {

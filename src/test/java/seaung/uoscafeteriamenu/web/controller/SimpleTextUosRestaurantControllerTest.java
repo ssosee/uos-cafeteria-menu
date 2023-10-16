@@ -3,6 +3,7 @@ package seaung.uoscafeteriamenu.web.controller;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import seaung.uoscafeteriamenu.domain.cache.repository.CacheMemberRepository;
 import seaung.uoscafeteriamenu.domain.cache.repository.CacheUosRestaurantRepository;
@@ -41,12 +42,12 @@ class SimpleTextUosRestaurantControllerTest extends ControllerTestSupport {
     @Autowired
     CacheUosRestaurantRepository cacheUosRestaurantRepository;
 
+    @Autowired
+    RedisTemplate<?, ?> redisTemplate;
+
     @AfterEach
     void tearDown() {
-        cacheManager.getCacheNames()
-                .forEach(name -> cacheManager.getCache(name).clear());
-        cacheMemberRepository.deleteAll();
-        cacheUosRestaurantRepository.deleteAll();
+        redisTemplate.getConnectionFactory().getConnection().flushAll();
     }
 
     @BeforeEach

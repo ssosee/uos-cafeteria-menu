@@ -2,6 +2,7 @@ package seaung.uoscafeteriamenu.web.controller.request.kakao;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Skill Request에서 사용자에 대한 정보를 userRequest.user에 담아서 제공하고 있습니다.

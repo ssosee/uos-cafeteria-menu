@@ -38,6 +38,11 @@ dependencies {
 
     // 정적페이지 크롤링
     implementation 'org.jsoup:jsoup:1.14.2'
+    // rate limiter
+    //implementation 'com.github.vladimir-bukhtoyarov:bucket4j-core:7.6.0'
+    implementation group: 'com.giffing.bucket4j.spring.boot.starter', name: 'bucket4j-spring-boot-starter', version: '0.6.0'
+    // https://mvnrepository.com/artifact/com.github.vladimir-bukhtoyarov/bucket4j-redis
+    implementation group: 'com.github.vladimir-bukhtoyarov', name: 'bucket4j-redis', version: '7.6.0'
 
     testImplementation "org.testcontainers:testcontainers:1.17.2"
     testImplementation "org.testcontainers:junit-jupiter:1.17.2"

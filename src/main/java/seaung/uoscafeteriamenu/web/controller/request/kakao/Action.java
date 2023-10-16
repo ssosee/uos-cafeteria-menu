@@ -3,6 +3,7 @@ package seaung.uoscafeteriamenu.web.controller.request.kakao;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.Map;
 

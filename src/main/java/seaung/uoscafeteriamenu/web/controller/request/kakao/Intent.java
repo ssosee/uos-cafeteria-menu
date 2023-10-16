@@ -2,6 +2,7 @@ package seaung.uoscafeteriamenu.web.controller.request.kakao;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 발화와 일치하는 블록의 정보를 담고 있는 필드입니다.

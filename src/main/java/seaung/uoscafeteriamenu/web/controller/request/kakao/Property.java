@@ -2,6 +2,7 @@ package seaung.uoscafeteriamenu.web.controller.request.kakao;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 추가적으로 제공하는 사용자의 속성 정보입니다.
