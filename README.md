@@ -1,7 +1,7 @@
-# [서울시립대학교 학식 봇](https://pf.kakao.com/_YVxdzG)
+# <a href="https://pf.kakao.com/_YVxdzG" target="_blank">서울시립대학교 학식 봇</a>
 
 ![bot-profile.png](docs%2Fimages%2Fbot-profile.png)
-* [채널 링크](https://pf.kakao.com/_YVxdzG)
+* <a href="https://pf.kakao.com/_YVxdzG" target="_blank">채널 링크</a>
 
 ## 목차
 * 개발 동기
@@ -9,7 +9,7 @@
 * 이슈 및 업데이트 사항
 * 시스템 구조
 * RDBMS 구조
-* [테스트 항목](http://uos-restaurant-bot.shop/test-docs)
+* <a href="http://uos-restaurant-bot.shop/test-docs" target="_blank">테스트 항목</a>
 * 사용 기술
 
 ## 개발 동기
@@ -45,7 +45,7 @@
 ## RDBMS 구조
 ![erd.png](docs%2Fimages%2Ferd.png)
 
-## [테스트 항목](http://uos-restaurant-bot.shop/test-docs)
+## <a href="http://uos-restaurant-bot.shop/test-docs" target="_blank">테스트 항목</a>
 *  총 85개의 테스트 항목 작성
 
 
