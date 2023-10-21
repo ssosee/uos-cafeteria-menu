@@ -9,13 +9,13 @@
 * 이슈 및 업데이트 사항
 * 시스템 구조
 * RDBMS 구조
-* 테스트 항목
+* [테스트 항목](http://uos-restaurant-bot.shop/test-docs)
 * 사용 기술
 
 ## 개발 동기
 * 👨‍🎓 졸업 전 학교와 관련된 프로젝트를 하나 만들면 재미있을 것 같아 진행
 * 🤖 학식 봇이 존재하면 학생들이 이용할지 궁금하여 진행
-* 😁 프론트 엔드에 대한 부담을 덜 수 있어 개발 확정!
+* 😁 프론트엔드에 대한 부담을 덜 수 있어 개발 확정!
 
 ## 제공 기능
 * **실시간 인기 메뉴**
@@ -45,7 +45,7 @@
 ## RDBMS 구조
 ![erd.png](docs%2Fimages%2Ferd.png)
 
-## [테스트 항목](docs%2FTest%20Results%20-%20Tests_in_%27uos-cafeteria-menu_test%27.html)[테스트 항목](docs%2FTest%20Results%20-%20Tests_in_%27uos-cafeteria-menu_test%27.html)
+## [테스트 항목](http://uos-restaurant-bot.shop/test-docs)
 *  총 85개의 테스트 항목 작성
 
 
