@@ -11,7 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 import seaung.uoscafeteriamenu.domain.cache.entity.CacheMember;
 import seaung.uoscafeteriamenu.domain.cache.entity.CacheUosRestaurant;
@@ -447,6 +446,48 @@ class UosRestaurantServiceTest {
 
     @Test
     @DisplayName("아침메뉴 중 가장 추천수가 많은 메뉴 1개를 캐시에서 조회한다.(추천수가 같으면 조회수가 많은 것을 조회)")
+    void findTop1BREAKFASTUosRestaurantMenuByLikeCountOfCacheHit2() {
+        // given
+        LocalDateTime now = LocalDateTime.of(2023, 8, 16, 10, 59, 59);
+        String date = CrawlingUtils.toDateString(now);
+
+        UosRestaurant uosRestaurant1 = createUosRestaurant(date, STUDENT_HALL, MealType.BREAKFAST, "라면", 0, 0);
+        UosRestaurant uosRestaurant2 = createUosRestaurant(date, MAIN_BUILDING, MealType.BREAKFAST, "김밥", 1, 1);
+        UosRestaurant uosRestaurant3 = createUosRestaurant(date, WESTERN_RESTAURANT, MealType.BREAKFAST, "돈까스", 11, 0);
+        UosRestaurant uosRestaurant4 = createUosRestaurant(date, MUSEUM_OF_NATURAL_SCIENCE, MealType.BREAKFAST, "제육", 1, 3);
+        uosRestaurantRepository.saveAll(List.of(uosRestaurant1, uosRestaurant2, uosRestaurant3, uosRestaurant4));
+        cacheUosRestaurantRepository.saveAll(List.of(CacheUosRestaurant.of(uosRestaurant1),
+                CacheUosRestaurant.of(uosRestaurant2),
+                CacheUosRestaurant.of(uosRestaurant3),
+                CacheUosRestaurant.of(uosRestaurant4)));
+
+
+        Pageable pageable = PageRequest.of(0, 1);
+
+        // when
+        Page<UosRestaurantMenuResponse> result = uosRestaurantService.findTop1UosRestaurantMenuByLikeCount(pageable, now);
+
+        // then
+        assertThat(result).hasSize(1)
+                .extracting("restaurantName", "mealType", "menu", "view", "likeCount")
+                .contains(
+                        tuple(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE.getKrName(), MealType.BREAKFAST.getKrName(), "제육", 2, 3)
+                );
+
+        List<CacheUosRestaurant> cacheUosRestaurants = cacheUosRestaurantRepository.findByDateAndMealType(date, MealType.BREAKFAST);
+        CacheUosRestaurant cacheUosRestaurant = uosRestaurantService.findTop1MenuByLikeCountInCache(cacheUosRestaurants).get();
+
+        assertAll(
+                () -> assertThat(cacheUosRestaurant.getRestaurantName()).isEqualTo(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE),
+                () -> assertThat(cacheUosRestaurant.getMealType()).isEqualTo(MealType.BREAKFAST),
+                () -> assertThat(cacheUosRestaurant.getMenuDesc()).isEqualTo("제육"),
+                () -> assertThat(cacheUosRestaurant.getView()).isEqualTo(2),
+                () -> assertThat(cacheUosRestaurant.getLikeCount()).isEqualTo(3)
+        );
+    }
+
+    @Test
+    @DisplayName("아침메뉴 중 가장 추천수가 많은 메뉴 1개를 캐시에서 조회한다.(추천수가 같으면 조회수가 많은 것을 조회)")
     void findTop1BREAKFASTUosRestaurantMenuByLikeCountOfCacheHit() {
         // given
         LocalDateTime now = LocalDateTime.of(2023, 8, 16, 10, 59, 59);
@@ -676,9 +717,44 @@ class UosRestaurantServiceTest {
                         tuple(UosRestaurantName.WESTERN_RESTAURANT, MealType.DINNER, "돈까스", 3, 3),
                         tuple(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE, MealType.DINNER, "제육", 4, 4)
                 );
+    }
 
-        List<CacheUosRestaurant> findCacheUosRestaurants = cacheUosRestaurantRepository.findByDate(date);
-        assertThat(findCacheUosRestaurants).isEmpty();
+    @Test
+    @DisplayName("")
+    void deleteAllCacheUosRestaurantAndWarmUpNextDayUosRestaurant() {
+        // given
+        LocalDateTime now = LocalDateTime.of(2023, 8, 16, 18, 30, 0);
+        String current = CrawlingUtils.toDateString(now);
+
+        LocalDateTime future = LocalDateTime.of(2023, 8, 17, 18, 30, 0);
+        String next = CrawlingUtils.toDateString(future);
+
+        UosRestaurant uosRestaurant1 = createUosRestaurant(current, STUDENT_HALL, MealType.DINNER, "라면", 0, 0);
+        UosRestaurant uosRestaurant2 = createUosRestaurant(current, MAIN_BUILDING, MealType.DINNER, "김밥", 0, 0);
+        UosRestaurant uosRestaurant3 = createUosRestaurant(current, WESTERN_RESTAURANT, MealType.DINNER, "돈까스", 0, 0);
+        UosRestaurant uosRestaurant4 = createUosRestaurant(current, MUSEUM_OF_NATURAL_SCIENCE, MealType.DINNER, "제육", 0, 0);
+        UosRestaurant uosRestaurant5 = createUosRestaurant(next, STUDENT_HALL, MealType.DINNER, "떡라면", 0, 0);
+        UosRestaurant uosRestaurant6 = createUosRestaurant(next, MAIN_BUILDING, MealType.DINNER, "충무김밥", 0, 0);
+        UosRestaurant uosRestaurant7 = createUosRestaurant(next, WESTERN_RESTAURANT, MealType.DINNER, "치즈돈까스", 0, 0);
+        UosRestaurant uosRestaurant8 = createUosRestaurant(next, MUSEUM_OF_NATURAL_SCIENCE, MealType.DINNER, "김치제육", 0, 0);
+        uosRestaurantRepository.saveAll(List.of(uosRestaurant1, uosRestaurant2, uosRestaurant3, uosRestaurant4,
+                uosRestaurant5, uosRestaurant6, uosRestaurant7, uosRestaurant8));
+
+        cacheUosRestaurantRepository.saveAll(CacheUosRestaurant.ofList(List.of(uosRestaurant1, uosRestaurant2, uosRestaurant3, uosRestaurant4)));
+
+        // when
+        uosRestaurantService.deleteAllCacheUosRestaurantAndWarmUpNextDayUosRestaurant(now);
+
+        // then
+        List<CacheUosRestaurant> cache = cacheUosRestaurantRepository.findByDate(next);
+        assertThat(cache).hasSize(4)
+                .extracting("restaurantName", "mealType", "menuDesc", "view", "likeCount")
+                .containsAnyOf(
+                        tuple(UosRestaurantName.STUDENT_HALL, MealType.DINNER, "떡라면", 0, 0),
+                        tuple(UosRestaurantName.MAIN_BUILDING, MealType.DINNER, "충무김밥", 0, 0),
+                        tuple(UosRestaurantName.WESTERN_RESTAURANT, MealType.DINNER, "치즈돈까스", 0, 0),
+                        tuple(UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE, MealType.DINNER, "김치제육", 0, 0)
+                );
     }
 
     private RecommendUosRestaurantMenuInput createRecommendUosRestaurantMenuInput(String botUserId, String date, UosRestaurantName restaurantName, MealType mealType) {

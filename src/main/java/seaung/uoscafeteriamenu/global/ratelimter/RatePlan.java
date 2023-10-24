@@ -33,7 +33,7 @@ public enum RatePlan {
     PROD("prod") {
         @Override
         public Bandwidth getLimit() {
-            return Bandwidth.classic(3, Refill.intervally(3, Duration.ofSeconds(1)));
+            return Bandwidth.classic(1, Refill.intervally(1, Duration.ofSeconds(1)));
         }
     };
 

@@ -314,9 +314,6 @@ public class UosRestaurantService {
                 uosRestaurant.changeViewAndLikeCount(cacheUosRestaurant.getView(), cacheUosRestaurant.getLikeCount());
             }
         }
-
-        // 캐시 삭제
-        cacheUosRestaurantRepository.deleteAll();
     }
 
     private boolean isSameUosMenuViewOrLikeCount(UosRestaurant uosRestaurant, CacheUosRestaurant cacheUosRestaurant) {
@@ -329,5 +326,18 @@ public class UosRestaurantService {
             return true;
         }
         return false;
+    }
+
+    // 캐시에 있는 금일 학교 메뉴를 삭제하고, 내일 메뉴를 캐시에 warm-up 한다.
+    public void deleteAllCacheUosRestaurantAndWarmUpNextDayUosRestaurant(LocalDateTime now) {
+        // 캐시에 있는 모든 학교 메뉴 삭제
+        cacheUosRestaurantRepository.deleteAll();
+
+        LocalDateTime future = now.plusDays(1);
+        String next = CrawlingUtils.toDateString(future);
+
+        // 내일 학교 메뉴를 캐시에 warm-up
+        List<UosRestaurant> findUosRestaurant = uosRestaurantRepository.findByCrawlingDate(next);
+        cacheUosRestaurantRepository.saveAll(CacheUosRestaurant.ofList(findUosRestaurant));
     }
 }

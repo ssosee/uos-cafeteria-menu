@@ -26,8 +26,8 @@ public class RedisBucketConfig {
     @Value("${spring.redis.port}")
     private int redisPort;
 
-    @Value("${bucket4j.level}")
-    private String bucketLevel;
+    @Value("${bucket.plan}")
+    private String bucketPlan;
 
     @Bean
     public RedisClient redisClient() {
@@ -48,7 +48,7 @@ public class RedisBucketConfig {
     @Bean
     public BucketConfiguration bucketConfiguration() {
         return BucketConfiguration.builder()
-                .addLimit(RatePlan.resolvePlan(bucketLevel))
+                .addLimit(RatePlan.resolvePlan(bucketPlan))
                 .build();
     }
 }

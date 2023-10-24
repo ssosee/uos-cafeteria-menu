@@ -1,6 +1,6 @@
 botApikey: botApikey-test
-bucket4j:
-  level: dev
+bucket:
+  plan: dev
 
 spring:
   config:

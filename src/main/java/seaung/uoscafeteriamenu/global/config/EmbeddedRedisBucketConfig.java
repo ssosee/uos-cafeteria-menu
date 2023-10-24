@@ -25,8 +25,8 @@ public class EmbeddedRedisBucketConfig {
     @Value("${spring.redis.port}")
     private int redisPort;
 
-    @Value("${bucket4j.level}")
-    private String bucketLevel;
+    @Value("${bucket.plan}")
+    private String bucketPlan;
 
     @Bean
     public RedisClient redisClient() {
@@ -40,15 +40,17 @@ public class EmbeddedRedisBucketConfig {
     public LettuceBasedProxyManager lettuceBasedProxyManager() {
         return LettuceBasedProxyManager
                 .builderFor(redisClient())
-                .withExpirationStrategy(ExpirationAfterWriteStrategy.basedOnTimeForRefillingBucketUpToMax(Duration.ofSeconds(10)))
+                .withExpirationStrategy(ExpirationAfterWriteStrategy
+                        .basedOnTimeForRefillingBucketUpToMax(Duration.ofSeconds(10))
+                )
                 .build();
     }
 
     @Bean
     public BucketConfiguration bucketConfiguration() {
-        log.info("처리율 제한 자치 레벨 설정={}", bucketLevel);
+        log.info("처리율 제한 장치 레벨 설정={}", bucketPlan);
         return BucketConfiguration.builder()
-                .addLimit(RatePlan.resolvePlan(bucketLevel))
+                .addLimit(RatePlan.resolvePlan(bucketPlan))
                 .build();
     }
 }
