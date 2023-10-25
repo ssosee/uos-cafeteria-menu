@@ -720,7 +720,7 @@ class UosRestaurantServiceTest {
     }
 
     @Test
-    @DisplayName("")
+    @DisplayName("금일 캐시된 학식메뉴를 삭제하고 내일 학식메뉴를 데이터베이스에서 조회하여 캐시에 warm-up 한다.")
     void deleteAllCacheUosRestaurantAndWarmUpNextDayUosRestaurant() {
         // given
         LocalDateTime now = LocalDateTime.of(2023, 8, 16, 18, 30, 0);
