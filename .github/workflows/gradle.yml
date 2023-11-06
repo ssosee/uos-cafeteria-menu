@@ -54,7 +54,7 @@ jobs:
     - name: Build with Gradle
       run: |
           ls -al
-          cd uos-restaurant-bot
+          cd uos-cafeteria-menu
           chmod +x ./gradlew
           ./gradlew build
 
