@@ -207,10 +207,9 @@ class UosRestaurantServiceTest {
 
     }
 
-    @Disabled
     @Test
-    @DisplayName("사용자가 학식 메뉴를 추천할 때 회원이 없으면 회원이 생성되고 추천수가 1증가하고 추천이력이 생성되고 캐시에 저장된다.")
-    void recommendUosRestaurantMenu() {
+    @DisplayName("학식메뉴를 추천할 때 캐시에 메뉴가 있으면 동기화를 한 후 추천수가 1증가하고 추천이력이 생성되고 캐시에 저장된다.")
+    void recommendUosRestaurantMenuSyncCache() {
         // given
         String date = CrawlingUtils.toDateString(LocalDateTime.now());
 
@@ -224,6 +223,9 @@ class UosRestaurantServiceTest {
 
         RecommendUosRestaurantMenuInput input = createRecommendUosRestaurantMenuInput(botUserId, date, UosRestaurantName.STUDENT_HALL, MealType.BREAKFAST);
 
+        uosRestaurant.changeViewAndLikeCount(100, 0);
+        cacheUosRestaurantRepository.save(CacheUosRestaurant.of(uosRestaurant));
+
         // when
         String response = uosRestaurantService.recommendUosRestaurantMenu(input);
 
@@ -233,8 +235,9 @@ class UosRestaurantServiceTest {
         MenuLike findMenuLike = menuLikeRepository.findByMemberIdAndUosRestaurantId(findMember.getId(), findUosRestaurant.getId()).get();
 
         assertAll(
-                () -> assertThat(response).isEqualTo("추천 고맙다! 내 친구 휴.먼"),
+                () -> assertThat(response).isEqualTo(UosRestaurantService.RECOMMEND_MESSAGE),
                 () -> assertThat(findUosRestaurant.getLikeCount()).isEqualTo(1),
+                () -> assertThat(findUosRestaurant.getView()).isEqualTo(100),
                 () -> assertThat(findMember).isNotNull(),
                 () -> assertThat(findMenuLike).isNotNull(),
                 () -> assertThat(findMenuLike.getMember()).isEqualTo(findMember),
@@ -245,7 +248,8 @@ class UosRestaurantServiceTest {
                 .findByDateAndRestaurantNameAndMealType(date, STUDENT_HALL, MealType.BREAKFAST).get();
         assertAll(
                 () ->assertThat(cacheUosRestaurant).isNotNull(),
-                () -> assertThat(cacheUosRestaurant.getLikeCount()).isEqualTo(1L)
+                () -> assertThat(cacheUosRestaurant.getLikeCount()).isEqualTo(1),
+                () -> assertThat(cacheUosRestaurant.getView()).isEqualTo(100)
         );
     }
 
