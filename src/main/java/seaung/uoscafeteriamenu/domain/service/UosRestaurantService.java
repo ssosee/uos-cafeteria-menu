@@ -32,6 +32,8 @@ import java.util.stream.StreamSupport;
 @Transactional(readOnly = true)
 public class UosRestaurantService {
 
+    public static final String RECOMMEND_MESSAGE = "추천 고맙다! 내 친구 휴.먼";
+
     private final UosRestaurantRepository uosRestaurantRepository;
     private final MenuLikeRepository menuLikeRepository;
     private final MemberRepository memberRepository;
@@ -105,10 +107,7 @@ public class UosRestaurantService {
     @Transactional
     public String recommendUosRestaurantMenu(RecommendUosRestaurantMenuInput input) {
 
-        // 학식 조회
-        UosRestaurant findUosRestaurant = uosRestaurantRepository.findByCrawlingDateAndRestaurantNameAndMealType(input.getDate(),
-                        input.getRestaurantName(), input.getMealType())
-                .orElseThrow(() -> new UosRestaurantMenuException(UosRestaurantMenuException.NOT_FOUND_MENU));
+        UosRestaurant findUosRestaurant = getSynchronizedUosRestaurantFromCache(input);
 
         // 회원 조회
         Member findMember = memberRepository.findByBotUserId(input.getBotUserId())
@@ -128,7 +127,26 @@ public class UosRestaurantService {
         // 캐시에 반영
         cacheUosRestaurantRepository.save(CacheUosRestaurant.of(findUosRestaurant));
 
-        return "추천 고맙다! 내 친구 휴.먼";
+        return RECOMMEND_MESSAGE;
+    }
+
+    private UosRestaurant getSynchronizedUosRestaurantFromCache(RecommendUosRestaurantMenuInput input) {
+        // 캐시 조회
+        Optional<CacheUosRestaurant> findCacheUosRestaurant = cacheUosRestaurantRepository
+                .findByDateAndRestaurantNameAndMealType(input.getDate(), input.getRestaurantName(), input.getMealType());
+
+        // 학식 조회
+        UosRestaurant findUosRestaurant = uosRestaurantRepository.findByCrawlingDateAndRestaurantNameAndMealType(input.getDate(),
+                        input.getRestaurantName(), input.getMealType())
+                .orElseThrow(() -> new UosRestaurantMenuException(UosRestaurantMenuException.NOT_FOUND_MENU));
+
+        // 캐시에 학식이 존재하면 캐시 동기화
+        if(findCacheUosRestaurant.isPresent()) {
+            CacheUosRestaurant cache = findCacheUosRestaurant.get();
+            findUosRestaurant.changeViewAndLikeCount(cache.getView(), cache.getLikeCount());
+        }
+
+        return findUosRestaurant;
     }
 
     // 추천수를 증가하고 추천이력을 저장
