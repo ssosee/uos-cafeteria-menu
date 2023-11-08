@@ -4,8 +4,10 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class Knowledge {
     private String answer; // 지식의 답변
     private String question; // 지식의 질문

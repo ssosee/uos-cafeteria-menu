@@ -39,6 +39,7 @@ class SimpleTextUosRestaurantControllerTest extends ControllerTestSupport {
 
     @Autowired
     CacheMemberRepository cacheMemberRepository;
+
     @Autowired
     CacheUosRestaurantRepository cacheUosRestaurantRepository;
 

@@ -7,7 +7,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
+import seaung.uoscafeteriamenu.api.korea.holiday.response.HolidayItem;
+import seaung.uoscafeteriamenu.api.korea.holiday.service.HolidayApiService;
 import seaung.uoscafeteriamenu.crawling.utils.CrawlingUtils;
+import seaung.uoscafeteriamenu.domain.cache.entity.CacheHoliday;
+import seaung.uoscafeteriamenu.domain.cache.repository.CacheHolidayRepository;
 import seaung.uoscafeteriamenu.domain.cache.repository.CacheMemberRepository;
 import seaung.uoscafeteriamenu.domain.entity.*;
 import seaung.uoscafeteriamenu.domain.repository.MemberRepository;
@@ -17,13 +21,16 @@ import seaung.uoscafeteriamenu.global.ratelimter.BucketResolver;
 import seaung.uoscafeteriamenu.web.controller.request.kakao.*;
 import seaung.uoscafeteriamenu.web.controller.response.kakao.SkillResponse;
 import seaung.uoscafeteriamenu.web.exception.ApikeyException;
+import seaung.uoscafeteriamenu.web.exception.HolidayException;
 import seaung.uoscafeteriamenu.web.exception.RateLimiterException;
+import seaung.uoscafeteriamenu.web.exception.SpecialHolidayException;
 import seaung.uoscafeteriamenu.web.exception.UosRestaurantMenuException;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import seaung.uoscafeteriamenu.web.exception.WeekendException;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -38,24 +45,22 @@ public class CommonControllerTest extends ControllerTestSupport {
 
     @Autowired
     UosRestaurantRepository uosRestaurantRepository;
-
     @Autowired
     SkillBlockRepository skillBlockRepository;
-
     @Autowired
     MemberRepository memberRepository;
-
     @Autowired
     CacheManager cacheManager;
-
     @Autowired
     CacheMemberRepository cacheMemberRepository;
-
     @Autowired
     BucketResolver bucketResolver;
-
     @Autowired
     RedisTemplate<?, ?> redisTemplate;
+    @Autowired
+    CacheHolidayRepository cacheHolidayRepository;
+    @Autowired
+    HolidayApiService holidayApiService;
 
     @AfterEach
     void tearDown() {
@@ -110,7 +115,7 @@ public class CommonControllerTest extends ControllerTestSupport {
                 .andExpect(jsonPath("$.template.outputs").isArray())
                 .andExpect(jsonPath("$.template.outputs[0].simpleText").isNotEmpty())
                 .andExpect(jsonPath("$.template.outputs[0].simpleText.text")
-                        .value(UosRestaurantMenuException.NOT_PROVIDE_MENU_AT_WEEKEND));
+                        .value(WeekendException.NOT_PROVIDE_MENU_AT_WEEKEND));
     }
 
     @Test
@@ -147,7 +152,7 @@ public class CommonControllerTest extends ControllerTestSupport {
                 .andExpect(jsonPath("$.template.outputs").isArray())
                 .andExpect(jsonPath("$.template.outputs[0].simpleText").isNotEmpty())
                 .andExpect(jsonPath("$.template.outputs[0].simpleText.text")
-                        .value(UosRestaurantMenuException.NOT_PROVIDE_MENU_AT_WEEKEND));
+                        .value(WeekendException.NOT_PROVIDE_MENU_AT_WEEKEND));
     }
 
     @Test
@@ -229,6 +234,44 @@ public class CommonControllerTest extends ControllerTestSupport {
                 .andExpect(jsonPath("$.template.outputs[0].simpleText").isNotEmpty())
                 .andExpect(jsonPath("$.template.outputs[0].simpleText.text")
                         .value(RateLimiterException.TOO_MANY_REQUEST));
+    }
+
+    @Test
+    @DisplayName("공휴일에는 예외가 발생한다.")
+    void holidayException() throws Exception {
+        // given
+        LocalDateTime fixedDateTime = LocalDateTime.of(2023, 8, 15, 10, 59, 59);
+        when(timeProvider.getCurrentLocalDateTime()).thenReturn(fixedDateTime);
+
+        HolidayItem holidayItem = create("광복절", "Y", "20230815");
+        cacheHolidayRepository.save(CacheHoliday.of(holidayItem));
+
+        SkillPayload skillPayload = createSkillPayload();
+        Pageable pageable = PageRequest.of(0, 1);
+
+        // when // then
+        mockMvc.perform(post("/api/v1/text-card/uos/restaurant/menu/top1-like")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("botApikey", botApikey)
+                        .content(om.writeValueAsBytes(skillPayload))
+                        .param("page", String.valueOf(pageable.getPageNumber()))
+                        .param("size", String.valueOf(pageable.getPageSize())))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.version").value(SkillResponse.apiVersion))
+                .andExpect(jsonPath("$.template").isNotEmpty())
+                .andExpect(jsonPath("$.template.outputs").isArray())
+                .andExpect(jsonPath("$.template.outputs[0].simpleText").isNotEmpty())
+                .andExpect(jsonPath("$.template.outputs[0].simpleText.text")
+                        .value(String.format(HolidayException.NOT_PROVIDE_MENU_AT_HOLIDAY, "광복절")));
+    }
+
+    private HolidayItem create(String dateName, String isHoliday, String locdate) {
+        return HolidayItem.builder()
+                .dateName(dateName)
+                .isHoliday(isHoliday)
+                .locdate(locdate)
+                .build();
     }
 
     private SkillPayload createSkillPayload() {

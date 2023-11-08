@@ -84,6 +84,39 @@ public class ApiControllerAdvice {
         return new ResponseEntity<>(skillResponse, HttpStatus.OK);
     }
 
+    @ExceptionHandler(WeekendException.class)
+    public ResponseEntity<SkillResponse> weekendException(WeekendException e) {
+
+        SkillResponse skillResponse = createSimpleTextResponse(e.getMessage());
+
+        log.error("[weekendException 발생] ", e);
+
+        // 400으로 보내면 챗봇이 응답을 안준다.
+        return new ResponseEntity<>(skillResponse, HttpStatus.OK);
+    }
+
+    @ExceptionHandler(HolidayException.class)
+    public ResponseEntity<SkillResponse> holidayException(HolidayException e) {
+
+        SkillResponse skillResponse = createSimpleTextResponse(e.getMessage());
+
+        log.error("[holidayException 발생] ", e);
+
+        // 400으로 보내면 챗봇이 응답을 안준다.
+        return new ResponseEntity<>(skillResponse, HttpStatus.OK);
+    }
+
+    @ExceptionHandler(SpecialHolidayException.class)
+    public ResponseEntity<SkillResponse> specialHolidayException(SpecialHolidayException e) {
+
+        SkillResponse skillResponse = createSimpleTextResponse(e.getMessage());
+
+        log.error("[specialHolidayException 발생] ", e);
+
+        // 400으로 보내면 챗봇이 응답을 안준다.
+        return new ResponseEntity<>(skillResponse, HttpStatus.OK);
+    }
+
     private SkillResponse createSimpleTextResponse(String errorMessage) {
         Outputs outputs = Outputs.builder()
                 .simpleText(new SimpleText(errorMessage))

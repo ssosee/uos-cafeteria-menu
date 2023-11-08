@@ -4,7 +4,10 @@ bucket:
 
 spring:
   profiles:
-    active: test
+    include:
+     - test
+     - api-key
+
   jpa:
     hibernate:
       ddl-auto: create-drop
