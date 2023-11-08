@@ -13,6 +13,7 @@ import seaung.uoscafeteriamenu.global.provider.TimeProvider;
 import seaung.uoscafeteriamenu.global.ratelimter.BucketResolver;
 import seaung.uoscafeteriamenu.web.controller.request.kakao.SkillPayload;
 import seaung.uoscafeteriamenu.web.exception.UosRestaurantMenuException;
+import seaung.uoscafeteriamenu.web.exception.WeekendException;
 
 /**
  * <a href="https://kim-jong-hyun.tistory.com/143">참고</a>
@@ -54,7 +55,7 @@ public class ControllerAspect {
     // 주말 확인
     private void checkWeekend() {
         if(TimeProvider.isWeekend(timeProvider.getCurrentLocalDateTime())) {
-            throw new UosRestaurantMenuException(UosRestaurantMenuException.NOT_PROVIDE_MENU_AT_WEEKEND);
+            throw new WeekendException(WeekendException.NOT_PROVIDE_MENU_AT_WEEKEND);
         }
     }
 }

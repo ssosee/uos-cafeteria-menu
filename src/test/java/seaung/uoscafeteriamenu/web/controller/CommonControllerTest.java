@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import seaung.uoscafeteriamenu.web.exception.WeekendException;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -110,7 +111,7 @@ public class CommonControllerTest extends ControllerTestSupport {
                 .andExpect(jsonPath("$.template.outputs").isArray())
                 .andExpect(jsonPath("$.template.outputs[0].simpleText").isNotEmpty())
                 .andExpect(jsonPath("$.template.outputs[0].simpleText.text")
-                        .value(UosRestaurantMenuException.NOT_PROVIDE_MENU_AT_WEEKEND));
+                        .value(WeekendException.NOT_PROVIDE_MENU_AT_WEEKEND));
     }
 
     @Test
@@ -147,7 +148,7 @@ public class CommonControllerTest extends ControllerTestSupport {
                 .andExpect(jsonPath("$.template.outputs").isArray())
                 .andExpect(jsonPath("$.template.outputs[0].simpleText").isNotEmpty())
                 .andExpect(jsonPath("$.template.outputs[0].simpleText.text")
-                        .value(UosRestaurantMenuException.NOT_PROVIDE_MENU_AT_WEEKEND));
+                        .value(WeekendException.NOT_PROVIDE_MENU_AT_WEEKEND));
     }
 
     @Test
