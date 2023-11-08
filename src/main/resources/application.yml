@@ -1,3 +1,5 @@
 spring:
   profiles:
-    default: prod
+    include:
+      - local
+      - api-key

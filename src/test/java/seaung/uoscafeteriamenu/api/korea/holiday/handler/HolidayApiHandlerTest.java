@@ -1,0 +1,50 @@
+package seaung.uoscafeteriamenu.api.korea.holiday.handler;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import seaung.uoscafeteriamenu.api.korea.holiday.response.ApiResponse;
+import seaung.uoscafeteriamenu.api.korea.holiday.response.HolidayItem;
+import seaung.uoscafeteriamenu.api.korea.holiday.response.HolidayResponse;
+import seaung.uoscafeteriamenu.global.provider.TimeProvider;
+
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.when;
+
+@SpringBootTest
+class HolidayApiHandlerTest {
+
+    @Autowired
+    HolidayApiHandler holidayApiHandler;
+
+    @MockBean
+    TimeProvider timeProvider;
+
+    @Test
+    @DisplayName("시간을 이용하여 공휴일 API를 호출한다.")
+    void callHolidaysApi() {
+        // given
+        LocalDateTime fixedDateTime = LocalDateTime.of(2023, 1, 1, 0, 0, 0);
+        Mockito.when(timeProvider.getCurrentLocalDateTime()).thenReturn(fixedDateTime);
+
+        // when
+        ApiResponse<HolidayResponse> response = holidayApiHandler.callHolidaysApi(timeProvider.getCurrentLocalDateTime());
+
+        // then
+        List<HolidayItem> holidays = response.getResponse().getBody().getItems().getItem();
+        assertThat(holidays).hasSize(5)
+                .extracting("dateKind", "dateName", "isHoliday", "locdate", "seq")
+                .contains(
+                        tuple("01", "1월1일", "Y", "20230101", 1),
+                        tuple("01", "설날", "Y", "20230121", 1),
+                        tuple("01", "설날", "Y", "20230122", 1),
+                        tuple("01", "설날", "Y", "20230123", 1),
+                        tuple("01", "대체공휴일", "Y", "20230124", 1)
+                );
+    }
+}
