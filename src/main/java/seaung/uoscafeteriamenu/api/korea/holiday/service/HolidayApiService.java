@@ -16,6 +16,7 @@ import seaung.uoscafeteriamenu.api.korea.holiday.response.HolidayItems;
 import seaung.uoscafeteriamenu.domain.cache.entity.CacheHoliday;
 import seaung.uoscafeteriamenu.domain.cache.repository.CacheHolidayRepository;
 import seaung.uoscafeteriamenu.web.exception.HolidayException;
+import seaung.uoscafeteriamenu.web.exception.SpecialHolidayException;
 
 @Service
 @RequiredArgsConstructor
@@ -54,7 +55,7 @@ public class HolidayApiService {
     private void checkSpecialHoliday(String dateName) {
         for(SpecialHoliday specialHoliday : SpecialHoliday.values()) {
             if(specialHoliday.getKrName().contains(dateName)) {
-                throw new HolidayException(specialHoliday.getSpecialMessage());
+                throw new SpecialHolidayException(specialHoliday.getSpecialMessage());
             }
         }
     }

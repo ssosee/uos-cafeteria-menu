@@ -11,6 +11,9 @@ import java.util.stream.StreamSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +24,7 @@ import seaung.uoscafeteriamenu.domain.cache.entity.CacheHoliday;
 import seaung.uoscafeteriamenu.domain.cache.repository.CacheHolidayRepository;
 import seaung.uoscafeteriamenu.global.provider.TimeProvider;
 import seaung.uoscafeteriamenu.web.exception.HolidayException;
+import seaung.uoscafeteriamenu.web.exception.SpecialHolidayException;
 
 @SpringBootTest
 class HolidayApiServiceTest {
@@ -124,6 +128,34 @@ class HolidayApiServiceTest {
 
         // when // then
         holidayApiService.checkHolidayInCache(timeProvider.getCurrentLocalDateTime());
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {"1월1일:2023:1:1:20230101",
+            "설날:2023:1:22:20230122",
+            "추석:2023:9:29:20230929",
+            "기독탄신일:2023:12:25:20231225"}, delimiter = ':')
+    @DisplayName("1월1일, 설날, 추석, 기독탄신일에는 특별한 메시지를 포함한 예외가 발생한다.")
+    void checkSpecialHolidayInCache(String dateName, int year, int month, int day, String locdate) {
+        // given
+        LocalDateTime fixedLocalDateTime = LocalDateTime.of(year, month, day, 0,0,0);
+        Mockito.when(timeProvider.getCurrentLocalDateTime()).thenReturn(fixedLocalDateTime);
+
+        HolidayItem holidayItem = create(dateName, "Y", locdate);
+        CacheHoliday cacheHoliday = CacheHoliday.of(holidayItem);
+        cacheHolidayRepository.save(cacheHoliday);
+
+        // when // then
+        assertThatThrownBy(() -> holidayApiService.checkHolidayInCache(timeProvider.getCurrentLocalDateTime()))
+                .isInstanceOf(SpecialHolidayException.class);
+    }
+
+    private HolidayItem create(String dateName, String isHoliday, String locdate) {
+        return HolidayItem.builder()
+                .dateName(dateName)
+                .isHoliday(isHoliday)
+                .locdate(locdate)
+                .build();
     }
 
     private HolidayItem create(String dateKind, String dateName, String isHoliday, String locdate, int seq) {

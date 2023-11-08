@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
  * 추가적으로 제공하는 사용자의 속성 정보입니다.
  */
 @Data
+@NoArgsConstructor
 public class Property {
     /**
      * 카오톡 채널에서 제공하는 사용자 식별키 입니다.

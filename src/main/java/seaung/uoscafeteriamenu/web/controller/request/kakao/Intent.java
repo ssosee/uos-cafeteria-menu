@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
  * 발화가 지식+에 일치하는 경우, 일치하는 지식의 목록을 포함합니다.
  */
 @Data
+@NoArgsConstructor
 public class Intent {
     private String id;
     private String name;

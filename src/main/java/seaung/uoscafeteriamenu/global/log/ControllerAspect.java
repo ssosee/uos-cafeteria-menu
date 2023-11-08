@@ -6,6 +6,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
+import seaung.uoscafeteriamenu.api.korea.holiday.service.HolidayApiService;
 import seaung.uoscafeteriamenu.domain.cache.entity.CacheMember;
 import seaung.uoscafeteriamenu.domain.cache.service.CacheMemberService;
 import seaung.uoscafeteriamenu.domain.service.MemberService;
@@ -27,6 +28,7 @@ public class ControllerAspect {
     private final TimeProvider timeProvider;
     private final MemberService memberService;
     private final BucketResolver bucketResolver;
+    private final HolidayApiService holidayApiService;
 
     @Around("seaung.uoscafeteriamenu.global.log.AppPointCuts.allController() && args(skillPayload, ..)")
     public Object doControllerCommonLogic(ProceedingJoinPoint joinPoint, SkillPayload skillPayload) throws Throwable {
@@ -39,6 +41,9 @@ public class ControllerAspect {
 
             // 처리율 제한장치 검증
             bucketResolver.checkBucketCounter(botUserId);
+
+            // 공휴일 확인
+            holidayApiService.checkHolidayInCache(timeProvider.getCurrentLocalDateTime());
 
             // 주말 확인
             checkWeekend();
