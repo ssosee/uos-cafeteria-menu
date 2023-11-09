@@ -17,8 +17,6 @@ permissions:
 ## 실제로 실행될 내용 정의
 jobs:
   build:
-    env:
-      version: v1.0.8
     # runs-on : github action의 CI서버 runner가 어떤 환경을 갖출지 고르는 것, ubuntu-latest : ubuntu 최신 버전에서 script를 실행
     runs-on: ubuntu-latest
     steps: # 처리할 일들을 순서대로 하나씩 정의
@@ -61,20 +59,25 @@ jobs:
           chmod +x ./gradlew
           ./gradlew build
 
+    # 원하는 버전을 수동으로 설정
+    - name: Get version from Dockerfile
+      id: get-version
+      run: echo "::set-output name=VERSION::$(grep -oP '(?<=ENV APP_VERSION=).+' Dockerfile)"
 
     ## 웹 이미지 빌드 및 도커허브에 push
     - name: web docker build and push
       run: |
         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{ version }} --platform linux/amd64 .
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{ steps.version.outputs.VERSION }} --platform linux/amd64 .
         docker images
-        docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{ version }}
+        docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{ steps.version.outputs.VERSION }}
 
 
     ## docker compose up
     ## appleboy/ssh-action@master 액션을 사용하여 지정한 서버에 ssh로 접속하고, script를 실행
     # script의 내용은 도커의 기존 프로세스들을 제거하고, docker repo로부터 방금 위에서 push한 내용을 pull 받아 실행하는 것입니다. 
     # 실행 시, docker-compose를 사용합니다.
+
     - name: Deploy to server
       uses: appleboy/ssh-action@master
       with:
@@ -83,6 +86,6 @@ jobs:
         key: ${{ secrets.KEY }}
         script: |
           sudo docker rm -f $(docker ps -qa)
-          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/{{ secrets.DOCKER_REPO }}:${{ version }}
-          docker run -d -p 80:8080 ${{ secrets.DOCKER_USERNAME }}/{{ secrets.DOCKER_REPO }}:${{ version }}
+          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/{{ secrets.DOCKER_REPO }}:${{ steps.version.outputs.VERSION }}
+          docker run -d -p 80:8080 ${{ secrets.DOCKER_USERNAME }}/{{ secrets.DOCKER_REPO }}:${{ steps.version.outputs.VERSION }}
           docker image prune -f
