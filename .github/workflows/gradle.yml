@@ -35,7 +35,7 @@ jobs:
     ## 환경파일 작성 : github에 올리지 못하는 정보의 설정파일을 runner에 삽입하는 것
     ## 필요없어서 작성 안 함
     # ## create application-database.yaml
-    - name: make application-database.yaml
+    - name: make application-secret.yaml
       run: |
          ## create application-prod.yaml
          cd ./src/main/resources
@@ -56,10 +56,8 @@ jobs:
     - name: Build with Gradle
       run: |
           ls -al
-          cd uos-cafeteria-menu
           chmod +x ./gradlew
           ./gradlew build
-
 
 
     ## 웹 이미지 빌드 및 도커허브에 push
