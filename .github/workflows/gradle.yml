@@ -63,10 +63,11 @@ jobs:
     ## 웹 이미지 빌드 및 도커허브에 push
     - name: web docker build and push
       run: |
+        version="v1.0.8"
         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }} --build-arg APP_VERSION=${{ github.run_number }} --platform linux/amd64 .
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{ version }} --platform linux/amd64 .
         docker images
-        docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
+        docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{ version }}
 
 
     ## docker compose up
