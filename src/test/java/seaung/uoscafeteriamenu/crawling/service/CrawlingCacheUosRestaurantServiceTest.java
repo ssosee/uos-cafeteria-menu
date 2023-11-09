@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
+import org.springframework.transaction.annotation.Transactional;
 import seaung.uoscafeteriamenu.crawling.utils.CrawlingUtils;
 import seaung.uoscafeteriamenu.domain.cache.entity.CacheUosRestaurant;
 import seaung.uoscafeteriamenu.domain.cache.repository.CacheUosRestaurantRepository;
@@ -23,6 +24,7 @@ import static seaung.uoscafeteriamenu.domain.entity.UosRestaurantName.*;
 import static seaung.uoscafeteriamenu.domain.entity.UosRestaurantName.MUSEUM_OF_NATURAL_SCIENCE;
 
 @SpringBootTest
+@Transactional
 class CrawlingCacheUosRestaurantServiceTest {
 
     @Autowired
@@ -47,7 +49,7 @@ class CrawlingCacheUosRestaurantServiceTest {
         UosRestaurant uosRestaurant3 = createUosRestaurant(date, WESTERN_RESTAURANT, MealType.BREAKFAST, "돈까스", 2, 0);
         UosRestaurant uosRestaurant4 = createUosRestaurant(date, MUSEUM_OF_NATURAL_SCIENCE, MealType.BREAKFAST, "제육", 2, 1);
         List<UosRestaurant> uosRestaurants = List.of(uosRestaurant1, uosRestaurant2, uosRestaurant3, uosRestaurant4);
-        uosRestaurantRepository.saveAll(uosRestaurants);
+        uosRestaurantRepository.saveAll(uosRestaurants); // id 때문에 존재
 
         // when
         crawlingCacheUosRestaurantService.saveAllCrawlingDataInRedis(uosRestaurants);
