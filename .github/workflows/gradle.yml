@@ -62,7 +62,7 @@ jobs:
     # 원하는 버전을 수동으로 설정
     - name: Get version from Dockerfile
       id: get-version
-      run: echo "::set-output name=VERSION::$(grep -oP '(?<=ENV APP_VERSION=).+' Dockerfile)"
+      run: echo "::set-output name=VERSION::$(grep -oP '(?<=ENV APP_VERSION=).+' Dockerfile | tr -d '\r')"
 
     ## 웹 이미지 빌드 및 도커허브에 push
     - name: web docker build and push
