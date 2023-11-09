@@ -35,17 +35,19 @@ jobs:
     ## 환경파일 작성 : github에 올리지 못하는 정보의 설정파일을 runner에 삽입하는 것
     ## 필요없어서 작성 안 함
     # ## create application-database.yaml
-#     - name: make application-database.yaml
-#       run: |
-#         ## create application-database.yaml
-#         cd ./src/main/resources
-#
-#         # application-database.yaml 파일 생성
-#         touch ./application-database.yaml
-#
-#         # GitHub-Actions 에서 설정한 값을 application-database.yaml 파일에 쓰기
-#         echo "${{ secrets.DATABASE }}" >> ./application-database.yaml
-#       shell: bash
+    - name: make application-database.yaml
+      run: |
+         ## create application-prod.yaml
+         cd ./src/main/resources
+
+         # application-database.yaml 파일 생성
+         touch ./application-prod.yaml
+         touch ./application-api-key.yaml
+
+         # GitHub-Actions 에서 설정한 값을 application-database.yaml 파일에 쓰기
+         echo "${{ secrets.PROD }}" >> ./application-database.yaml
+         echo "${{ secrets.API_KEY }}" >> ./application-api-key.yaml
+      shell: bash
 
     ## gradle build
     # - name: Build with Gradle
