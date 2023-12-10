@@ -46,7 +46,7 @@
 ![erd.png](docs%2Fimages%2Ferd.png)
 
 ## <a href="http://uos-restaurant-bot.shop/test-docs" target="_blank">테스트 항목</a>
-*  총 85개의 테스트 항목 작성
+*  총 101개의 테스트 항목 작성
 
 
 ## 사용 기술
