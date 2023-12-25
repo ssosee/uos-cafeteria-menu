@@ -106,7 +106,7 @@ jobs:
         username: ec2-user
         # password: ${{ secrets.AWS_EC2_PASSWORD }}
         port: ${{ secrets.EC2_SSH_PORT }}
-        key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        key: ${{ secrets.AWS_EC2_KEY }}
         timeout: 60s
         script: |
           sudo docker rm -f $(docker ps -qa)
