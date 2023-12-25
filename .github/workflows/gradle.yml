@@ -76,6 +76,10 @@ jobs:
         docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{ steps.get-version.outputs.VERSION }}
 
 
+    - name: Get Github action IP
+      id: ip
+      uses: haythem/public-ip@v1.3
+      
     ## docker compose up
     ## appleboy/ssh-action@master 액션을 사용하여 지정한 서버에 ssh로 접속하고, script를 실행
     # script의 내용은 도커의 기존 프로세스들을 제거하고, docker repo로부터 방금 위에서 push한 내용을 pull 받아 실행하는 것입니다. 
@@ -97,7 +101,7 @@ jobs:
     # Add github ip to AWS (7)
     - name: Add GitHub IP to AWS
       run: |
-        aws ec2 authorize-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}
+        aws ec2 authorize-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
 
     # AWS EC2 Server Connect & Docker 명령어 실행 (8)
     - name: AWS EC2 Connection
@@ -117,4 +121,4 @@ jobs:
     # REMOVE Github IP FROM security group (9)
     - name: Remove IP FROM security group
       run: |
-        aws ec2 revoke-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}
+        aws ec2 revoke-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
