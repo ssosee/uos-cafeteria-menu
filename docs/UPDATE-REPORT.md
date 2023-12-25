@@ -1,6 +1,7 @@
 # 버전 정보
 |   버전    |     날짜     |
 |:-------:|:----------:|
+| v1.0.9  | 2023/12/25 |
 | v1.0.8  | 2023/11/09 |
 | v1.0.73 | 2023/11/06 |
 | v1.0.72 | 2023/10/25 |
@@ -26,15 +27,94 @@
 |:--:|:---:|
 | ✅  |  🟩 |
 
+## 시스템 개선(v1.0.8)
+### 이력
+* ✅ **[23/12/25]** 공휴일 API 호출 시 필드 타입 문제
+  * 같은 item 필드에서 데이터에 따라 Object 또는 Array를 내려줌
+  * `JsonDeserializer`를 상속받은 `HolidayItemDeserializer`를 구현하여 해결
+```
+## 응답 결과가 item의 value가 Object인 경우
+{
+  "response": {
+    "header": {
+      "resultCode": "00",
+      "resultMsg": "NORMAL SERVICE."
+    },
+    "body": {
+      "items": {
+        "item": {
+          "dateKind": "01",
+          "dateName": "기독탄신일",
+          "isHoliday": "Y",
+          "locdate": 20231225,
+          "seq": 1
+        }
+      },
+      "numOfRows": 10,
+      "pageNo": 1,
+      "totalCount": 1
+    }
+  }
+}
+  
+## 응답 결과가 item의 value가 Array인 경우
+{
+  "response": {
+    "header": {
+      "resultCode": "00",
+      "resultMsg": "NORMAL SERVICE."
+    },
+    "body": {
+      "items": {
+        "item": [
+          {
+            "dateKind": "01",
+            "dateName": "어린이날",
+            "isHoliday": "Y",
+            "locdate": 20230505,
+            "seq": 1
+          },
+          {
+            "dateKind": "01",
+            "dateName": "부처님오신날",
+            "isHoliday": "Y",
+            "locdate": 20230527,
+            "seq": 1
+          },
+          {
+            "dateKind": "01",
+            "dateName": "대체공휴일",
+            "isHoliday": "Y",
+            "locdate": 20230529,
+            "seq": 1
+          }
+        ]
+      },
+      "numOfRows": 10,
+      "pageNo": 1,
+      "totalCount": 3
+    }
+  }
+}
+```
+
+* ✅ **[23/12/25]** `UriComponentsBuilder` 싱글톤 사용시 중첩되면서 URL이 저장되는 현상
+  * 스프링 빈으로 등록하지 않고, 직접 생성하도록 변경
+```
+1. 첫 번째 호출시 /api/v1?year=2023&month=01
+2. 두 번째 호출시 /api/v1?year=2023&month=01&year=2023&month=01
+3. 세 번째 호출시 /api/v1?year=2023&month=01&year=2023&month=01&year=2023&month=01
+```
+
 ## 시스템 개선(v1.0.73)
 ### 이력
-* ✅ 특일 정보 API를 활용하여 예외처리 추가
+* ✅ **[23/11/09]** 특일 정보 API를 활용하여 예외처리 추가
   * 주말뿐 아니라, 공휴일에도 학식을 제공하지 않음.
   * 임시공휴일을 고려하여 매일 API 호출하여 해당 정보를 캐시에 저장한다.
   * 모든 요청마다 공휴일인지 확인한다.
 
 ## 시스템 개선(v1.0.72)
-* ✅ 메뉴 추천시 학식 메뉴 데이터 정합성 이슈
+* ✅ **[23/11/06]** 메뉴 추천시 학식 메뉴 데이터 정합성 이슈
   *  메뉴 추천시에 캐시에서 메뉴를 조회하고 변경 내역을 데이터베이스에 반영한다.
 
 문제 발생 시나리오

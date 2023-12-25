@@ -41,11 +41,6 @@ public class AppConfig {
     }
 
     @Bean
-    public UriComponentsBuilder UriComponentsBuilder() {
-        return UriComponentsBuilder.newInstance();
-    }
-
-    @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper om = new ObjectMapper();
 

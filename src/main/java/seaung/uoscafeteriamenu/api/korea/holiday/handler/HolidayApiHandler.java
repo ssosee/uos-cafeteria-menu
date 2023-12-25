@@ -26,10 +26,10 @@ public class HolidayApiHandler {
     private static final String MONTH_FORMAT = "%02d";
 
     private final RestTemplate restTemplate;
-    private final UriComponentsBuilder uriComponentsBuilder;
 
     public ApiResponse<HolidayResponse> callHolidaysApi(LocalDateTime now) {
-        System.out.println(getHolidaysUri(now));
+        URI holidaysUri = getHolidaysUri(now);
+        log.info("url = {}", holidaysUri);
         return restTemplate.exchange(
                 getHolidaysUri(now),
                 HttpMethod.GET,
@@ -40,7 +40,7 @@ public class HolidayApiHandler {
     }
 
     private URI getHolidaysUri(LocalDateTime now) {
-        return uriComponentsBuilder
+        return UriComponentsBuilder.newInstance()
                 .uri(URI.create(API_BASIC_URL))
                 .pathSegment(HOLIDAY_URL_PATH)
                 .queryParam(YEAR_KEY, now.getYear())
