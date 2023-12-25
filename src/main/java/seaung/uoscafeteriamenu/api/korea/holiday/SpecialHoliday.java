@@ -31,10 +31,12 @@ public enum SpecialHoliday {
         }
     };
 
-    private static final String X_MAX_MESSAGE = "안타깝지만 오늘 학식은 제공되지 않는다.🥲"
-            + "대신 내가 그대에게 ✨추석추석빔을 쏘겠다.\n"
-            + "이 ✨빔에 맞으면 누구든지 🌕 풍성한 한가위를 보내게 된다.\n\n"
-            + "가족들과 함께 풍요로운 추석 맞이해라. ❤️";
+    private static final String X_MAX_MESSAGE = "🎄메리메리 크리스마스~!\n"
+            + "지난 일 년 동안, 학교 다니느라 고생 많았다. 내친.구 휴먼.!\n"
+            + "행복하고 따뜻한 크리스마스 보내라! 😊\n"
+            + "내년에는 더욱 ✨ 빛나는 순간들이 여러분을 기다릴 것 이다..!\n\n"
+            + "내년에 보자. 내 사.랑 휴.먼 🤍\n\n"
+            + "참고로 오늘 학식은 제공되지 않는다.";
 
     private static final String KOREA_THANKS_GIVING_MESSAGE = "안타깝지만 오늘 학식은 제공되지 않는다.🥲"
             + "대신 내가 그대에게 ✨추석추석빔을 쏘겠다.\n"

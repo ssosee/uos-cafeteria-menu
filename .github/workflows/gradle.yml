@@ -5,9 +5,6 @@ on: # on : 어떤 조건에서 이 workflow를 실행할 것인지 컨디션
   push:
    branches:
      - main
-  pull_request:
-   branches:
-     - main
 
 env:
   AWS_REGION: ap-northeast-2
@@ -38,18 +35,18 @@ jobs:
     ## 환경파일 작성 : github에 올리지 못하는 정보의 설정파일을 runner에 삽입하는 것
     ## 필요없어서 작성 안 함
     # ## create application-database.yaml
-    - name: make application-secret.yaml
+    - name: make application-secret.yml
       run: |
-         ## create application-prod.yaml
+         ## create application-prod.yml
          cd ./src/main/resources
 
          # application-database.yaml 파일 생성
-         touch ./application-prod.yaml
-         touch ./application-api-key.yaml
+         touch ./application-prod.yml
+         touch ./application-api-key.yml
 
          # GitHub-Actions 에서 설정한 값을 application-prod.yaml 파일에 쓰기
-         echo "${{ secrets.PROD }}" >> ./application-prod.yaml
-         echo "${{ secrets.API_KEY }}" >> ./application-api-key.yaml
+         echo "${{ secrets.PROD }}" >> ./application-prod.yml
+         echo "${{ secrets.API_KEY }}" >> ./application-api-key.yml
       shell: bash
 
     ## gradle build
@@ -93,10 +90,10 @@ jobs:
         aws-region: ${{ env.AWS_REGION }}
 
 
-    # Add github ip to AWS (7)
+    # Add GitHub ip to AWS (7)
     - name: Add GitHub IP to AWS
       run: |
-        aws ec2 authorize-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+        aws ec2 authorize-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port ${{ secrets.EC2_SSH_PORT }} --cidr ${{ steps.ip.outputs.ipv4 }}/32
 
     # AWS EC2 Server Connect & Docker 명령어 실행 (8)
     - name: AWS EC2 Connection
@@ -105,7 +102,7 @@ jobs:
         host: ${{ secrets.AWS_EC2_HOST }}
         username: ec2-user
         password: ${{ secrets.AWS_EC2_PASSWORD }}
-        port: 22
+        port: ${{ secrets.EC2_SSH_PORT }}
         # key: ${{ secrets.AWS_EC2_KEY }}
         timeout: 60s
         script: |
@@ -114,7 +111,7 @@ jobs:
           sudo docker run -d -p 80:8080 ${{ secrets.DOCKER_USERNAME }}/{{ secrets.DOCKER_REPO }}:${{ steps.get-version.outputs.VERSION }}
           sudo docker image prune -f
 
-    # REMOVE Github IP FROM security group (9)
+    # REMOVE GitHub IP FROM security group (9)
     - name: Remove IP FROM security group
       run: |
-        aws ec2 revoke-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+        aws ec2 revoke-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port ${{ secrets.EC2_SSH_PORT }} --cidr ${{ steps.ip.outputs.ipv4 }}/32

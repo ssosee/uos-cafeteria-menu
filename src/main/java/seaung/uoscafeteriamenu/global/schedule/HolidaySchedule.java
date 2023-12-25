@@ -20,8 +20,8 @@ public class HolidaySchedule {
     private final HolidayApiService holidayApiService;
     private final TimeProvider timeProvider;
 
-    //@Scheduled(cron = "0 0 0 * * ?", zone = "Asia/Seoul")
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "0 0 0 * * ?", zone = "Asia/Seoul")
+    //@Scheduled(cron = "0/10 * * * * ?")
     @Async("uosRestaurantAsyncExecutor")
     public void refreshHolidayInCache() {
         log.info("공휴일 정보 캐시 저장 스케줄링 시작");
