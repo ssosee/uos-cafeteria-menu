@@ -47,8 +47,8 @@ jobs:
          touch ./application-prod.yaml
          touch ./application-api-key.yaml
 
-         # GitHub-Actions 에서 설정한 값을 application-database.yaml 파일에 쓰기
-         echo "${{ secrets.PROD }}" >> ./application-database.yaml
+         # GitHub-Actions 에서 설정한 값을 application-prod.yaml 파일에 쓰기
+         echo "${{ secrets.PROD }}" >> ./application-prod.yaml
          echo "${{ secrets.API_KEY }}" >> ./application-api-key.yaml
       shell: bash
 
