@@ -42,6 +42,10 @@
 
 ![system-architecture.png](docs%2Fimages%2Fsystem-architecture.png)
 
+## CI/CD 파이프라인
+
+![cicd-pipelines.png](docs/images/cicd-pipelines.png)
+
 ## RDBMS 구조
 ![erd.png](docs%2Fimages%2Ferd.png)
 
