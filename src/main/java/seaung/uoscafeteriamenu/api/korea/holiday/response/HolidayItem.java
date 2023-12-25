@@ -1,5 +1,7 @@
 package seaung.uoscafeteriamenu.api.korea.holiday.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
