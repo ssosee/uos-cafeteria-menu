@@ -1,15 +1,13 @@
 package seaung.uoscafeteriamenu.crawling.utils;
 
-import org.springframework.util.StringUtils;
-import seaung.uoscafeteriamenu.domain.entity.MealType;
-import seaung.uoscafeteriamenu.domain.entity.UosRestaurantName;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.regex.Pattern;
+import org.springframework.util.StringUtils;
+import seaung.uoscafeteriamenu.domain.entity.MealType;
+import seaung.uoscafeteriamenu.domain.entity.UosRestaurantName;
 
 public class CrawlingUtils {
 

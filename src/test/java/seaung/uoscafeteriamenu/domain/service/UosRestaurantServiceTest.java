@@ -441,11 +441,12 @@ class UosRestaurantServiceTest {
         LocalDateTime now = LocalDateTime.of(2023, 8, 16, 14, 0, 0);
 
         Pageable pageable = PageRequest.of(0, 1);
+        MealType mealType = CrawlingUtils.localDateTimeToMealType(now);
 
         // when // then
         assertThatThrownBy(() -> uosRestaurantService.findTop1UosRestaurantMenuByView(pageable, now))
                 .isInstanceOf(UosRestaurantMenuException.class)
-                .hasMessage(UosRestaurantMenuException.NOT_FOUND_MENU);
+                .hasMessage(String.format(UosRestaurantMenuException.NOT_FOUND_MENU_FORMAT, mealType.getKrName()));
     }
 
     @Test
@@ -652,10 +653,12 @@ class UosRestaurantServiceTest {
         LocalDateTime now = LocalDateTime.of(2023, 8, 16, 14, 0, 0);
         Pageable pageable = PageRequest.of(0, 1);
 
+        MealType mealType = CrawlingUtils.localDateTimeToMealType(now);
+
         // when // then
         assertThatThrownBy(() -> uosRestaurantService.findTop1UosRestaurantMenuByLikeCount(pageable, now))
                 .isInstanceOf(UosRestaurantMenuException.class)
-                .hasMessage(UosRestaurantMenuException.NOT_FOUND_MENU);
+                .hasMessage(String.format(UosRestaurantMenuException.NOT_FOUND_MENU_FORMAT, mealType.getKrName()));
     }
 
     @Test

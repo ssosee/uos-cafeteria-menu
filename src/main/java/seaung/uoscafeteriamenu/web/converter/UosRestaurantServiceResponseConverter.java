@@ -19,6 +19,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UosRestaurantServiceResponseConverter {
 
+    public static final String LINE_BREAK = "\n";
+    public static final int LINE_BREAK_COUNT = 3;
+
     private final CacheSkillBlockService cacheSkillBlockService;
 
     /**
@@ -120,6 +123,6 @@ public class UosRestaurantServiceResponseConverter {
     private String joinMenuTexts(List<UosRestaurantMenuResponse> responses) {
         return responses.stream()
                 .map(UosRestaurantMenuResponse::getText)
-                .collect(Collectors.joining("\n\n\n"));
+                .collect(Collectors.joining(LINE_BREAK.repeat(LINE_BREAK_COUNT)));
     }
 }

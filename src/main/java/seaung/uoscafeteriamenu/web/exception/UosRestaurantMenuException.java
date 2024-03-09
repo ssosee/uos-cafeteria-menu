@@ -3,6 +3,7 @@ package seaung.uoscafeteriamenu.web.exception;
 public class UosRestaurantMenuException extends IllegalArgumentException {
 
     public static String NOT_FOUND_MENU = "예외 발생.... 학교에서 메뉴를 제공하지 않았다.. 휴.먼.친구.";
+    public static String NOT_FOUND_MENU_FORMAT = "예외 발생.... 학교에서 %s 메뉴를 제공하지 않았다.. 휴.먼.친구.";
     public static String NOT_FOUND_RESTAURANT = "예외 발생.... 지원하지 않는 식당이다. 휴.먼.친구.";
     public static String NOT_FOUND_MEAL_TYPE = "예외 발생.... 지원하지 않는 식사종류다. 휴.먼.친구.";
     public static String CLOSED = "모든 학.교식당 소속 휴.먼들이 에.너지를 🪫충전 하러 갔다.\n우.리 내일. 만나자 휴.먼" +

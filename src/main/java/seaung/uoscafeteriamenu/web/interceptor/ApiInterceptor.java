@@ -18,11 +18,13 @@ import javax.servlet.http.HttpServletResponse;
 @RequiredArgsConstructor
 public class ApiInterceptor implements HandlerInterceptor {
 
+    public static final String BOT_APIKEY = "botApikey";
+
     private final CacheBotApikeyService botApiKeyService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String botApikeyHeader = request.getHeader("botApikey");
+        String botApikeyHeader = request.getHeader(BOT_APIKEY);
         botApiKeyService.findBotApiKeyHeader(botApikeyHeader);
 
         return true;

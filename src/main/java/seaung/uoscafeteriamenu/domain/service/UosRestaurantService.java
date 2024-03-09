@@ -1,5 +1,6 @@
 package seaung.uoscafeteriamenu.domain.service;
 
+import java.text.Format;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -193,7 +194,9 @@ public class UosRestaurantService {
 
         // 인기 메뉴가 없으면
         if(findMenu.getContent().isEmpty()) {
-            throw new UosRestaurantMenuException(UosRestaurantMenuException.NOT_FOUND_MENU);
+            String exceptionMessage = String.format(
+                    UosRestaurantMenuException.NOT_FOUND_MENU_FORMAT, mealType.getKrName());
+            throw new UosRestaurantMenuException(exceptionMessage);
         }
 
         // 조회수 증가
@@ -245,7 +248,9 @@ public class UosRestaurantService {
 
         // 추천 메뉴가 없으면
         if(findMenu.getContent().isEmpty()) {
-            throw new UosRestaurantMenuException(UosRestaurantMenuException.NOT_FOUND_MENU);
+            String exceptionMessage = String.format(
+                    UosRestaurantMenuException.NOT_FOUND_MENU_FORMAT, mealType.getKrName());
+            throw new UosRestaurantMenuException(exceptionMessage);
         }
 
         // 조회수 증가
