@@ -36,7 +36,7 @@ public class CrawlingSchedule {
      * @6: 요일(0-7) 0과 7은 일요일, 1은 월요일 6은 토요일
      */
     //@Scheduled(cron = "*/10 * * * * *", zone = "Asia/Seoul")
-    @Scheduled(cron = "0 30 7 * * MON", zone = "Asia/Seoul") // 매주 월요일 7시30분에 실행
+    @Scheduled(cron = "0 00 8 * * MON", zone = "Asia/Seoul") // 매주 월요일 7시30분에 실행
     @Async("uosRestaurantAsyncExecutor")
     public void crawlingStudentHall() throws IOException {
         log.info("크롤링 시작...");
