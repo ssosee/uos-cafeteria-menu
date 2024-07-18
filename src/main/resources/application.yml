@@ -1,5 +1,6 @@
 spring:
   profiles:
     include:
-      - prod
+      - local
       - api-key
+      - sentry
