@@ -2,6 +2,8 @@ package seaung.uoscafeteriamenu.global.provider;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 /**
  * 시간을 고정하여 테스트하기 위해 사용
@@ -9,7 +11,7 @@ import java.time.LocalDateTime;
 public class TimeProvider {
 
     public LocalDateTime getCurrentLocalDateTime() {
-        return LocalDateTime.now();
+        return ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime();
     }
 
     public static boolean isWeekend(LocalDateTime now) {
