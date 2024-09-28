@@ -70,7 +70,8 @@ jobs:
     - name: web docker build and push
       run: |
         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{ steps.get-version.outputs.VERSION }} --platform linux/amd64 .
+        # docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{ steps.get-version.outputs.VERSION }} --platform linux/amd64 .
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{ steps.get-version.outputs.VERSION }} .
         docker images
         docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{ steps.get-version.outputs.VERSION }}
 
@@ -109,7 +110,8 @@ jobs:
         script: |
           sudo docker rm -f $(docker ps -qa)
           sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{ steps.get-version.outputs.VERSION }}
-          sudo docker run -d -p 80:8080 ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{ steps.get-version.outputs.VERSION }}
+          # sudo docker run -d -p 80:8080 ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{ steps.get-version.outputs.VERSION }}
+          sudo docker run -d -p 80:8080 --name uos-bot ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{ steps.get-version.outputs.VERSION }}
           sudo docker image prune -f
 
     # REMOVE GitHub IP FROM security group (9)
