@@ -101,10 +101,10 @@ jobs:
       uses: appleboy/ssh-action@v0.1.6
       with:
         host: ${{ secrets.AWS_EC2_HOST }}
-        username: github_action
-        password: ${{ secrets.AWS_EC2_PASSWORD }}
+        username: ubuntu
+        # password: ${{ secrets.AWS_EC2_PASSWORD }}
         port: ${{ secrets.EC2_SSH_PORT }}
-        # key: ${{ secrets.AWS_EC2_KEY }}
+        key: ${{ secrets.AWS_EC2_KEY }}
         timeout: 60s
         script: |
           sudo docker rm -f $(docker ps -qa)
