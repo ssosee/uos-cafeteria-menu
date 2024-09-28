@@ -38,6 +38,9 @@ out/
 
 ### config ###
 src/main/resources/application-prod.yml
+src/main/resources/application-prod-deprecated.yml
+src/main/resources/application-dev.yml
+src/main/resources/application-dev-deprecated.yml
 src/main/resources/application-api-key.yml
 src/main/resources/application-sentry.yml
 src/test/resources/application-api-key.yml
