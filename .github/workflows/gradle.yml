@@ -111,7 +111,8 @@ jobs:
           sudo docker rm -f $(docker ps -qa)
           sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{ steps.get-version.outputs.VERSION }}
           # sudo docker run -d -p 80:8080 ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{ steps.get-version.outputs.VERSION }}
-          sudo docker run -d -p 80:8080 --name uos-bot ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{ steps.get-version.outputs.VERSION }}
+          # sudo docker run -d -p 80:8080 --name uos-bot ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{ steps.get-version.outputs.VERSION }}
+          sudo docker run -d -p 80:8080 --name uos-bot -v /home/ubuntu/pinpoint-agent-2.5.3:/pinpoint-agent ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{ steps.get-version.outputs.VERSION }}
           sudo docker image prune -f
 
     # REMOVE GitHub IP FROM security group (9)
