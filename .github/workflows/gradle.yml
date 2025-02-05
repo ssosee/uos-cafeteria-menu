@@ -108,6 +108,7 @@ jobs:
         key: ${{ secrets.AWS_EC2_KEY }}
         timeout: 60s
         script: |
+          sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           sudo docker rm -f $(docker ps -qa)
           sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{ steps.get-version.outputs.VERSION }}
           # sudo docker run -d -p 80:8080 ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{ steps.get-version.outputs.VERSION }}
