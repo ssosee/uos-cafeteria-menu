@@ -39,8 +39,11 @@
 ## 시스템 구조
 * 학교측에서 학식 메뉴에 대한 `API`를 제공하지 않기 때문에 `크롤링`하는 방법을 채택
 * 서버에 처리율 제한 장치(`RateLimiter`) 함께 구현
+* 모니터링을 위해 `Pinpoint` 설치
 
-![system-architecture.png](docs%2Fimages%2Fsystem-architecture.png)
+<img width="1882" alt="image" src="https://github.com/user-attachments/assets/5bd47384-0b44-422a-bbd6-6a905f432aa7" />
+
+
 
 ## CI/CD 파이프라인
 
