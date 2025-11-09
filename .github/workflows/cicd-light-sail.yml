@@ -42,21 +42,21 @@ jobs:
           ${{ secrets.PROD }}
           EOF
 
-          - name: Create application-api-key.yml
-            run: |
-              cat > ./src/main/resources/application-api-key.yml << 'EOF'
-              ${{ secrets.API_KEY }}
-              EOF
+      - name: Create application-api-key.yml
+        run: |
+          cat > ./src/main/resources/application-api-key.yml << 'EOF'
+          ${{ secrets.API_KEY }}
+          EOF
 
-          - name: Create application-sentry.yml
-            run: |
-              cat > ./src/main/resources/application-sentry.yml << 'EOF'
-              ${{ secrets.SENTRY }}
-              EOF
+      - name: Create application-sentry.yml
+        run: |
+          cat > ./src/main/resources/application-sentry.yml << 'EOF'
+          ${{ secrets.SENTRY }}
+          EOF
 
-          - name: Verify files
-            run: |
-              ls -la ./src/main/resources/
+      - name: Verify files
+        run: |
+          ls -la ./src/main/resources/
 
       - name: Copy files to server
         uses: appleboy/scp-action@master
@@ -74,11 +74,25 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            docker load < /home/${{ secrets.SERVER_USER }}/uos-restaraunt-kakao-bot-app.tar.gz
+            USER_HOME=/home/${{ secrets.SERVER_USER }}
+            IMAGE_NAME=uos-restaraunt-kakao-bot-app:${{ github.sha }}
+            
+            docker load < ${USER_HOME}/uos-restaraunt-kakao-bot-app.tar.gz
             docker stop uos-restaraunt-kakao-bot-app 2>/dev/null || true
             docker rm uos-restaraunt-kakao-bot-app 2>/dev/null || true
-            docker run -d --name uos-restaraunt-kakao-bot-app --restart unless-stopped -p 8080:8080 -v /home/${{ secrets.SERVER_USER }}/src/main/resources/application-prod.yml:/app/config/application-prod.yml:ro -v /home/${{ secrets.SERVER_USER }}/src/main/resources/application-api-key.yml:/app/config/application-api-key.yml:ro -v /home/${{ secrets.SERVER_USER }}/src/main/resources/application-sentry.yml:/app/config/application-sentry.yml:ro -e SPRING_PROFILES_ACTIVE=prod -e SPRING_CONFIG_LOCATION=classpath:/application.yml,/app/config/application-prod.yml,/app/config/application-api-key.yml,/app/config/application-sentry.yml uos-restaraunt-kakao-bot-app:${{ github.sha }}
-            rm -f /home/${{ secrets.SERVER_USER }}/uos-restaraunt-kakao-bot-app.tar.gz
+            
+            docker run -d \
+              --name uos-restaraunt-kakao-bot-app \
+              --restart unless-stopped \
+              -p 8080:8080 \
+              -v ${USER_HOME}/src/main/resources/application-prod.yml:/app/config/application-prod.yml:ro \
+              -v ${USER_HOME}/src/main/resources/application-api-key.yml:/app/config/application-api-key.yml:ro \
+              -v ${USER_HOME}/src/main/resources/application-sentry.yml:/app/config/application-sentry.yml:ro \
+              -e SPRING_PROFILES_ACTIVE=prod \
+              -e SPRING_CONFIG_LOCATION=classpath:/application.yml,/app/config/application-prod.yml,/app/config/application-api-key.yml,/app/config/application-sentry.yml \
+              ${IMAGE_NAME}
+            
+            rm -f ${USER_HOME}/uos-restaraunt-kakao-bot-app.tar.gz
             docker image prune -af
             sleep 5
             docker logs --tail 30 uos-restaraunt-kakao-bot-app
