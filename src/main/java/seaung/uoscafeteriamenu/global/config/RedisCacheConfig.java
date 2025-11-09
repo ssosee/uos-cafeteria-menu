@@ -11,6 +11,8 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisKeyValueAdapter;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -46,6 +48,9 @@ public class RedisCacheConfig {
     @Value("${spring.redis.port}")
     private int redisPort;
 
+    @Value("${spring.redis.ssl}")
+    private boolean sslEnabled;
+
     /**
          Lettuce: Multi-Thread 에서 Thread-Safe한 Redis 클라이언트로 netty에 의해 관리된다.
          Sentinel, Cluster, Redis data model 같은 고급 기능들을 지원하며
@@ -58,8 +63,24 @@ public class RedisCacheConfig {
      **/
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
-        log.info("RedisConnectionFactory 초기화");
-        return new LettuceConnectionFactory(redisHost, redisPort);
+        log.info("RedisConnectionFactory 초기화 - host: {}, port: {}, ssl: {}",
+                redisHost, redisPort, sslEnabled);
+
+        RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration();
+        redisConfig.setHostName(redisHost);
+        redisConfig.setPort(redisPort);
+
+        LettuceClientConfiguration.LettuceClientConfigurationBuilder clientConfigBuilder =
+                LettuceClientConfiguration.builder()
+                        .commandTimeout(Duration.ofSeconds(5));
+
+        if (sslEnabled) {
+            clientConfigBuilder.useSsl();
+        }
+
+        LettuceClientConfiguration clientConfig = clientConfigBuilder.build();
+
+        return new LettuceConnectionFactory(redisConfig, clientConfig);
     }
 
     /**
