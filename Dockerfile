@@ -3,9 +3,11 @@ ARG JAR_FILE=build/libs/*.jar
 COPY ${JAR_FILE} app.jar
 ENV TZ Asia/Seoul
 ENV APP_VERSION=v1.1.12
-# ENTRYPOINT ["java","-jar","/app.jar"]
+
 ENTRYPOINT ["java", \
- "-javaagent:/pinpoint-agent/pinpoint-bootstrap-2.5.3.jar", \
- "-Dpinpoint.agentId=aws-ec2-1", \
- "-Dpinpoint.applicationName=uosRestaurantBot", \
+ "-Xms128m", \
+ "-Xmx384m", \
+ "-XX:+UseSerialGC", \
+ "-XX:MaxMetaspaceSize=128m", \
+ "-Djava.security.egd=file:/dev/./urandom", \
  "-jar", "/app.jar"]
