@@ -88,13 +88,13 @@ jobs:
             sleep 5
             docker logs --tail 30 uos-restaraunt-kakao-bot-app
 
-      ## Slack에 cicd 결과 전송
-      - name: action-slack
-        uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          author_name: "[PROD] 배포 결과를 알려드려요"
-          fields: repo,message,commit,author,eventName,ref,took
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        if: always()
+#      ## Slack에 cicd 결과 전송
+#      - name: action-slack
+#        uses: 8398a7/action-slack@v3
+#        with:
+#          status: ${{ job.status }}
+#          author_name: "[PROD] 배포 결과를 알려드려요"
+#          fields: repo,message,commit,author,eventName,ref,took
+#        env:
+#          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+#        if: always()
