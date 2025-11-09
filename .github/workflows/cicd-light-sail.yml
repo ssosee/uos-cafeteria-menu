@@ -84,7 +84,7 @@ jobs:
             docker run -d \
               --name uos-restaraunt-kakao-bot-app \
               --restart unless-stopped \
-              -p 8080:8080 \
+              --network host
               -v ${USER_HOME}/src/main/resources/application-prod.yml:/app/config/application-prod.yml:ro \
               -v ${USER_HOME}/src/main/resources/application-api-key.yml:/app/config/application-api-key.yml:ro \
               -v ${USER_HOME}/src/main/resources/application-sentry.yml:/app/config/application-sentry.yml:ro \
