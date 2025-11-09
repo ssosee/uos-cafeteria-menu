@@ -35,16 +35,28 @@ jobs:
           docker build -t uos-restaraunt-kakao-bot-app:${{ github.sha }} .
           docker save uos-restaraunt-kakao-bot-app:${{ github.sha }} | gzip > uos-restaraunt-kakao-bot-app.tar.gz
 
-      - name: make application-secret.yml
+      - name: Create application-prod.yml
         run: |
-          cd ./src/main/resources
-          touch ./application-prod.yml
-          touch ./application-api-key.yml
-          touch ./application-sentry.yml
-          echo "${{ secrets.PROD }}" >> ./application-prod.yml
-          echo "${{ secrets.API_KEY }}" >> ./application-api-key.yml
-          echo "${{ secrets.SENTRY }}" >> ./application-sentry.yml
-          ls -la
+          mkdir -p ./src/main/resources
+          cat > ./src/main/resources/application-prod.yml << 'EOF'
+          ${{ secrets.PROD }}
+          EOF
+
+          - name: Create application-api-key.yml
+            run: |
+              cat > ./src/main/resources/application-api-key.yml << 'EOF'
+              ${{ secrets.API_KEY }}
+              EOF
+
+          - name: Create application-sentry.yml
+            run: |
+              cat > ./src/main/resources/application-sentry.yml << 'EOF'
+              ${{ secrets.SENTRY }}
+              EOF
+
+          - name: Verify files
+            run: |
+              ls -la ./src/main/resources/
 
       - name: Copy files to server
         uses: appleboy/scp-action@master
