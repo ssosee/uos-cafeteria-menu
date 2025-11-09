@@ -2,6 +2,10 @@ package seaung.uoscafeteriamenu.global.config;
 
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.distributed.proxy.ProxyManager;
+import io.lettuce.core.ClientOptions;
+import io.lettuce.core.ReadFrom;
+import io.lettuce.core.cluster.ClusterClientOptions;
+import io.lettuce.core.cluster.ClusterTopologyRefreshOptions;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
@@ -10,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
+import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
@@ -22,6 +27,7 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
+import java.util.Collections;
 
 /**
  * AWS ElastiCache는 COPNFIG 명령어를 허용하지 않음
@@ -63,24 +69,44 @@ public class RedisCacheConfig {
      **/
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
-        log.info("RedisConnectionFactory 초기화 - host: {}, port: {}, ssl: {}",
+        log.info("Redis Cluster ConnectionFactory 초기화 - host: {}, port: {}, ssl: {}",
                 redisHost, redisPort, sslEnabled);
 
-        RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration();
-        redisConfig.setHostName(redisHost);
-        redisConfig.setPort(redisPort);
+        // Redis Cluster 설정
+        RedisClusterConfiguration clusterConfig = new RedisClusterConfiguration(
+                Collections.singletonList(redisHost + ":" + redisPort)
+        );
 
+        // Cluster topology refresh 설정
+        ClusterTopologyRefreshOptions topologyRefreshOptions = ClusterTopologyRefreshOptions.builder()
+                .enableAllAdaptiveRefreshTriggers()
+                .enablePeriodicRefresh(Duration.ofMinutes(10))
+                .build();
+
+        // Cluster client options 설정
+        ClusterClientOptions clusterClientOptions = ClusterClientOptions.builder()
+                .topologyRefreshOptions(topologyRefreshOptions)
+                .disconnectedBehavior(ClientOptions.DisconnectedBehavior.REJECT_COMMANDS)
+                .autoReconnect(true)
+                .validateClusterNodeMembership(false)  // ElastiCache Serverless에서 필요
+                .build();
+
+        // Lettuce client 설정
         LettuceClientConfiguration.LettuceClientConfigurationBuilder clientConfigBuilder =
                 LettuceClientConfiguration.builder()
-                        .commandTimeout(Duration.ofSeconds(5));
+                        .commandTimeout(Duration.ofSeconds(10))
+                        .shutdownTimeout(Duration.ofMillis(100))
+                        .readFrom(ReadFrom.REPLICA_PREFERRED)  // Read replica 사용
+                        .clientOptions(clusterClientOptions);
 
         if (sslEnabled) {
+            log.info("SSL 활성화");
             clientConfigBuilder.useSsl();
         }
 
         LettuceClientConfiguration clientConfig = clientConfigBuilder.build();
 
-        return new LettuceConnectionFactory(redisConfig, clientConfig);
+        return new LettuceConnectionFactory(clusterConfig, clientConfig);
     }
 
     /**
