@@ -40,12 +40,12 @@ import java.util.Collections;
  * This prevents CONFIG command usage.
  */
 @Slf4j
-@Configuration
+// @Configuration
 @EnableRedisRepositories(
         enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP,
         keyspaceNotificationsConfigParameter = ""
 )
-@Profile({"prod", "dev"})
+// @Profile({"prod", "dev"})
 public class RedisCacheConfig {
 
     @Value("${spring.redis.host}")

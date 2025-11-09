@@ -16,8 +16,8 @@ import seaung.uoscafeteriamenu.global.ratelimter.RatePlan;
 
 import java.time.Duration;
 
-@Configuration
-@Profile({"prod", "dev"})
+// @Configuration
+// @Profile({"prod", "dev"})
 public class RedisBucketConfig {
 
     @Value("${spring.redis.host}")

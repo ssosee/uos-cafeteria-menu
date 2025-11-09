@@ -16,7 +16,7 @@ import java.time.Duration;
 
 @Slf4j
 @Configuration
-@Profile({"test", "local"})
+@Profile({"test", "local", "prod"})
 public class EmbeddedRedisBucketConfig {
 
     @Value("${spring.redis.host}")

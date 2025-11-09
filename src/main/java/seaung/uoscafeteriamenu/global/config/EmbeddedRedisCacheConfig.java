@@ -24,7 +24,7 @@ import java.time.Duration;
 @Configuration
 @EnableRedisRepositories(enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP)
 @DependsOn({"embeddedRedisConfig"}) // 빈 초기화 순서 지정
-@Profile({"test", "local"})
+@Profile({"test", "local", "prod"})
 public class EmbeddedRedisCacheConfig {
 
     @Value("${spring.redis.host}")
