@@ -25,16 +25,6 @@ jobs:
           java-version: '11'
           distribution: 'corretto'
 
-      - name: Build with Gradle
-        run: |
-          chmod +x gradlew
-          ./gradlew clean build -x test
-
-      - name: Build Docker image
-        run: |
-          docker build -t uos-restaraunt-kakao-bot-app:${{ github.sha }} .
-          docker save uos-restaraunt-kakao-bot-app:${{ github.sha }} | gzip > uos-restaraunt-kakao-bot-app.tar.gz
-
       - name: Create application-prod.yml
         run: |
           mkdir -p ./src/main/resources
@@ -54,9 +44,21 @@ jobs:
           ${{ secrets.SENTRY }}
           EOF
 
-      - name: Verify files
+      - name: Verify files before build
         run: |
           ls -la ./src/main/resources/
+          echo "=== application-prod.yml content (masked) ==="
+          head -n 5 ./src/main/resources/application-prod.yml
+
+      - name: Build with Gradle
+        run: |
+          chmod +x gradlew
+          ./gradlew clean build -x test
+
+      - name: Build Docker image
+        run: |
+          docker build -t uos-restaraunt-kakao-bot-app:${{ github.sha }} .
+          docker save uos-restaraunt-kakao-bot-app:${{ github.sha }} | gzip > uos-restaraunt-kakao-bot-app.tar.gz
 
       - name: Copy files to server
         uses: appleboy/scp-action@master
